@@ -132,6 +132,10 @@ function getTransitionType(node: any): TransType {
 
 function triggerSceneTransition(node: any) {
   const ttype = getTransitionType(node)
+  const COVER_MS = ttype === 'title' ? 500 : 500
+  const REVEAL_MS = ttype === 'title' ? 600 : 700
+
+  // 1. Show overlay (cover phase)
   transition.value = {
     active: true,
     type: ttype,
@@ -139,13 +143,17 @@ function triggerSceneTransition(node: any) {
     nodeName: node?.name,
     nodeTime: node?.time_label,
   }
-  // Cover phase: let CSS animation play (~600ms)
-  // Then swap content + reveal
+  // 2. After cover, swap content
   setTimeout(() => {
-    // Content swap happens via handleChoice's node reset
-    transition.value = { ...transition.value } // trigger reveal
-    setTimeout(() => { transition.value.active = false }, 800)
-  }, 600)
+    prevNodeId = store.currentNode?.id ?? ''
+    transitions.value = []
+    chosenIds.value = new Set()
+    displayedText.value = ''
+    sceneClass.value = ''
+    startTypewriter()
+    // 3. Remove overlay (starts reveal CSS)
+    transition.value.active = false
+  }, COVER_MS)
 }
 
 // Reset when node changes (backup — primary reset is in handleChoice)
@@ -198,20 +206,9 @@ async function handleChoice(choice: any) {
   await store.choose(choice.id)
 
   const newNode = store.currentNode?.id
-  // Node changed — trigger scene transition + full reset
+  // Node changed — trigger scene transition
   if (newNode && newNode !== prevNode) {
-    const nextNode = store.currentNode
-    triggerSceneTransition(nextNode)
-    // Reset after cover phase (total ~1400ms: cover 600 + reveal 800)
-    setTimeout(() => {
-      prevNodeId = newNode!
-      transitions.value = []
-      chosenIds.value = new Set()
-      displayedText.value = ''
-      sceneClass.value = ''
-      startTypewriter()
-      scrollDown()
-    }, 700)
+    triggerSceneTransition(store.currentNode)
     return
   }
 
@@ -360,16 +357,17 @@ watch(showLoadPanel, (v) => { if (v) refreshSaves() })
 
 // Ink wash (墨染) — radial expansion from center
 .trans-ink {
-  background: radial-gradient(circle, $bg-void 0%, transparent 0%);
-  animation: inkCover 0.6s ease-in forwards, inkReveal 0.8s ease-out 0.6s forwards;
+  animation: inkCover 0.5s ease-in forwards, inkReveal 0.7s ease-out 0.5s forwards;
+  background: $bg-void; opacity:0;
 }
 @keyframes inkCover {
-  0% { background: radial-gradient(circle, $bg-void 0%, transparent 0%); }
-  100% { background: radial-gradient(circle, $bg-void 100%, transparent 100%); }
+  0% { clip-path: circle(0% at 50% 50%); opacity:0; }
+  2% { opacity:1; }
+  100% { clip-path: circle(80% at 50% 50%); opacity:1; }
 }
 @keyframes inkReveal {
-  0% { background: radial-gradient(circle, $bg-void 100%, transparent 100%); opacity:1; }
-  100% { background: radial-gradient(circle, $bg-void 0%, transparent 0%); opacity:0; }
+  0% { clip-path: circle(80% at 50% 50%); opacity:1; }
+  100% { clip-path: circle(0% at 50% 50%); opacity:0; }
 }
 
 // Time rift (时空裂隙) — vertical crack widens
