@@ -1,8 +1,8 @@
 #!/bin/bash
 # Start Cycle Master backend
-# Run: bash start-backend.sh
+# Run: bash scripts/start-backend.sh
 
-ROOT="$(cd "$(dirname "$0")" && pwd)"
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
 # Kill existing process on port 8000
 PID=$(netstat -ano 2>/dev/null | grep ':8000.*LISTENING' | awk '{print $5}' | head -1)

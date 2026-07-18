@@ -1,8 +1,8 @@
 #!/bin/bash
 # Start Cycle Master frontend
-# Run: bash start-frontend.sh
+# Run: bash scripts/start-frontend.sh
 
-ROOT="$(cd "$(dirname "$0")" && pwd)"
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
 # Kill existing process on port 5173
 PID=$(netstat -ano 2>/dev/null | grep ':5173.*LISTENING' | awk '{print $5}' | head -1)
