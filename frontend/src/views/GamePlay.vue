@@ -107,7 +107,7 @@ const isTyping = ref(false)
 let typingTimer: ReturnType<typeof setInterval> | null = null
 let prevNodeId = ''
 
-// Reset when node changes
+// Reset when node changes (backup — primary reset is in handleChoice)
 watch(() => store.currentNode?.id, (newId) => {
   if (newId && newId !== prevNodeId) {
     prevNodeId = newId
@@ -117,15 +117,11 @@ watch(() => store.currentNode?.id, (newId) => {
     displayedText.value = ''
     startTypewriter()
   }
-}, { immediate: true })
+})
 
-// Also clear transitions when content changes (same node, different content = new segment)
-watch(() => store.currentNode?.content, (newContent, oldContent) => {
-  if (newContent && newContent !== oldContent && oldContent) {
-    transitions.value = []
-    chosenIds.value = new Set()
-  }
-  if (!displayedText.value && newContent) startTypewriter()
+// Re-typewriter if content changes and display is empty
+watch(() => store.currentNode?.content, (c) => {
+  if (c && !displayedText.value) startTypewriter()
 })
 
 const renderedContent = computed(() => store.currentNode ? md2html(store.currentNode.content) : '')
@@ -153,27 +149,31 @@ function startTypewriter() {
 async function handleChoice(choice: any) {
   if (isTyping.value || chosenIds.value.has(choice.id) || store.loading) return
 
+  // Snapshot state BEFORE API call
+  const prevNode = store.currentNode?.id
   const label = choice.text
   chosenIds.value = new Set([...chosenIds.value, choice.id])
 
   await store.choose(choice.id)
 
-  // If transition text came back, show it
-  if (store.transitionText) {
-    transitions.value.push({ label, text: md2html(store.transitionText) })
-    // Clear transition so it doesn't persist
-    if (store.currentFrame) {
-      store.currentFrame = { ...store.currentFrame, transition_text: undefined }
-    }
-  }
-
-  // If node changed, reset
-  if (store.currentNode && store.currentNode.id !== prevNodeId) {
-    prevNodeId = store.currentNode.id
+  const newNode = store.currentNode?.id
+  // Node changed — full reset
+  if (newNode && newNode !== prevNode) {
+    prevNodeId = newNode
     transitions.value = []
     chosenIds.value = new Set()
     displayedText.value = ''
     startTypewriter()
+    scrollDown()
+    return
+  }
+
+  // Same node — append transition inline
+  if (store.transitionText) {
+    transitions.value.push({ label, text: md2html(store.transitionText) })
+    if (store.currentFrame) {
+      store.currentFrame = { ...store.currentFrame, transition_text: undefined }
+    }
   }
 
   scrollDown()
