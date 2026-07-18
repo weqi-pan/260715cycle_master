@@ -1,0 +1,17 @@
+@import './variables.scss';
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: $bg-dark;
+  color: $text-primary;
+  font-family: $font-body;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+#app {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
