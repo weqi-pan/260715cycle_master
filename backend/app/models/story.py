@@ -116,6 +116,7 @@ class Choice(Base):
     hint = Column(String, nullable=True)  # 鼠标悬停提示
     is_hidden_when_locked = Column(Integer, default=0)  # 条件不满足时是否完全隐藏（0=否, 1=是）
     transition_text = Column(Text, nullable=True)  # 选项选中后的过渡旁白
+    choice_group = Column(String, nullable=True)  # 互斥选项组名（同组选项互斥）
 
     # ── ORM 关系 ─────────────────────────────────────────────
     from_node = relationship(

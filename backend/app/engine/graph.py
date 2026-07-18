@@ -96,6 +96,7 @@ class GraphBundle:
                 hint=c.hint,
                 is_hidden_when_locked=bool(c.is_hidden_when_locked),
                 transition_text=c.transition_text,
+                choice_group=c.choice_group,
             ))
 
     @staticmethod
@@ -129,7 +130,8 @@ class ChoiceData:
     """
 
     def __init__(self, id, from_node_id, text, short_text, next_node_id,
-                 condition, effects, priority, hint, is_hidden_when_locked, transition_text):
+                 condition, effects, priority, hint, is_hidden_when_locked, transition_text,
+                 choice_group=None):
         self.id = id                              # 选项唯一标识
         self.from_node_id = from_node_id           # 来源节点 ID
         self.text = text                           # 完整显示文本
@@ -141,6 +143,7 @@ class ChoiceData:
         self.hint = hint                           # 鼠标悬停提示
         self.is_hidden_when_locked = is_hidden_when_locked  # 条件不满足时是否隐藏
         self.transition_text = transition_text     # 过渡旁白
+        self.choice_group = choice_group           # 互斥选项组（同组只能选一个）
 
 
 class GraphLoader:

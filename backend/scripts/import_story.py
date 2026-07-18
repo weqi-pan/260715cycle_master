@@ -33,10 +33,10 @@
 import json
 import os
 from sqlalchemy import text
-from app.database import SessionLocal, init_db
-from app.models.story import StoryNode, Choice
-from app.models.save import Save, NodePersistentState  # 确保表已注册到 Base.metadata
-from app.config import STORY_DATA_DIR
+from ..app.database import SessionLocal, init_db
+from ..app.models.story import StoryNode, Choice
+from ..app.models.save import Save, NodePersistentState  # 确保表已注册到 Base.metadata
+from ..app.config import STORY_DATA_DIR
 
 
 def import_all():
@@ -177,6 +177,7 @@ def _import_choices(session):
                 hint=c.get("hint"),
                 is_hidden_when_locked=1 if c.get("is_hidden_when_locked") else 0,
                 transition_text=c.get("transition_text"),
+                choice_group=c.get("choice_group"),
             )
             session.add(choice)
             count += 1
@@ -210,7 +211,7 @@ def _verify(session):
         for bc in bad_choices:
             print(f"  {bc[0]} → {bc[1]}")
     else:
-        print("[验证] 所有选项的 next_node_id 引用有效 ✓")
+        print("[验证] 所有选项的 next_node_id 引用有效 OK")
 
     # ── from_node_id 引用完整性 ──────────────────────────────
     # 检查是否有选项的来源节点不存在
@@ -223,7 +224,7 @@ def _verify(session):
         for bc in bad_from:
             print(f"  {bc[0]} 从 {bc[1]}")
     else:
-        print("[验证] 所有选项的 from_node_id 引用有效 ✓")
+        print("[验证] 所有选项的 from_node_id 引用有效 OK")
 
 
 # ============================================================

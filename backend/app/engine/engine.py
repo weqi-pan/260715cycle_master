@@ -116,11 +116,15 @@ class GameEngine:
 
         # ④ 应用效果 — 执行 effects 列表中的变更
         #   同时收集场景特效（notify/shake/flash）到 scene_effects
+        #   互斥选项组：如果选项有 group 字段，自动锁定同组其他选项
         scene_effects: list[dict] = []
-        for effect in choice.effects:
+        all_effects = list(choice.effects)
+        if getattr(choice, 'choice_group', None):
+            all_effects.append({"type": "set_flag", "target": f"_group_{choice.choice_group}_chosen", "value": True})
+        for effect in all_effects:
             if effect.get("type") in ("notify", "shake", "flash"):
                 scene_effects.append(effect)
-        self._apply_effects(choice.effects, state, node_id)
+        self._apply_effects(all_effects, state, node_id)
 
         # ⑤ 节点跳转 — 将玩家移动到选项指向的目标节点
         next_bundle = graph[choice.next_node_id]
@@ -215,6 +219,9 @@ class GameEngine:
             available = self.evaluator.check(c.condition, state)
             if not available:
                 continue  # 条件不满足的选项不显示
+            # 互斥选项组：如果同组已有选项被选中，则隐藏
+            if c.choice_group and state.flags.get(f"_group_{c.choice_group}_chosen"):
+                continue
             results.append(ChoiceResult(
                 id=c.id,
                 text=c.text,
@@ -286,8 +293,9 @@ class GameEngine:
             value = effect.get("value")    # 效果值
 
             if etype == "add_item":
-                # 向背包添加道具（name 字段用于 UI 显示）
-                state.inventory.append({"id": target, "name": target, "count": value})
+                # 向背包添加道具（name 字段用于 UI 显示，映射为中文名）
+                item_name = ConditionEvaluator.ITEM_NAMES.get(target, target)
+                state.inventory.append({"id": target, "name": item_name, "count": value})
 
             elif etype == "remove_item":
                 # 从背包移除指定 ID 的道具

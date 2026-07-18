@@ -14,6 +14,7 @@
       :attributes="store.currentState.player_attributes"
       :inventory="store.currentState.inventory"
       :node-name="store.currentNode?.name"
+      @toggle-map="showMap = !showMap"
     />
 
     <!-- Main content area -->
@@ -63,10 +64,22 @@
           <div v-else-if="!isTyping" class="continue-hint" @click.stop="dismissTransition">
             <span class="arrow">▼</span>
           </div>
-          <!-- Save/Load bar -->
+          <!-- Action bar -->
           <div class="save-bar">
+            <button class="save-btn" @click="showBackpack = !showBackpack">🎒 背包</button>
             <button class="save-btn" @click="doSave" :disabled="store.loading">💾 存档</button>
             <button class="save-btn" @click="showLoadPanel = !showLoadPanel">📂 读档</button>
+          </div>
+
+          <!-- Backpack panel -->
+          <div v-if="showBackpack" class="load-panel">
+            <div v-if="!store.currentState || store.currentState.inventory.length === 0" class="load-empty">背包空空如也</div>
+            <div v-for="(item, idx) in (store.currentState?.inventory ?? [])" :key="idx" class="load-row">
+              <span class="load-name">{{ item.name }}</span>
+              <span class="load-meta" v-if="isCrossSurfaceItem(item)">↻ 跨面</span>
+              <button v-if="isDiscardable(item)" @click="discardItem(idx)" class="del">丢弃</button>
+            </div>
+            <button class="close-btn" @click="showBackpack = false">关闭</button>
           </div>
 
           <!-- Load panel -->
@@ -93,19 +106,15 @@
       </div>
     </div>
 
-    <!-- Transition overlay -->
-    <Teleport to="body">
-      <div v-if="store.transitionText" class="transition-overlay" @click="dismissTransition">
-        <div class="transition-box">
-          <div class="transition-text" v-html="renderedTransition" />
-          <p class="dismiss-hint">— 点击任意处继续 —</p>
-        </div>
-      </div>
-    </Teleport>
+    <!-- Transition text (inline below choices) -->
+    <div v-if="store.transitionText" class="transition-inline" @click="dismissTransition">
+      <div class="transition-text" v-html="renderedTransition" />
+      <p class="dismiss-hint">— 点击继续 —</p>
+    </div>
 
-    <!-- Cycle Map -->
+    <!-- Cycle Map (toggle via location click) -->
     <CycleMap
-      v-if="store.currentState"
+      v-if="showMap && store.currentState"
       :current-id="store.currentNode?.id ?? 'A'"
       :visited-ids="store.currentState.visited_nodes"
       :has-warp-access="store.currentState.flags?.taoist_chant === true"
@@ -236,6 +245,18 @@ watch(() => store.currentFrame?.scene_effects, (effects) => {
   }
 }, { deep: true })
 
+// ── Backpack ──
+const showBackpack = ref(false)
+const showMap = ref(false)
+const CROSS_SURFACE_ITEMS = new Set(['item_amulet','item_qing_coin','item_beads','item_porcelain_shard','item_denim_rag','item_jade_pendant'])
+const DISCARDABLE_ITEMS = new Set(['item_qing_coin','item_denim_rag','item_warning_note','item_old_newspaper'])
+function isCrossSurfaceItem(item: any) { return CROSS_SURFACE_ITEMS.has(item.id) }
+function isDiscardable(item: any) { return DISCARDABLE_ITEMS.has(item.id) }
+function discardItem(idx: number) {
+  if (!store.currentState) return
+  store.currentState.inventory.splice(idx, 1)
+}
+
 // ── Save/Load ──
 const showLoadPanel = ref(false)
 const saveList = ref<any[]>([])
@@ -356,15 +377,14 @@ h1 { font-family:$font-display; font-size:3rem; font-weight:700; color:$accent-g
   &:hover { background:rgba($accent-red,0.1); border-color:$accent-red; box-shadow:0 0 20px rgba($accent-red,0.15); }
 }
 
-// ── Transition overlay ──
-.transition-overlay { position:fixed; inset:0; z-index:200; background:rgba(0,0,0,0.88); display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; }
-.transition-box { max-width:$narrative-max-width; padding:2rem 2.5rem; }
-.transition-text { color:$text-primary; font-size:1rem; line-height:1.85; letter-spacing:0.02em;
-  :deep(p) { margin-bottom:0.8rem; text-indent:2em; &:first-child { text-indent:0; } }
+// ── Transition inline ──
+.transition-inline { max-width:$narrative-max-width; margin:1rem auto; padding:1rem 1.5rem; background:rgba($accent-gold,0.04); border-left:2px solid $accent-gold; cursor:pointer; animation: fadeIn 0.3s ease-out; }
+.transition-text { color:$text-secondary; font-size:0.95rem; line-height:1.8;
+  :deep(p) { margin-bottom:0.6rem; text-indent:2em; &:first-child { text-indent:0; } }
   :deep(strong) { color:$accent-gold; }
   :deep(em) { color:$text-secondary; }
 }
-.dismiss-hint { text-align:center; color:$text-dim; font-size:0.8rem; margin-top:2rem; letter-spacing:0.1em; }
+.dismiss-hint { text-align:right; color:$text-dim; font-size:0.7rem; margin-top:0.3rem; }
 
 // ── Save/Load bar ──
 .save-bar { display:flex; gap:0.5rem; justify-content:center; padding:0.5rem 0 2rem; }

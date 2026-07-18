@@ -30,7 +30,7 @@
           </span>
         </div>
       </div>
-      <div class="node-name" v-if="nodeName">
+      <div class="node-name" v-if="nodeName" @click="$emit('toggleMap')" title="点击查看地图">
         <span class="node-pin">📍</span>{{ nodeName }}
       </div>
     </div>
@@ -48,6 +48,7 @@ const props = defineProps<{
   inventory?: ItemBrief[]
   nodeName?: string
 }>()
+defineEmits<{ toggleMap: [] }>()
 
 const cycle = computed(() => props.cycleCount)
 const halfCycle = computed(() => props.halfCycleCount)
@@ -208,6 +209,8 @@ function isCrossSurface(item: ItemBrief): boolean {
   color: $text-dim;
   font-size: 0.75rem;
   white-space: nowrap;
+  cursor: pointer;
+  &:hover { color: $accent-gold; }
 }
 
 .node-pin {
