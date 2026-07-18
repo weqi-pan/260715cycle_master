@@ -37,7 +37,7 @@ watch(() => props.background, (newBg) => {
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variables.scss';
+@use '@/assets/styles/variables.scss' as *;
 
 .bg-layer {
   position: fixed;

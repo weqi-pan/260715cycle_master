@@ -17,7 +17,7 @@ defineProps<{
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variables.scss';
+@use '@/assets/styles/variables.scss' as *;
 
 .speaker-header {
   display: flex;

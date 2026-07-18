@@ -79,7 +79,7 @@ function isCrossSurface(item: ItemBrief): boolean {
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variables.scss';
+@use '@/assets/styles/variables.scss' as *;
 
 .status-bar {
   display: flex;

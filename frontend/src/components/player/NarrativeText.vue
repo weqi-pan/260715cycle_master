@@ -19,7 +19,7 @@ const rendered = computed(() => {
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variables.scss';
+@use '@/assets/styles/variables.scss' as *;
 
 .narrative-text {
   font-size: 1rem;

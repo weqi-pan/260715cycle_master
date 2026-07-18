@@ -11,7 +11,7 @@ defineEmits<{ continue: [] }>()
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variables.scss';
+@use '@/assets/styles/variables.scss' as *;
 
 .continue-indicator {
   text-align: center;
