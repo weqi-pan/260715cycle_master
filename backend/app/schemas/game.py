@@ -37,6 +37,7 @@ class NodeData(BaseModel):
     time_label: Optional[str] = None
     content: str
     speaker: Optional[str] = None
+    speaker_avatar: Optional[str] = None
     background: Optional[str] = None
 
 

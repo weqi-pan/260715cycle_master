@@ -23,6 +23,7 @@ export interface NodeData {
   time_label?: string
   content: string
   speaker?: string
+  speaker_avatar?: string
   background?: string
 }
 
