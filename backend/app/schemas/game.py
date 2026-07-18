@@ -111,6 +111,7 @@ class ChoiceResult(BaseModel):
     id: str                          # 选项 ID
     text: str                        # 完整显示文本
     short_text: Optional[str] = None  # 缩略文本（按钮）
+    next_node_id: str = ""           # 目标节点 ID（前端判断是否场景切换）
     available: bool = True            # 是否可选（条件满足）
     reason: Optional[str] = None     # 不可选时的人读原因
     source: str = "static"           # 选项来源: "static" | "special_shortcut" | "special_warp"

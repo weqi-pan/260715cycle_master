@@ -78,6 +78,7 @@ class SpecialRouter:
                 results.append(ChoiceResult(
                     id="__warp_K_enter",
                     text=entry_text,
+                    next_node_id="K",
                     available=True,
                     source="special_warp",  # 标记为跃迁来源
                 ))
@@ -93,6 +94,7 @@ class SpecialRouter:
                     results.append(ChoiceResult(
                         id=f"__warp_K_exit_{target_id}",
                         text=f"跃迁至{target.name}（{target.id}）",
+                        next_node_id=target_id,
                         available=True,
                         source="special_warp",
                     ))

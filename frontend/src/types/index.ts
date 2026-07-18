@@ -33,6 +33,7 @@ export interface ChoiceResult {
   id: string
   text: string
   short_text?: string
+  next_node_id?: string
   available: boolean
   reason?: string
   source: 'static' | 'special_shortcut' | 'special_warp'

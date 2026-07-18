@@ -226,6 +226,7 @@ class GameEngine:
                 id=c.id,
                 text=c.text,
                 short_text=c.short_text,
+                next_node_id=c.next_node_id,
                 available=True,
                 reason=None,
                 source="static",

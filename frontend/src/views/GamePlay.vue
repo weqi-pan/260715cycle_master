@@ -34,13 +34,19 @@
           <!-- Current choices -->
           <div v-if="store.choices.length && !isTyping" class="choice-area">
             <button v-for="c in store.choices" :key="c.id"
-              class="choice-btn" :class="{ warp: c.source === 'special_warp', chosen: chosenIds.has(c.id) }"
+              class="choice-btn"
+              :class="{
+                warp: c.source === 'special_warp',
+                chosen: chosenIds.has(c.id),
+                'scene-transition': isSceneTransition(c),
+              }"
               :disabled="chosenIds.has(c.id)"
               @click="handleChoice(c)"
             >
               <span class="choice-text">{{ c.text }}</span>
               <span v-if="chosenIds.has(c.id)" class="chosen-mark">✓</span>
               <span v-if="c.source === 'special_warp'" class="warp-tag">跃迁</span>
+              <span v-if="isSceneTransition(c)" class="transition-icon">→</span>
             </button>
           </div>
         </div>
@@ -107,13 +113,19 @@ watch(() => store.currentNode?.id, (newId) => {
     prevNodeId = newId
     transitions.value = []
     chosenIds.value = new Set()
+    isTyping.value = false
     displayedText.value = ''
     startTypewriter()
   }
-})
+}, { immediate: true })
 
-watch(() => store.currentNode?.content, () => {
-  if (!displayedText.value) startTypewriter()
+// Also clear transitions when content changes (same node, different content = new segment)
+watch(() => store.currentNode?.content, (newContent, oldContent) => {
+  if (newContent && newContent !== oldContent && oldContent) {
+    transitions.value = []
+    chosenIds.value = new Set()
+  }
+  if (!displayedText.value && newContent) startTypewriter()
 })
 
 const renderedContent = computed(() => store.currentNode ? md2html(store.currentNode.content) : '')
@@ -165,6 +177,11 @@ async function handleChoice(choice: any) {
   }
 
   scrollDown()
+}
+
+function isSceneTransition(c: any): boolean {
+  // Choices that change scene: go to a different node, not "stay on same"
+  return c.id && store.currentNode && c.next_node_id !== store.currentNode.id
 }
 
 function onBgClick() {
@@ -278,7 +295,11 @@ watch(showLoadPanel, (v) => { if (v) refreshSaves() })
     .choice-text { text-decoration:line-through; }
   }
   &.warp { border-color:rgba($accent-ghost,0.35); border-left-color:rgba($accent-ghost,0.6); border-style:dashed; }
+  &.scene-transition { border-color:rgba($accent-red,0.25); border-left-color:rgba($accent-red,0.5); background:linear-gradient(135deg, rgba(20,14,14,0.95), rgba(26,16,16,0.9));
+    &:hover:not(.chosen) { border-color:rgba($accent-red,0.5); border-left-color:$accent-red; background:linear-gradient(135deg, rgba(30,18,18,0.95), rgba(36,20,20,0.9)); }
+  }
 }
+.transition-icon { position:absolute; right:0.8rem; top:50%; transform:translateY(-50%); color:rgba($accent-red,0.6); font-size:1rem; }
 .chosen-mark { position:absolute; right:0.8rem; top:50%; transform:translateY(-50%); color:$accent-gold; font-size:0.8rem; }
 .warp-tag { position:absolute; right:0.8rem; top:50%; transform:translateY(-50%); font-family:$font-ui; font-size:0.65rem; color:rgba($accent-ghost,0.6); border:1px solid rgba($accent-ghost,0.25); padding:0.1rem 0.4rem; border-radius:2px; }
 
