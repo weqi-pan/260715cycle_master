@@ -32,11 +32,13 @@
 # backend/import_story.py
 import json
 import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from sqlalchemy import text
-from ..app.database import SessionLocal, init_db
-from ..app.models.story import StoryNode, Choice
-from ..app.models.save import Save, NodePersistentState  # 确保表已注册到 Base.metadata
-from ..app.config import STORY_DATA_DIR
+from app.database import SessionLocal, init_db
+from app.models.story import StoryNode, Choice
+from app.models.save import Save, NodePersistentState  # 确保表已注册到 Base.metadata
+from app.config import STORY_DATA_DIR
 
 
 def import_all():
