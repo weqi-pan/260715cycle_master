@@ -5,11 +5,25 @@ $ErrorActionPreference = "Stop"
 $root = $PSScriptRoot | Split-Path -Parent
 $host.UI.RawUI.WindowTitle = "Cycle Master"
 
-# Clean old ports
+# Clean old ports — try multiple methods
 Write-Host "[...] Cleaning old ports..." -F DarkGray
-Get-NetTCPConnection -LocalPort 8000 -EA SilentlyContinue | % { Stop-Process -Id $_.OwningProcess -Force -EA SilentlyContinue }
-Get-NetTCPConnection -LocalPort 5173 -EA SilentlyContinue | % { Stop-Process -Id $_.OwningProcess -Force -EA SilentlyContinue }
-Start-Sleep 1
+
+# Method 1: PowerShell cmdlet (needs admin on some Windows)
+try {
+    Get-NetTCPConnection -LocalPort 8000 -EA Stop | % { Stop-Process -Id $_.OwningProcess -Force -EA SilentlyContinue }
+    Get-NetTCPConnection -LocalPort 5173 -EA Stop | % { Stop-Process -Id $_.OwningProcess -Force -EA SilentlyContinue }
+} catch {
+    # Method 2: netstat fallback (works without admin)
+    $netstat = netstat -ano 2>$null
+    foreach ($port in @(8000, 5173)) {
+        $lines = $netstat | Select-String ":$port.*LISTENING"
+        foreach ($line in $lines) {
+            $pid = ($line -split '\s+')[-1]
+            if ($pid -match '^\d+$') { Stop-Process -Id $pid -Force -EA SilentlyContinue }
+        }
+    }
+}
+Start-Sleep 2
 
 # Check venv
 $py = "$root\backend\venv\Scripts\python.exe"
@@ -85,7 +99,8 @@ try {
     Write-Host "`nStopping services..." -F Yellow
     if (!$backend.HasExited) { $backend.Kill() }
     if (!$frontend.HasExited) { $frontend.Kill() }
-    Get-NetTCPConnection -LocalPort 8000 -EA SilentlyContinue | % { Stop-Process -Id $_.OwningProcess -Force -EA SilentlyContinue }
-    Get-NetTCPConnection -LocalPort 5173 -EA SilentlyContinue | % { Stop-Process -Id $_.OwningProcess -Force -EA SilentlyContinue }
+    # Extra port cleanup
+    taskkill //F //IM python.exe 2>$null
+    taskkill //F //IM node.exe 2>$null
     Write-Host "Stopped." -F Green
 }
