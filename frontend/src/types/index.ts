@@ -55,4 +55,5 @@ export interface Frame {
   persistent_found: PersistentFound
   cycle_event: CycleEvent | null
   transition_text?: string
+  scene_effects?: Array<{ type: string; target?: string; value?: any }>
 }

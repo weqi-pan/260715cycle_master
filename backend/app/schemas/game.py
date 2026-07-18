@@ -55,6 +55,7 @@ class Frame(BaseModel):
     persistent_found: PersistentFound = PersistentFound()
     cycle_event: Optional[dict] = None
     transition_text: Optional[str] = None
+    scene_effects: list[dict] = []  # [{type: "notify"|"shake"|"flash", ...}]
 
 
 class ChooseRequest(BaseModel):

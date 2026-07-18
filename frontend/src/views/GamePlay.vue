@@ -29,7 +29,7 @@
 
       <!-- Game content -->
       <template v-else-if="store.currentNode">
-        <div class="content-wrapper">
+        <div class="content-wrapper" :key="store.currentNode.id" :class="transitionClass">
           <!-- Time label -->
           <div v-if="store.currentNode.time_label" class="time-label">
             ◈ {{ store.currentNode.time_label }}
@@ -111,6 +111,13 @@
       :has-warp-access="store.currentState.flags?.taoist_chant === true"
     />
 
+    <!-- Scene effect: shake -->
+    <div v-if="sceneEffect === 'shake'" class="scene-shake" />
+    <!-- Scene effect: flash -->
+    <div v-if="sceneEffect === 'flash'" class="scene-flash" :style="flashStyle" />
+    <!-- Scene effect: notify -->
+    <div v-if="sceneEffect === 'notify' && notifyText" class="scene-notify">{{ notifyText }}</div>
+
     <!-- Cycle toast -->
     <div v-if="store.cycleEvent" class="cycle-toast">
       <span class="cycle-icon">⟳</span> 第 {{ store.cycleEvent.cycle_count }} 次循环完成
@@ -188,6 +195,26 @@ function onBgClick() {
   if (store.choices.length > 0) return
   dismissTransition()
 }
+
+// ── Scene effects ──
+const sceneEffect = ref<string | null>(null)
+const notifyText = ref('')
+const flashStyle = ref({})
+const transitionClass = ref('fade-in')
+
+watch(() => store.currentNode?.id, () => {
+  transitionClass.value = 'fade-in'
+  setTimeout(() => { transitionClass.value = '' }, 500)
+})
+
+watch(() => store.currentFrame?.scene_effects, (effects) => {
+  if (!effects?.length) return
+  for (const e of effects) {
+    if (e.type === 'notify') { notifyText.value = e.target || e.value || ''; sceneEffect.value = 'notify'; setTimeout(() => { sceneEffect.value = null }, 2500) }
+    if (e.type === 'shake') { sceneEffect.value = 'shake'; setTimeout(() => { sceneEffect.value = null }, 500) }
+    if (e.type === 'flash') { flashStyle.value = { background: e.target || 'rgba(255,255,255,0.1)' }; sceneEffect.value = 'flash'; setTimeout(() => { sceneEffect.value = null }, 300) }
+  }
+}, { deep: true })
 
 // ── Save/Load ──
 const showLoadPanel = ref(false)
@@ -337,6 +364,18 @@ h1 { font-family:$font-display; font-size:3rem; font-weight:700; color:$accent-g
 .load-name { flex:1; color:$text-primary; font-size:0.85rem; }
 .load-meta { color:$text-dim; font-size:0.7rem; }
 .close-btn { display:block; margin:0.5rem auto 0; padding:0.3rem 1.5rem; background:transparent; border:1px solid rgba($accent-gold,0.15); color:$text-dim; font-family:$font-ui; font-size:0.8rem; cursor:pointer; border-radius:3px; }
+
+// ── Node transition ──
+.fade-in { animation: fadeIn 0.4s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+// ── Scene effects ──
+.scene-shake { position: fixed; inset: 0; z-index: 300; pointer-events: none; animation: shake 0.4s ease-out; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+.scene-flash { position: fixed; inset: 0; z-index: 299; pointer-events: none; animation: flashAnim 0.3s ease-out; }
+@keyframes flashAnim { from { opacity: 1; } to { opacity: 0; } }
+.scene-notify { position: fixed; top: 15%; left: 50%; transform: translateX(-50%); z-index: 310; color: $accent-gold; font-family: $font-display; font-size: 1.2rem; letter-spacing: 0.1em; pointer-events: none; animation: notifyAnim 2.5s ease-out; text-shadow: 0 0 10px rgba($accent-red,0.3); }
+@keyframes notifyAnim { 0%{opacity:0;transform:translateX(-50%) translateY(-10px)} 15%{opacity:1;transform:translateX(-50%) translateY(0)} 70%{opacity:1} 100%{opacity:0} }
 
 // ── Cycle toast ──
 .cycle-toast { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:100; color:$accent-gold; font-family:$font-display; font-size:1.1rem; letter-spacing:0.1em; pointer-events:none; animation:cycleFade 3s infinite; }

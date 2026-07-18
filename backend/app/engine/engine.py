@@ -34,7 +34,11 @@ class GameEngine:
         if node_id not in state.visited_nodes:
             state.visited_nodes.append(node_id)
 
-        # ④ 应用 Effects
+        # ④ 应用 Effects + collect scene effects
+        scene_effects = []
+        for effect in choice.effects:
+            if effect.get("type") in ("notify", "shake", "flash"):
+                scene_effects.append(effect)
         self._apply_effects(choice.effects, state, node_id)
 
         # ⑤ 跳转目标节点
@@ -87,6 +91,7 @@ class GameEngine:
             persistent_found=persistent,
             cycle_event=cycle_event,
             transition_text=choice.transition_text,
+            scene_effects=scene_effects,
         )
 
     def resolve_available_choices(
@@ -153,6 +158,8 @@ class GameEngine:
             elif etype == "leave_danger":
                 pd = state.persistent_nodes.setdefault(node_id, {"items": [], "dangers": []})
                 pd["dangers"].append({"id": target, "name": value or target})
+            elif etype in ("notify", "shake", "flash"):
+                pass  # Handled as scene_effects — accumulated separately
 
     def _resolve_content(self, bundle: GraphBundle, state: GameState) -> str:
         """解析 cycle_variants + {{变量}} 替换。"""
