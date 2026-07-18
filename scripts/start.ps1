@@ -1,176 +1,89 @@
 # ============================================
 # Cycle Master — 一键启动 & 一键关闭
+# 用法: .\scripts\start.ps1  或双击 start.bat
+# 关闭: 按 Ctrl+C 或直接关闭窗口
 # ============================================
-# 用法: .\scripts\start.ps1
-# 关闭: 按 Q 键 → 自动停止所有服务并退出
-# ============================================
+$ErrorActionPreference = "Stop"
+$projectRoot = $PSScriptRoot | Split-Path -Parent
+$host.UI.RawUI.WindowTitle = "Cycle Master"
 
-$projectRoot = Split-Path -Parent $PSScriptRoot
-$host.UI.RawUI.WindowTitle = "Cycle Master — 荔湾·四日轮回"
-
-# ---------- 全局进程追踪 ----------
-$script:backendProcess = $null
-$script:frontendProcess = $null
-$script:stopping = $false
-
-function Stop-All {
-    if ($script:stopping) { return }
-    $script:stopping = $true
-
-    Write-Host ""
-    Write-Host "正在停止服务..." -ForegroundColor Yellow
-
-    if ($script:backendProcess -and !$script:backendProcess.HasExited) {
-        $script:backendProcess.Kill()
-        Write-Host "  [OK] 后端已停止" -ForegroundColor Green
-    }
-    if ($script:frontendProcess -and !$script:frontendProcess.HasExited) {
-        $script:frontendProcess.Kill()
-        Write-Host "  [OK] 前端已停止" -ForegroundColor Green
-    }
-
-    # 确保端口释放
-    Get-NetTCPConnection -LocalPort 8000 -ErrorAction SilentlyContinue |
-        ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }
-    Get-NetTCPConnection -LocalPort 5173 -ErrorAction SilentlyContinue |
-        ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }
-
-    Write-Host "所有服务已停止。再见。" -ForegroundColor Cyan
-    [Environment]::Exit(0)
-}
-
-# 注册退出钩子
-$null = Register-EngineEvent -SourceIdentifier PowerShell.Exiting -Action { Stop-All } -SupportEvent
-
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "  Cycle Master — 荔湾·四日轮回" -ForegroundColor Yellow
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host ""
+# ---------- 清理旧进程 ----------
+Write-Host "[...] 清理旧端口..." -ForegroundColor DarkGray
+Stop-Process -Id (Get-NetTCPConnection -LocalPort 8000 -EA SilentlyContinue).OwningProcess -Force -EA SilentlyContinue
+Stop-Process -Id (Get-NetTCPConnection -LocalPort 5173 -EA SilentlyContinue).OwningProcess -Force -EA SilentlyContinue
+Start-Sleep 1
 
 # ---------- 检查依赖 ----------
-$backendVenv = Join-Path $projectRoot "backend\venv\Scripts\python.exe"
-if (-not (Test-Path $backendVenv)) {
-    Write-Host "[ERROR] 后端虚拟环境不存在" -ForegroundColor Red
-    Write-Host "请先运行: cd backend; python -m venv venv; .\venv\Scripts\Activate.ps1; pip install -r requirements.txt" -ForegroundColor Yellow
-    Read-Host "按回车退出"
-    exit 1
-}
-
-$frontendNodeModules = Join-Path $projectRoot "frontend\node_modules"
-if (-not (Test-Path $frontendNodeModules)) {
-    Write-Host "[...] 前端依赖未安装，正在安装..." -ForegroundColor Yellow
-    Push-Location (Join-Path $projectRoot "frontend")
-    npm install
-    Pop-Location
+$py = "$projectRoot\backend\venv\Scripts\python.exe"
+if (!(Test-Path $py)) { Write-Host "[ERROR] venv 不存在" -F Red; Read-Host; exit 1 }
+if (!(Test-Path "$projectRoot\frontend\node_modules")) {
+    Write-Host "[...] 安装前端依赖..." -F Yellow
+    Push-Location "$projectRoot\frontend"; npm install; Pop-Location
 }
 
 # ---------- 检查数据库 ----------
-$dbFile = Join-Path $projectRoot "backend\cycle_master.db"
-if (-not (Test-Path $dbFile)) {
-    Write-Host "[...] 数据库不存在，正在导入..." -ForegroundColor Yellow
-    Push-Location (Join-Path $projectRoot "backend")
-    & $backendVenv -c "from app.database import init_db; init_db()" 2>$null
-    & $backendVenv import_story.py 2>$null
+if (!(Test-Path "$projectRoot\backend\cycle_master.db")) {
+    Write-Host "[...] 初始化数据库..." -F Yellow
+    Push-Location "$projectRoot\backend"
+    & $py -c "from app.database import init_db; init_db()" 2>$null
+    & $py import_story.py 2>$null
     Pop-Location
 }
 
-# ---------- 清理旧进程 ----------
-Write-Host "[...] 清理旧进程..." -ForegroundColor DarkGray
-Get-NetTCPConnection -LocalPort 8000 -ErrorAction SilentlyContinue |
-    ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }
-Get-NetTCPConnection -LocalPort 5173 -ErrorAction SilentlyContinue |
-    ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }
-Start-Sleep -Seconds 1
+Write-Host ""
+Write-Host "========================================" -F Cyan
+Write-Host "  Cycle Master - 启动中..." -F Yellow
+Write-Host "========================================" -F Cyan
 
 # ---------- 启动后端 ----------
-Write-Host "[1/2] 启动后端 (FastAPI :8000)..." -ForegroundColor Green
-$backendDir = Join-Path $projectRoot "backend"
-$psi = New-Object System.Diagnostics.ProcessStartInfo
-$psi.FileName = "$backendDir\venv\Scripts\python.exe"
-$psi.Arguments = "-m uvicorn app.main:app --port 8000"
-$psi.WorkingDirectory = $backendDir
-$psi.UseShellExecute = $false
-$psi.RedirectStandardOutput = $true
-$psi.RedirectStandardError = $true
-$psi.CreateNoWindow = $true
+Write-Host "[1/2] 后端..." -F Green -NoNewline
+$backend = Start-Process -FilePath $py `
+    -ArgumentList "-m uvicorn app.main:app --port 8000" `
+    -WorkingDirectory "$projectRoot\backend" `
+    -WindowStyle Hidden -PassThru
 
-$script:backendProcess = [System.Diagnostics.Process]::Start($psi)
-
-# 等待后端就绪
-$ready = $false
-for ($i = 0; $i -lt 30; $i++) {
-    try {
-        $r = Invoke-WebRequest -Uri "http://localhost:8000/api/health" -UseBasicParsing -TimeoutSec 1
-        if ($r.StatusCode -eq 200) { $ready = $true; break }
-    } catch { Start-Sleep -Milliseconds 500 }
+for ($i=0; $i -lt 20; $i++) {
+    try { if ((Invoke-WebRequest "http://localhost:8000/api/health" -TimeoutSec 1 -UseBasicParsing).StatusCode -eq 200) { break } } catch {}
+    Start-Sleep -Milliseconds 500
 }
-if ($ready) {
-    Write-Host "  [OK] 后端就绪" -ForegroundColor Green
-} else {
-    Write-Host "  [FAIL] 后端启动失败" -ForegroundColor Red
-    Stop-All
-}
+if ($backend.HasExited) { Write-Host " FAIL" -F Red; Read-Host; exit 1 }
+Write-Host " OK :8000" -F Green
 
 # ---------- 启动前端 ----------
-Write-Host "[2/2] 启动前端 (Vite :5173)..." -ForegroundColor Green
-$frontendDir = Join-Path $projectRoot "frontend"
-$fpsi = New-Object System.Diagnostics.ProcessStartInfo
-$fpsi.FileName = "npx"
-$fpsi.Arguments = "vite --port 5173"
-$fpsi.WorkingDirectory = $frontendDir
-$fpsi.UseShellExecute = $false
-$fpsi.RedirectStandardOutput = $true
-$fpsi.RedirectStandardError = $true
-$fpsi.CreateNoWindow = $true
+Write-Host "[2/2] 前端..." -F Green -NoNewline
+$frontend = Start-Process -FilePath "npx" `
+    -ArgumentList "vite --port 5173" `
+    -WorkingDirectory "$projectRoot\frontend" `
+    -WindowStyle Hidden -PassThru
 
-$script:frontendProcess = [System.Diagnostics.Process]::Start($fpsi)
-
-# 等待前端就绪
-$fready = $false
-for ($i = 0; $i -lt 30; $i++) {
-    try {
-        $r = Invoke-WebRequest -Uri "http://localhost:5173" -UseBasicParsing -TimeoutSec 1
-        if ($r.StatusCode -eq 200) { $fready = $true; break }
-    } catch { Start-Sleep -Milliseconds 500 }
+for ($i=0; $i -lt 20; $i++) {
+    try { if ((Invoke-WebRequest "http://localhost:5173" -TimeoutSec 1 -UseBasicParsing).StatusCode -eq 200) { break } } catch {}
+    Start-Sleep -Milliseconds 500
 }
-if ($fready) {
-    Write-Host "  [OK] 前端就绪" -ForegroundColor Green
-} else {
-    Write-Host "  [FAIL] 前端启动失败" -ForegroundColor Red
-    Stop-All
-}
+if ($frontend.HasExited) { Write-Host " FAIL" -F Red; Read-Host; exit 1 }
+Write-Host " OK :5173" -F Green
 
-# ---------- 启动完成 ----------
+# ---------- 完成 ----------
 Write-Host ""
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "  启动完成！" -ForegroundColor Green
+Write-Host "========================================" -F Cyan
+Write-Host "  游戏:     http://localhost:5173/play" -F Yellow
+Write-Host "  后端API:  http://localhost:8000" -F DarkGray
+Write-Host "  按 Ctrl+C 停止所有服务" -F Magenta
+Write-Host "========================================" -F Cyan
 Write-Host ""
-Write-Host "  游戏:     http://localhost:5173/play" -ForegroundColor Yellow
-Write-Host "  后端API:  http://localhost:8000" -ForegroundColor DarkGray
-Write-Host "  API文档:  http://localhost:8000/docs" -ForegroundColor DarkGray
-Write-Host ""
-Write-Host "  按 Q 键 → 停止所有服务并关闭" -ForegroundColor Magenta
-Write-Host "  (或直接关闭本窗口)" -ForegroundColor DarkGray
-Write-Host "========================================" -ForegroundColor Cyan
 
-# ---------- 等待退出 ----------
-while (!$script:stopping) {
-    if ([Console]::KeyAvailable) {
-        $key = [Console]::ReadKey($true)
-        if ($key.Key -eq 'Q') {
-            Stop-All
-        }
+# ---------- 等待 Ctrl+C ----------
+try {
+    while ($true) {
+        if ($backend.HasExited) { Write-Host "[WARN] 后端意外退出" -F Red; break }
+        if ($frontend.HasExited) { Write-Host "[WARN] 前端意外退出" -F Red; break }
+        Start-Sleep -Seconds 2
     }
-    # 检查进程是否仍在运行
-    if ($script:backendProcess.HasExited) {
-        Write-Host ""
-        Write-Host "[WARN] 后端意外退出！" -ForegroundColor Red
-        Stop-All
-    }
-    if ($script:frontendProcess.HasExited) {
-        Write-Host ""
-        Write-Host "[WARN] 前端意外退出！" -ForegroundColor Red
-        Stop-All
-    }
-    Start-Sleep -Milliseconds 200
+} finally {
+    Write-Host "`n停止服务..." -F Yellow
+    if (!$backend.HasExited) { $backend.Kill() }
+    if (!$frontend.HasExited) { $frontend.Kill() }
+    Stop-Process -Id (Get-NetTCPConnection -LocalPort 8000 -EA SilentlyContinue).OwningProcess -Force -EA SilentlyContinue
+    Stop-Process -Id (Get-NetTCPConnection -LocalPort 5173 -EA SilentlyContinue).OwningProcess -Force -EA SilentlyContinue
+    Write-Host "已停止。" -F Green
 }
