@@ -126,7 +126,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed, watch, nextTick } from 'vue'
+import { onMounted, ref, computed, watch } from 'vue'
 import { useGameStore } from '@/stores/gameStore'
 import StatusBar from '@/components/player/StatusBar.vue'
 import CycleMap from '@/components/player/CycleMap.vue'

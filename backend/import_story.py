@@ -5,6 +5,7 @@ import os
 from sqlalchemy import text
 from app.database import SessionLocal, init_db
 from app.models.story import StoryNode, Choice
+from app.models.save import Save, NodePersistentState  # ensure tables are registered
 from app.config import STORY_DATA_DIR
 
 
@@ -13,10 +14,11 @@ def import_all():
 
     # 清空已有故事数据
     with SessionLocal() as session:
-        session.execute(text("DELETE FROM choices"))
-        session.execute(text("DELETE FROM node_persistent_state"))
-        session.execute(text("DELETE FROM saves"))
-        session.execute(text("DELETE FROM story_nodes"))
+        for tbl in ["choices", "node_persistent_state", "saves", "story_nodes"]:
+            try:
+                session.execute(text(f"DELETE FROM {tbl}"))
+            except Exception:
+                pass  # table may not exist yet in fresh DB
         session.commit()
 
     with SessionLocal() as session:

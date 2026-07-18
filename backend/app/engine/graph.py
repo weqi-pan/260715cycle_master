@@ -89,14 +89,3 @@ class GraphLoader:
             graph[node.id] = GraphBundle(node, node_choices)
 
         return graph
-
-    def get_node(self, graph: dict[str, GraphBundle], node_id: str) -> GraphBundle:
-        if node_id not in graph:
-            raise ValueError(f"Node '{node_id}' not found in graph")
-        return graph[node_id]
-
-    def get_choice(self, bundle: GraphBundle, choice_id: str) -> ChoiceData:
-        for c in bundle.choices:
-            if c.id == choice_id:
-                return c
-        raise ValueError(f"Choice '{choice_id}' not found in node '{bundle.id}'")
