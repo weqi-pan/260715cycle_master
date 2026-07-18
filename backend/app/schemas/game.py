@@ -26,7 +26,7 @@ class GameState(BaseModel):
     flags: dict[str, Any] = {}
     visited_nodes: list[str] = []
     endings_reached: list[str] = []
-    player_attributes: dict[str, int] = {}
+    player_attributes: dict[str, int] = Field(default_factory=lambda: {"sanity": 100, "courage": 5, "insight": 3})
 
 
 class NodeData(BaseModel):
