@@ -1,55 +1,149 @@
+"""
+条件表达式求值器。
+
+解析并执行故事剧本中使用的条件表达式字符串，判断玩家是否满足某个选项的解锁条件。
+
+支持的表达式语法：
+
+    【逻辑组合】
+        and:A,B,C           — 所有子条件都满足
+        or:A,B,C            — 任一子条件满足
+        not:condition       — 条件取反
+
+    【道具与标记】
+        has_item:item_id    — 持有指定道具
+        has_flag:flag_name  — 指定标记为真
+        flag:NAME=VALUE     — 标记等于指定值
+
+    【属性比较】
+        attr:NAME>=VALUE    — 属性比较（支持 >= <= > < == !=）
+
+    【循环/位置】
+        cycle>=N            — 循环次数 ≥ N
+        half_cycle>=N       — 半循环次数 ≥ N
+        at_node:NODE_ID     — 当前在指定节点
+
+嵌套规则：
+    and:/or: 内部可以用逗号分隔子条件，每个子条件可以是任意表达式。
+    当遇到 and:/or: 作为子条件的开头时，嵌套深度 +1，
+    该子条件内部的逗号不会被外层当作分隔符。
+"""
+
 # backend/app/engine/condition_eval.py
 import re
 from app.schemas.game import GameState
 
 
 class ConditionEvaluator:
-    """Parse condition expression strings and evaluate them against a GameState."""
+    """
+    条件表达式求值器。
+
+    核心职责：
+        1. 解析条件表达式字符串
+        2. 根据当前 GameState 求值，返回 True/False
+        3. 提供 describe_condition() 将表达式翻译为人类可读的中文描述
+
+    用法:
+        evaluator = ConditionEvaluator()
+        ok = evaluator.check("has_item:item_amulet", state)
+        desc = evaluator.describe_condition("and:has_item:item_old_key,has_flag:know_secret_tunnel")
+        # → "需要持有「锈蚀铜钥匙」，并且「知晓地下密道」"
+
+    设计决策：
+        - 使用前缀语法（如 "has_item:"）而非 JSON 结构，使编辑器中的条件字段更简洁
+        - 条件表达式中不直接写物品/标记的中文名，而是引用 ID，
+          由 describe_condition() 通过静态映射表翻译为中文供 UI 显示
+    """
+
+    # ============================================================
+    # 条件求值（evaluate / check）
+    # ============================================================
 
     def check(self, condition: str | None, state: GameState) -> bool:
-        """null/empty string means no constraint, always returns True."""
+        """
+        条件检查入口。
+
+        空或 None 条件视为无约束，始终返回 True。
+        非空条件委托给 evaluate() 递归求值。
+
+        参数:
+            condition: 条件表达式字符串（可为 None）
+            state:     当前游戏状态
+        返回:
+            条件是否满足
+        """
         if condition is None or condition.strip() == "":
             return True
         return self.evaluate(condition, state)
 
     def evaluate(self, condition: str, state: GameState) -> bool:
+        """
+        递归求值条件表达式。
+
+        按照表达式前缀分发给对应的处理逻辑：
+            and:/or: → 逻辑组合（递归子条件）
+            not:     → 取反
+            has_item:/has_flag:/flag: → 道具和标记检查
+            attr:    → 属性比较
+            cycle>= / half_cycle>=    → 循环次数检查
+            at_node: → 当前位置检查
+
+        参数:
+            condition: 条件表达式字符串（不含前后空白）
+            state:     当前游戏状态
+        返回:
+            条件是否满足
+        抛出:
+            ValueError: 无法识别的条件表达式
+        """
         condition = condition.strip()
 
-        # -- and --
+        # ── and: 逻辑与 ──────────────────────────────────────
+        # 格式: and:子条件1,子条件2,子条件3
+        # 所有子条件都满足才返回 True
         if condition.startswith("and:"):
-            inner = condition[4:]
+            inner = condition[4:]  # 去掉 "and:" 前缀
             parts = self._split_top_level(inner)
             return all(self.evaluate(p, state) for p in parts)
 
-        # -- or --
+        # ── or: 逻辑或 ───────────────────────────────────────
+        # 格式: or:子条件1,子条件2,子条件3
+        # 任一子条件满足即返回 True
         if condition.startswith("or:"):
-            inner = condition[3:]
+            inner = condition[3:]  # 去掉 "or:" 前缀
             parts = self._split_top_level(inner)
             return any(self.evaluate(p, state) for p in parts)
 
-        # -- not --
+        # ── not: 逻辑非 ──────────────────────────────────────
         if condition.startswith("not:"):
             inner = condition[4:]
             return not self.evaluate(inner, state)
 
-        # -- has_item --
+        # ── has_item: 持有道具 ────────────────────────────────
+        # 格式: has_item:item_amulet
+        # 检查背包中是否存在指定道具 ID
         if condition.startswith("has_item:"):
             item_id = condition[9:]
             return any(item.get("id") == item_id for item in state.inventory)
 
-        # -- has_flag --
+        # ── has_flag: 标记为真 ────────────────────────────────
+        # 格式: has_flag:know_secret_tunnel
+        # 检查指定标记是否为真值
         if condition.startswith("has_flag:"):
             flag_name = condition[9:]
             return bool(state.flags.get(flag_name))
 
-        # -- flag:NAME=VALUE --
+        # ── flag:NAME=VALUE 标记等于指定值 ────────────────────
+        # 格式: flag:trust_level=5
         m = re.match(r"^flag:([^=]+)=(.+)$", condition)
         if m:
             flag_name, expected = m.group(1), m.group(2)
             actual = state.flags.get(flag_name)
             return str(actual) == expected
 
-        # -- attr:NAME OP VALUE --
+        # ── attr:NAME OP VALUE 属性比较 ──────────────────────
+        # 格式: attr:sanity>=50 或 attr:courage<3
+        # 支持 >= <= > < == != 六种比较运算符
         m = re.match(r"^attr:(\w+)(>=|<=|>|<|==|!=)(.+)$", condition)
         if m:
             attr_name, op, raw_val = m.group(1), m.group(2), m.group(3)
@@ -65,27 +159,38 @@ class ConditionEvaluator:
             if op == "==": return attr_val == cmp_val
             if op == "!=": return attr_val != cmp_val
 
-        # -- cycle --
+        # ── cycle>=N 循环次数检查 ────────────────────────────
+        # 格式: cycle>=3
+        # 检查已完成的完整循环次数是否 ≥ N
         m = re.match(r"^cycle>=(\d+)$", condition)
         if m:
             return state.cycle_count >= int(m.group(1))
 
-        # -- half_cycle --
+        # ── half_cycle>=N 半循环次数检查 ─────────────────────
+        # 格式: half_cycle>=2
+        # 检查已到达 E 节点的次数是否 ≥ N
         m = re.match(r"^half_cycle>=(\d+)$", condition)
         if m:
             return state.half_cycle_count >= int(m.group(1))
 
-        # -- at_node --
+        # ── at_node:NODE_ID 当前位置检查 ──────────────────────
+        # 格式: at_node:E
+        # 检查玩家当前是否在指定节点
         m = re.match(r"^at_node:(.+)$", condition)
         if m:
             return state.current_node_id == m.group(1)
 
+        # ── 无法识别的表达式 ─────────────────────────────────
         raise ValueError(f"Unknown condition expression: {condition}")
 
-    # ── Human-readable condition descriptions ──
+    # ============================================================
+    # 人类可读中文描述（describe_condition）
+    # ============================================================
 
-    # Static maps for translating internal IDs to Chinese text.
-    # Extended at runtime via update_maps() when story data is loaded.
+    # ── 标记名称映射表 ───────────────────────────────────────
+    # Key: 数据库中使用的英文 ID
+    # Value: UI 中显示的中文描述
+    # 运行时可通过 update_maps() 扩展
     FLAG_NAMES: dict[str, str] = {
         "know_secret_tunnel": "知晓地下密道",
         "taoist_chant": "掌握道法口诀",
@@ -127,6 +232,7 @@ class ConditionEvaluator:
         "li_mingchen_story_heard": "听过李氏家族故事",
     }
 
+    # ── 道具名称映射表 ───────────────────────────────────────
     ITEM_NAMES: dict[str, str] = {
         "item_amulet": "阿六的护身符",
         "item_tunnel_map": "密道地图",
@@ -170,6 +276,7 @@ class ConditionEvaluator:
         "item_denim_rag": "一块破布",
     }
 
+    # ── 属性名称映射表 ───────────────────────────────────────
     ATTR_NAMES: dict[str, str] = {
         "sanity": "理智",
         "courage": "勇气",
@@ -178,7 +285,17 @@ class ConditionEvaluator:
 
     @classmethod
     def update_maps(cls, flags: dict[str, str] = None, items: dict[str, str] = None):
-        """Extend the flag/item name maps at runtime (called after story import)."""
+        """
+        运行时扩展标记/道具名称映射。
+
+        当故事数据（story_data）导入后，如果定义了新的标记或道具，
+        调用此方法将其中文名称注册到求值器，确保 describe_condition()
+        可以正确翻译。
+
+        参数:
+            flags: 新增的标记 ID → 中文名称映射
+            items: 新增的道具 ID → 中文名称映射
+        """
         if flags:
             cls.FLAG_NAMES.update(flags)
         if items:
@@ -186,54 +303,68 @@ class ConditionEvaluator:
 
     @classmethod
     def describe_condition(cls, condition: str | None) -> str:
-        """Convert a condition expression into human-readable Chinese text."""
+        """
+        将条件表达式翻译为人类可读的中文描述。
+
+        用于编辑器 UI 和游戏中选择项的附加说明。
+
+        示例:
+            "has_item:item_old_key" → "持有「锈蚀铜钥匙」"
+            "and:has_flag:zhang_trust,attr:courage>=5" → "需要「获得张天民信任」，并且勇气≥5"
+            "not:has_item:item_talisman" → "不能持有「镇魂符纸」"
+
+        参数:
+            condition: 条件表达式字符串（可为 None）
+        返回:
+            中文描述字符串，空条件返回 ""
+        """
         if condition is None or condition.strip() == "":
             return ""
 
         cond = condition.strip()
 
-        # and: → "需要 A 并且 B"
+        # ── and: 逻辑与 → "需要A，并且B，并且C" ──────────────
         if cond.startswith("and:"):
             inner = cond[4:]
             parts = cls._split_top_level_static(inner)
             descs = [cls.describe_condition(p) for p in parts if cls.describe_condition(p)]
             return "需要" + "，并且".join(descs)
 
-        # or: → "需要 A 或 B"
+        # ── or: 逻辑或 → "需要A，或B，或C" ────────────────────
         if cond.startswith("or:"):
             inner = cond[3:]
             parts = cls._split_top_level_static(inner)
             descs = [cls.describe_condition(p) for p in parts if cls.describe_condition(p)]
             return "需要" + "，或".join(descs)
 
-        # not: → "不能…"
+        # ── not: 逻辑非 → "不能…" ────────────────────────────
         if cond.startswith("not:"):
             inner = cond[4:]
             inner_desc = cls.describe_condition(inner)
             if inner_desc.startswith("需要"):
-                inner_desc = inner_desc[2:]  # strip "需要"
+                inner_desc = inner_desc[2:]  # 去掉 "需要" 前缀使语句更流畅
             return f"不能{inner_desc}"
 
-        # has_item
+        # ── has_item → "持有「道具名」" ──────────────────────
         if cond.startswith("has_item:"):
             item_id = cond[9:]
             name = cls.ITEM_NAMES.get(item_id, item_id)
             return f"持有「{name}」"
 
-        # has_flag
+        # ── has_flag → "「标记名」" ───────────────────────────
         if cond.startswith("has_flag:"):
             flag_name = cond[9:]
             name = cls.FLAG_NAMES.get(flag_name, flag_name)
             return f"「{name}」"
 
-        # flag:NAME=VALUE
+        # ── flag:NAME=VALUE → "「标记名」达到VALUE" ────────────
         m = re.match(r"^flag:([^=]+)=(.+)$", cond)
         if m:
             flag_name, expected = m.group(1), m.group(2)
             name = cls.FLAG_NAMES.get(flag_name, flag_name)
             return f"「{name}」达到{expected}"
 
-        # attr
+        # ── attr → "属性名≥/≤/==/!=值" ──────────────────────
         m = re.match(r"^attr:(\w+)(>=|<=|>|<|==|!=)(.+)$", cond)
         if m:
             attr_name, op, val = m.group(1), m.group(2), m.group(3)
@@ -241,29 +372,44 @@ class ConditionEvaluator:
             op_text = {"==": "等于", "!=": "不等于", ">=": "≥", "<=": "≤", ">": ">", "<": "<"}[op]
             return f"{name}{op_text}{val}"
 
-        # cycle
+        # ── cycle>=N → "完成至少N次完整循环" ─────────────────
         m = re.match(r"^cycle>=(\d+)$", cond)
         if m:
             return f"完成至少{m.group(1)}次完整循环"
 
-        # half_cycle
+        # ── half_cycle>=N → "完成至少N次半循环" ───────────────
         m = re.match(r"^half_cycle>=(\d+)$", cond)
         if m:
             return f"完成至少{m.group(1)}次半循环"
 
-        # at_node
+        # ── at_node → "当前在节点 X" ─────────────────────────
         m = re.match(r"^at_node:(.+)$", cond)
         if m:
             node_id = m.group(1)
             return f"当前在节点 {node_id}"
 
+        # 未识别的表达式原样返回
         return condition
+
+    # ============================================================
+    # 辅助方法
+    # ============================================================
 
     @staticmethod
     def _split_top_level_static(text: str) -> list[str]:
-        """Static version of _split_top_level for use in describe_condition."""
+        """
+        静态版本的顶层逗号分割（供 describe_condition 使用）。
+
+        与 _split_top_level 逻辑相同，但因为 describe_condition 是
+        @classmethod，需要静态版本以避免实例方法绑定问题。
+
+        参数:
+            text: 待分割的表达式字符串
+        返回:
+            分割后的子表达式列表（去除空白和空串）
+        """
         parts = []
-        depth = 0
+        depth = 0  # 嵌套深度（遇到 and:/or: 前缀时 +1）
         current: list[str] = []
         i = 0
         while i < len(text):
@@ -277,9 +423,11 @@ class ConditionEvaluator:
                 continue
             if ch == ",":
                 if depth == 0:
+                    # 顶层逗号 → 分割点
                     parts.append("".join(current).strip())
                     current = []
                 else:
+                    # 嵌套逗号 → 保留
                     current.append(ch)
                 i += 1
                 continue
@@ -290,11 +438,26 @@ class ConditionEvaluator:
         return [p for p in parts if p]
 
     def _split_top_level(self, text: str) -> list[str]:
-        """Split at top-level commas, respecting and:/or: nesting.
+        """
+        顶层逗号分割（实例方法）。
 
-        When and:/or: is encountered the nesting depth increases,
-        so commas inside a sub-expression are not treated as split
-        points for the containing expression.
+        在 and:/or: 表达式中，用逗号分隔子条件。但子条件内部的逗号
+        （在嵌套的 and:/or: 中）不应被当作分隔符。
+
+        算法：维护一个嵌套深度计数器。
+            - 遇到 "and:" 或 "or:" 前缀 → 深度 +1
+            - 遇到逗号 → 深度 0 时分隔，深度 > 0 时保留
+            - 其他字符 → 追加到当前 token
+
+        示例:
+            text = "has_item:A,and:has_flag:B,has_item:C"
+            分割结果 = ["has_item:A", "and:has_flag:B,has_item:C"]
+                                  ↑ 这是顶层逗号               ↑ 这个逗号在嵌套内部
+
+        参数:
+            text: 待分割的表达式字符串
+        返回:
+            分割后的子表达式列表（去除空白和空串）
         """
         parts = []
         depth = 0
@@ -304,7 +467,7 @@ class ConditionEvaluator:
             ch = text[i]
             remaining = text[i:]
 
-            # Enter sub-expression when we see and:/or:
+            # 遇到 and:/or: 前缀 → 进入嵌套
             if remaining.startswith("and:"):
                 depth += 1
                 current.extend("and:")
@@ -319,10 +482,11 @@ class ConditionEvaluator:
 
             if ch == ",":
                 if depth == 0:
+                    # 顶层逗号：分割点
                     parts.append("".join(current).strip())
                     current = []
                 else:
-                    # Comma inside sub-expression -- keep it as part of token
+                    # 嵌套内部逗号：保留
                     current.append(ch)
                 i += 1
                 continue
