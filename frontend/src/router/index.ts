@@ -2,7 +2,19 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: [],
+  routes: [
+    { path: '/', redirect: '/play' },
+    {
+      path: '/play',
+      name: 'play',
+      component: () => import('@/views/GamePlay.vue'),
+    },
+    {
+      path: '/editor',
+      name: 'editor',
+      component: () => import('@/views/EditorPlaceholder.vue'),
+    },
+  ],
 })
 
 export default router
