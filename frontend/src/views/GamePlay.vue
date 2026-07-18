@@ -80,6 +80,14 @@
       :has-warp-access="store.currentState.flags?.taoist_chant === true" />
 
     <div v-if="sceneEffect === 'notify' && notifyText" class="scene-notify">{{ notifyText }}</div>
+    <!-- Scene transition overlay -->
+    <div v-if="transition.active" class="trans-overlay" :class="'trans-' + transition.type" :key="transition.key">
+      <div v-if="transition.type === 'title'" class="trans-title">
+        <div class="trans-node-name">{{ transition.nodeName }}</div>
+        <div class="trans-node-time">{{ transition.nodeTime }}</div>
+      </div>
+    </div>
+
     <div v-if="store.cycleEvent" class="cycle-toast">
       <span class="cycle-icon">⟳</span> 第 {{ store.cycleEvent.cycle_count }} 次循环完成
     </div>
@@ -105,6 +113,40 @@ const isTyping = ref(false)
 const sceneClass = ref('')
 let typingTimer: ReturnType<typeof setInterval> | null = null
 let prevNodeId = ''
+
+// ── Scene transition system ──
+const transition = ref<{ active: boolean; type: string; key: number; nodeName?: string; nodeTime?: string }>({ active: false, type: 'ink', key: 0 })
+let transKey = 0
+
+type TransType = 'ink' | 'rift' | 'title'
+function getTransitionType(node: any): TransType {
+  // E node (八棺) with crossing_config → time rift
+  if (node?.id === 'E') return 'rift'
+  // A node (起点) cycle restart → title card
+  if (node?.id === 'A') return 'title'
+  // K node (warp) → rift variant
+  if (node?.id === 'K') return 'rift'
+  // Default → ink wash
+  return 'ink'
+}
+
+function triggerSceneTransition(node: any) {
+  const ttype = getTransitionType(node)
+  transition.value = {
+    active: true,
+    type: ttype,
+    key: ++transKey,
+    nodeName: node?.name,
+    nodeTime: node?.time_label,
+  }
+  // Cover phase: let CSS animation play (~600ms)
+  // Then swap content + reveal
+  setTimeout(() => {
+    // Content swap happens via handleChoice's node reset
+    transition.value = { ...transition.value } // trigger reveal
+    setTimeout(() => { transition.value.active = false }, 800)
+  }, 600)
+}
 
 // Reset when node changes (backup — primary reset is in handleChoice)
 watch(() => store.currentNode?.id, (newId) => {
@@ -156,19 +198,20 @@ async function handleChoice(choice: any) {
   await store.choose(choice.id)
 
   const newNode = store.currentNode?.id
-  // Node changed — scene transition animation + full reset
+  // Node changed — trigger scene transition + full reset
   if (newNode && newNode !== prevNode) {
-    sceneClass.value = 'scene-out'
+    const nextNode = store.currentNode
+    triggerSceneTransition(nextNode)
+    // Reset after cover phase (total ~1400ms: cover 600 + reveal 800)
     setTimeout(() => {
-      prevNodeId = newNode
+      prevNodeId = newNode!
       transitions.value = []
       chosenIds.value = new Set()
       displayedText.value = ''
+      sceneClass.value = ''
       startTypewriter()
-      sceneClass.value = 'scene-in'
-      setTimeout(() => { sceneClass.value = '' }, 600)
       scrollDown()
-    }, 400)
+    }, 700)
     return
   }
 
@@ -312,11 +355,63 @@ watch(showLoadPanel, (v) => { if (v) refreshSaves() })
 .chosen-mark { position:absolute; right:0.8rem; top:50%; transform:translateY(-50%); color:$accent-gold; font-size:0.8rem; }
 .warp-tag { position:absolute; right:0.8rem; top:50%; transform:translateY(-50%); font-family:$font-ui; font-size:0.65rem; color:rgba($accent-ghost,0.6); border:1px solid rgba($accent-ghost,0.25); padding:0.1rem 0.4rem; border-radius:2px; }
 
-// Scene transitions
-.content-wrapper.scene-out { animation: sceneOut 0.4s ease-in forwards; }
-@keyframes sceneOut { to { opacity:0; transform:translateY(-4px); } }
-.content-wrapper.scene-in { animation: sceneIn 0.6s ease-out forwards; }
-@keyframes sceneIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+// ── Scene transition overlay ──
+.trans-overlay { position:fixed; inset:0; z-index:500; pointer-events:none; }
+
+// Ink wash (墨染) — radial expansion from center
+.trans-ink {
+  background: radial-gradient(circle, $bg-void 0%, transparent 0%);
+  animation: inkCover 0.6s ease-in forwards, inkReveal 0.8s ease-out 0.6s forwards;
+}
+@keyframes inkCover {
+  0% { background: radial-gradient(circle, $bg-void 0%, transparent 0%); }
+  100% { background: radial-gradient(circle, $bg-void 100%, transparent 100%); }
+}
+@keyframes inkReveal {
+  0% { background: radial-gradient(circle, $bg-void 100%, transparent 100%); opacity:1; }
+  100% { background: radial-gradient(circle, $bg-void 0%, transparent 0%); opacity:0; }
+}
+
+// Time rift (时空裂隙) — vertical crack widens
+.trans-rift {
+  background: $bg-void;
+  clip-path: inset(0 50% 0 50%);
+  animation: riftCover 0.6s ease-in forwards, riftReveal 0.8s ease-out 0.6s forwards;
+}
+@keyframes riftCover {
+  0% { clip-path: inset(0 50% 0 50%); background: $bg-void; }
+  100% { clip-path: inset(0 0 0 0); background: rgba($bg-void, 0.95); }
+}
+@keyframes riftReveal {
+  0% { clip-path: inset(0 0 0 0); background: rgba($bg-void, 0.95); opacity:1; }
+  60% { clip-path: inset(0 45% 0 45%); background: rgba($accent-red, 0.2); }
+  100% { clip-path: inset(0 50% 0 50%); background: transparent; opacity:0; }
+}
+
+// Title card (暗幕标题卡) — fade to black → title → fade in
+.trans-title {
+  background: $bg-void;
+  animation: titleCover 0.5s ease-in forwards, titleHold 0.6s ease 0.5s forwards, titleReveal 0.6s ease-out 1.1s forwards;
+  display:flex; align-items:center; justify-content:center;
+}
+@keyframes titleCover {
+  0% { opacity:0; }
+  100% { opacity:1; }
+}
+@keyframes titleHold {
+  0%,100% { opacity:1; }
+}
+@keyframes titleReveal {
+  0% { opacity:1; }
+  100% { opacity:0; }
+}
+.trans-title .trans-node-name {
+  font-family:$font-display; font-size:2.2rem; color:$accent-gold; letter-spacing:0.2em; text-align:center; animation: titleFadeIn 0.4s ease-out 0.3s both;
+}
+.trans-title .trans-node-time {
+  font-family:$font-ui; font-size:0.9rem; color:$text-dim; letter-spacing:0.15em; text-align:center; margin-top:0.5rem; animation: titleFadeIn 0.4s ease-out 0.5s both;
+}
+@keyframes titleFadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
 
 .load-panel { max-width:400px; margin:0 auto 1rem; padding:1rem; background:rgba($bg-void,0.95); border:1px solid rgba($accent-gold,0.15); border-radius:6px; }
 .load-empty { color:$text-dim; text-align:center; padding:1rem; font-size:0.85rem; }
