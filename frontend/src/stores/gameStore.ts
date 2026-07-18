@@ -33,10 +33,11 @@ export const useGameStore = defineStore('game', () => {
   async function choose(choiceId: string) {
     if (!currentFrame.value) return
     const nodeId = currentFrame.value.node.id
+    const currentState = currentFrame.value.state
     loading.value = true
     error.value = null
     try {
-      const frame = await chooseAction(nodeId, choiceId)
+      const frame = await chooseAction(nodeId, choiceId, currentState)
       currentFrame.value = frame
       history.value.push(frame)
     } catch (e: any) {

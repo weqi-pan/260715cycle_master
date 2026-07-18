@@ -58,6 +58,7 @@ class Frame(BaseModel):
 
 class ChooseRequest(BaseModel):
     choice_id: str
+    state: GameState
 
 
 class SaveGameRequest(BaseModel):

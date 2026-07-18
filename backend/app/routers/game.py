@@ -43,7 +43,7 @@ def start_game(db: Session = Depends(get_db)):
 @router.post("/choose/{node_id}", response_model=Frame)
 def choose_action(node_id: str, req: ChooseRequest, db: Session = Depends(get_db)):
     graph = _get_graph(db)
-    state = GameState(current_node_id=node_id)
+    state = req.state  # Use state from client (persistent across requests)
     try:
         frame = engine.process_choice(graph, node_id, req.choice_id, state)
         return frame
