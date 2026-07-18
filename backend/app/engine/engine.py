@@ -81,29 +81,16 @@ class GameEngine:
 
         for c in bundle.choices:
             available = self.evaluator.check(c.condition, state)
-            # Hide unavailable choices by default; only show if explicitly NOT hidden
             if not available:
-                if c.is_hidden_when_locked:
-                    continue
-                # Show locked choice with readable reason
-                reason = c.hint or self.evaluator.describe_condition(c.condition)
-                results.append(ChoiceResult(
-                    id=c.id,
-                    text=c.text,
-                    short_text=c.short_text,
-                    available=False,
-                    reason=reason,
-                    source="static",
-                ))
-            else:
-                results.append(ChoiceResult(
-                    id=c.id,
-                    text=c.text,
-                    short_text=c.short_text,
-                    available=True,
-                    reason=None,
-                    source="static",
-                ))
+                continue  # Hide all unavailable choices
+            results.append(ChoiceResult(
+                id=c.id,
+                text=c.text,
+                short_text=c.short_text,
+                available=True,
+                reason=None,
+                source="static",
+            ))
 
         # 注入特殊路由选项
         specials = self.special_router.get_available(bundle, graph, state)
