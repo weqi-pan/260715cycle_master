@@ -1,89 +1,91 @@
-# ============================================
-# Cycle Master — 一键启动 & 一键关闭
-# 用法: .\scripts\start.ps1  或双击 start.bat
-# 关闭: 按 Ctrl+C 或直接关闭窗口
-# ============================================
+# Cycle Master — One-click launcher
+# Usage: .\scripts\start.ps1  or double-click start.bat
+# Stop:  Ctrl+C to kill all services
 $ErrorActionPreference = "Stop"
-$projectRoot = $PSScriptRoot | Split-Path -Parent
+$root = $PSScriptRoot | Split-Path -Parent
 $host.UI.RawUI.WindowTitle = "Cycle Master"
 
-# ---------- 清理旧进程 ----------
-Write-Host "[...] 清理旧端口..." -ForegroundColor DarkGray
-Stop-Process -Id (Get-NetTCPConnection -LocalPort 8000 -EA SilentlyContinue).OwningProcess -Force -EA SilentlyContinue
-Stop-Process -Id (Get-NetTCPConnection -LocalPort 5173 -EA SilentlyContinue).OwningProcess -Force -EA SilentlyContinue
+# Clean old ports
+Write-Host "[...] Cleaning old ports..." -F DarkGray
+Get-NetTCPConnection -LocalPort 8000 -EA SilentlyContinue | % { Stop-Process -Id $_.OwningProcess -Force -EA SilentlyContinue }
+Get-NetTCPConnection -LocalPort 5173 -EA SilentlyContinue | % { Stop-Process -Id $_.OwningProcess -Force -EA SilentlyContinue }
 Start-Sleep 1
 
-# ---------- 检查依赖 ----------
-$py = "$projectRoot\backend\venv\Scripts\python.exe"
-if (!(Test-Path $py)) { Write-Host "[ERROR] venv 不存在" -F Red; Read-Host; exit 1 }
-if (!(Test-Path "$projectRoot\frontend\node_modules")) {
-    Write-Host "[...] 安装前端依赖..." -F Yellow
-    Push-Location "$projectRoot\frontend"; npm install; Pop-Location
+# Check venv
+$py = "$root\backend\venv\Scripts\python.exe"
+if (!(Test-Path $py)) { Write-Host "[ERROR] venv not found at $py" -F Red; Read-Host; exit 1 }
+
+# Check node_modules
+if (!(Test-Path "$root\frontend\node_modules")) {
+    Write-Host "[...] Installing frontend deps..." -F Yellow
+    Push-Location "$root\frontend"; npm install; Pop-Location
 }
 
-# ---------- 检查数据库 ----------
-if (!(Test-Path "$projectRoot\backend\cycle_master.db")) {
-    Write-Host "[...] 初始化数据库..." -F Yellow
-    Push-Location "$projectRoot\backend"
-    & $py -c "from app.database import init_db; init_db()" 2>$null
-    & $py import_story.py 2>$null
+# Init DB if missing
+if (!(Test-Path "$root\backend\cycle_master.db")) {
+    Write-Host "[...] Initializing database..." -F Yellow
+    Push-Location "$root\backend"
+    & $py -c "from app.database import init_db; init_db()"
+    & $py import_story.py
     Pop-Location
 }
 
 Write-Host ""
 Write-Host "========================================" -F Cyan
-Write-Host "  Cycle Master - 启动中..." -F Yellow
+Write-Host "  Cycle Master - Starting..." -F Yellow
 Write-Host "========================================" -F Cyan
 
-# ---------- 启动后端 ----------
-Write-Host "[1/2] 后端..." -F Green -NoNewline
+# Start backend
+Write-Host "[1/2] Backend..." -F Green -NoNewline
 $backend = Start-Process -FilePath $py `
     -ArgumentList "-m uvicorn app.main:app --port 8000" `
-    -WorkingDirectory "$projectRoot\backend" `
+    -WorkingDirectory "$root\backend" `
     -WindowStyle Hidden -PassThru
 
-for ($i=0; $i -lt 20; $i++) {
-    try { if ((Invoke-WebRequest "http://localhost:8000/api/health" -TimeoutSec 1 -UseBasicParsing).StatusCode -eq 200) { break } } catch {}
+$ok = $false
+for ($i = 0; $i -lt 20; $i++) {
+    try { if ((iwr "http://localhost:8000/api/health" -TimeoutSec 1 -UseBasicParsing).StatusCode -eq 200) { $ok = $true; break } } catch {}
     Start-Sleep -Milliseconds 500
 }
-if ($backend.HasExited) { Write-Host " FAIL" -F Red; Read-Host; exit 1 }
+if ($backend.HasExited -or !$ok) { Write-Host " FAIL" -F Red; Read-Host; exit 1 }
 Write-Host " OK :8000" -F Green
 
-# ---------- 启动前端 ----------
-Write-Host "[2/2] 前端..." -F Green -NoNewline
+# Start frontend
+Write-Host "[2/2] Frontend..." -F Green -NoNewline
 $frontend = Start-Process -FilePath "npx" `
     -ArgumentList "vite --port 5173" `
-    -WorkingDirectory "$projectRoot\frontend" `
+    -WorkingDirectory "$root\frontend" `
     -WindowStyle Hidden -PassThru
 
-for ($i=0; $i -lt 20; $i++) {
-    try { if ((Invoke-WebRequest "http://localhost:5173" -TimeoutSec 1 -UseBasicParsing).StatusCode -eq 200) { break } } catch {}
+$ok = $false
+for ($i = 0; $i -lt 20; $i++) {
+    try { if ((iwr "http://localhost:5173" -TimeoutSec 1 -UseBasicParsing).StatusCode -eq 200) { $ok = $true; break } } catch {}
     Start-Sleep -Milliseconds 500
 }
-if ($frontend.HasExited) { Write-Host " FAIL" -F Red; Read-Host; exit 1 }
+if ($frontend.HasExited -or !$ok) { Write-Host " FAIL" -F Red; Read-Host; exit 1 }
 Write-Host " OK :5173" -F Green
 
-# ---------- 完成 ----------
 Write-Host ""
 Write-Host "========================================" -F Cyan
-Write-Host "  游戏:     http://localhost:5173/play" -F Yellow
-Write-Host "  后端API:  http://localhost:8000" -F DarkGray
-Write-Host "  按 Ctrl+C 停止所有服务" -F Magenta
+Write-Host "  Game:     http://localhost:5173/play" -F Yellow
+Write-Host "  Backend:  http://localhost:8000" -F DarkGray
+Write-Host "  API docs: http://localhost:8000/docs" -F DarkGray
+Write-Host "  Press Ctrl+C to stop all services" -F Magenta
 Write-Host "========================================" -F Cyan
 Write-Host ""
 
-# ---------- 等待 Ctrl+C ----------
+# Wait and watch
 try {
     while ($true) {
-        if ($backend.HasExited) { Write-Host "[WARN] 后端意外退出" -F Red; break }
-        if ($frontend.HasExited) { Write-Host "[WARN] 前端意外退出" -F Red; break }
+        if ($backend.HasExited) { Write-Host "[WARN] Backend stopped unexpectedly" -F Red; break }
+        if ($frontend.HasExited) { Write-Host "[WARN] Frontend stopped unexpectedly" -F Red; break }
         Start-Sleep -Seconds 2
     }
 } finally {
-    Write-Host "`n停止服务..." -F Yellow
+    Write-Host "`nStopping services..." -F Yellow
     if (!$backend.HasExited) { $backend.Kill() }
     if (!$frontend.HasExited) { $frontend.Kill() }
-    Stop-Process -Id (Get-NetTCPConnection -LocalPort 8000 -EA SilentlyContinue).OwningProcess -Force -EA SilentlyContinue
-    Stop-Process -Id (Get-NetTCPConnection -LocalPort 5173 -EA SilentlyContinue).OwningProcess -Force -EA SilentlyContinue
-    Write-Host "已停止。" -F Green
+    Get-NetTCPConnection -LocalPort 8000 -EA SilentlyContinue | % { Stop-Process -Id $_.OwningProcess -Force -EA SilentlyContinue }
+    Get-NetTCPConnection -LocalPort 5173 -EA SilentlyContinue | % { Stop-Process -Id $_.OwningProcess -Force -EA SilentlyContinue }
+    Write-Host "Stopped." -F Green
 }
