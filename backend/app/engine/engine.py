@@ -85,6 +85,7 @@ class GameEngine:
                 content=self._resolve_content(next_bundle, state),
                 speaker=next_bundle.speaker,
                 background=next_bundle.background,
+                ambient=next_bundle.ambient,
             ),
             state=state,
             available_choices=available,

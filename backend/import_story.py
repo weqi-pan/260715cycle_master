@@ -47,6 +47,7 @@ def _import_nodes(session):
             background=data.get("background"),
             cycle_variants_json=json.dumps(data.get("cycle_variants", {}), ensure_ascii=False),
             color_palette=data.get("color_palette"),
+            ambient=data.get("ambient"),
             atmosphere_json=json.dumps(data.get("atmosphere", []), ensure_ascii=False),
             sensory=data.get("sensory"),
             gender_variant_json=json.dumps(data.get("gender_variant"), ensure_ascii=False) if data.get("gender_variant") else None,

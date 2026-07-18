@@ -17,6 +17,7 @@ class StoryNode(Base):
     background = Column(String, nullable=True)
     cycle_variants_json = Column(Text, nullable=True, default="{}")
     color_palette = Column(String, nullable=True)
+    ambient = Column(String, nullable=True)
     atmosphere_json = Column(Text, nullable=True, default="[]")
     sensory = Column(Text, nullable=True)
     gender_variant_json = Column(Text, nullable=True)

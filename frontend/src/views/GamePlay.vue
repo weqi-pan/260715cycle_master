@@ -2,7 +2,7 @@
 <template>
   <div class="game-play" @click="onBgClick">
     <!-- z-0: Background layer -->
-    <div class="bg-layer">
+    <div class="bg-layer" :style="bgTintStyle">
       <div class="bg-vignette" />
     </div>
 
@@ -195,6 +195,26 @@ function onBgClick() {
   if (store.choices.length > 0) return
   dismissTransition()
 }
+
+// ── Ambient audio ──
+let ambientAudio: HTMLAudioElement | null = null
+watch(() => store.currentNode?.ambient, (src) => {
+  if (ambientAudio) { ambientAudio.pause(); ambientAudio = null }
+  if (src) {
+    ambientAudio = new Audio(src)
+    ambientAudio.loop = true
+    ambientAudio.volume = 0.3
+    ambientAudio.play().catch(() => {})
+  }
+})
+
+// ── Color tint from node palette ──
+const bgTintStyle = computed(() => {
+  const palette = store.currentNode?.color_palette
+  if (!palette) return {}
+  const color = palette.split('+')[0]?.trim()
+  return color ? { background: `radial-gradient(ellipse at center, transparent 40%, ${color}10 100%)` } : {}
+})
 
 // ── Scene effects ──
 const sceneEffect = ref<string | null>(null)

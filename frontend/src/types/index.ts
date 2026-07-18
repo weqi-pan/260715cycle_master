@@ -25,6 +25,8 @@ export interface NodeData {
   speaker?: string
   speaker_avatar?: string
   background?: string
+  ambient?: string
+  color_palette?: string
 }
 
 export interface ChoiceResult {

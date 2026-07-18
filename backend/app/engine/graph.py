@@ -17,6 +17,7 @@ class GraphBundle:
         self.background = node.background
         self.cycle_variants = self._safe_json(node.cycle_variants_json, {})
         self.color_palette = node.color_palette
+        self.ambient = node.ambient
         self.atmosphere = self._safe_json(node.atmosphere_json, [])
         self.sensory = node.sensory
         self.gender_variant = self._safe_json(node.gender_variant_json, None)

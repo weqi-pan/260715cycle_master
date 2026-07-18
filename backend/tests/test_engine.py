@@ -57,6 +57,7 @@ def graph():
     node_a.atmosphere_json = "[]"
     node_a.sensory = None
     node_a.color_palette = None
+    node_a.ambient = None
     node_a.gender_variant_json = None
     node_a.parent_node_id = None
     node_a.trigger_condition = None
@@ -79,6 +80,7 @@ def graph():
     node_b.atmosphere_json = "[]"
     node_b.sensory = None
     node_b.color_palette = None
+    node_b.ambient = None
     node_b.gender_variant_json = None
     node_b.parent_node_id = None
     node_b.trigger_condition = None

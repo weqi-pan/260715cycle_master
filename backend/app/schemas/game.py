@@ -40,6 +40,7 @@ class NodeData(BaseModel):
     speaker: Optional[str] = None
     speaker_avatar: Optional[str] = None
     background: Optional[str] = None
+    ambient: Optional[str] = None
 
 
 class PersistentFound(BaseModel):
