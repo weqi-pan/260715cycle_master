@@ -1,7 +1,28 @@
-$bg-dark: #1a1a2e;
-$bg-panel: #16213e;
-$text-primary: #e0d5c1;
-$text-secondary: #a09080;
-$accent-gold: #c9a96e;
-$accent-red: #8b2500;
+// ============================================
+// Cycle Master — Design Tokens (中式恐怖)
+// ============================================
+
+// ── Background ──
+$bg-void: #0d0d0d;           // 墨黑底 — 主背景
+$bg-panel: #1a1410;          // 宣纸色面板 — 卡片/选项底色
+$bg-panel-hover: #241c14;    // 宣纸悬停
+
+// ── Text ──
+$text-primary: #c8b896;      // 褪墨 — 正文文字
+$text-secondary: #8a7a6a;    // 石灰色 — 辅助文字
+$text-dim: #5a4a3a;          // 暗纹 — 禁用/占位
+
+// ── Accent ──
+$accent-gold: #b8943e;       // 庙金 — 强调/标题/选中
+$accent-red: #8b2500;        // 朱砂 — 危险/警告/符纸
+$accent-red-glow: #a03010;   // 朱砂辉光
+$accent-ghost: #3a4a5a;      // 鬼蓝 — 特殊/跃迁
+
+// ── Typography ──
+$font-display: 'Noto Serif SC', 'SimSun', 'STSong', serif;
 $font-body: 'Noto Serif SC', 'Source Han Serif SC', 'SimSun', serif;
+$font-ui: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+
+// ── Sizing ──
+$narrative-max-width: 680px;
+$choice-max-width: 600px;

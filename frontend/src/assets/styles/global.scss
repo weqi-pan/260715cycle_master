@@ -3,15 +3,46 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  background: $bg-dark;
+  background: $bg-void;
   color: $text-primary;
   font-family: $font-body;
   font-size: 16px;
-  line-height: 1.8;
+  line-height: 1.85;
+  letter-spacing: 0.02em;
+  -webkit-font-smoothing: antialiased;
 }
 
 #app {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  position: relative;
+
+  // Subtle breathing vignette — like incense smoke in a dark temple
+  &::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.5) 100%);
+    pointer-events: none;
+    z-index: 1000;
+    animation: breathe 8s ease-in-out infinite;
+  }
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.85; }
+}
+
+// Scrollbar styling
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba($accent-gold, 0.2);
+  border-radius: 2px;
 }
