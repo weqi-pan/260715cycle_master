@@ -355,14 +355,14 @@ watch(showLoadPanel, (v) => { if (v) refreshSaves() })
 // ── Scene transition overlay ──
 .trans-overlay { position:fixed; inset:0; z-index:500; pointer-events:none; }
 
-// Ink wash (墨染) — radial expansion from center
+// Ink wash (墨染) — radial expansion from center (visible ink color)
 .trans-ink {
   animation: inkCover 0.5s ease-in forwards, inkReveal 0.7s ease-out 0.5s forwards;
-  background: $bg-void; opacity:0;
+  background: #1a1410; opacity:0;  // 宣纸深色 — 与纯黑背景形成对比
 }
 @keyframes inkCover {
   0% { clip-path: circle(0% at 50% 50%); opacity:0; }
-  2% { opacity:1; }
+  5% { opacity:1; }
   100% { clip-path: circle(80% at 50% 50%); opacity:1; }
 }
 @keyframes inkReveal {
@@ -370,34 +370,31 @@ watch(showLoadPanel, (v) => { if (v) refreshSaves() })
   100% { clip-path: circle(0% at 50% 50%); opacity:0; }
 }
 
-// Time rift (时空裂隙) — vertical crack widens
+// Time rift (时空裂隙) — vertical crack with red glow
 .trans-rift {
-  background: $bg-void;
-  clip-path: inset(0 50% 0 50%);
-  animation: riftCover 0.6s ease-in forwards, riftReveal 0.8s ease-out 0.6s forwards;
+  animation: riftCover 0.5s ease-in forwards, riftReveal 0.8s ease-out 0.5s forwards;
+  background: #1a1010;  // 暗红底色 — 与黑背景形成对比
+  clip-path: inset(0 50% 0 50%); opacity:1;
 }
 @keyframes riftCover {
-  0% { clip-path: inset(0 50% 0 50%); background: $bg-void; }
-  100% { clip-path: inset(0 0 0 0); background: rgba($bg-void, 0.95); }
+  0% { clip-path: inset(0 50% 0 50%); }
+  100% { clip-path: inset(0 0 0 0); }
 }
 @keyframes riftReveal {
-  0% { clip-path: inset(0 0 0 0); background: rgba($bg-void, 0.95); opacity:1; }
-  60% { clip-path: inset(0 45% 0 45%); background: rgba($accent-red, 0.2); }
-  100% { clip-path: inset(0 50% 0 50%); background: transparent; opacity:0; }
+  0% { clip-path: inset(0 0 0 0); opacity:1; background: #1a1010; }
+  60% { clip-path: inset(0 42% 0 42%); background: rgba($accent-red, 0.15); }
+  100% { clip-path: inset(0 50% 0 50%); opacity:0; }
 }
 
-// Title card (暗幕标题卡) — fade to black → title → fade in
+// Title card (暗幕标题卡) — fade to dark → title → fade out
 .trans-title {
-  background: $bg-void;
-  animation: titleCover 0.5s ease-in forwards, titleHold 0.6s ease 0.5s forwards, titleReveal 0.6s ease-out 1.1s forwards;
-  display:flex; align-items:center; justify-content:center;
+  background: #1a1410;
+  animation: titleCover 0.4s ease-in forwards, titleReveal 0.6s ease-out 1.0s forwards;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
 }
 @keyframes titleCover {
   0% { opacity:0; }
   100% { opacity:1; }
-}
-@keyframes titleHold {
-  0%,100% { opacity:1; }
 }
 @keyframes titleReveal {
   0% { opacity:1; }
