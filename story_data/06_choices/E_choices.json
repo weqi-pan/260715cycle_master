@@ -1,0 +1,169 @@
+[
+  {
+    "id": "E_choice_01",
+    "from_node_id": "E",
+    "text": "砸开B1珠宝柜台，取出墨玉吊坠",
+    "short_text": "砸开柜台",
+    "next_node_id": "E",
+    "condition": "attr:courage>=3",
+    "effects": [
+      { "type": "add_item", "target": "item_black_jade", "value": 1 }
+    ],
+    "priority": 1,
+    "hint": "柜台锁着——需要勇气砸开它",
+    "transition_text": "你用钥匙柄对准展示柜的锁扣用力砸下去。玻璃没有碎——但锁扣变形了，柜门弹开。\n\n里面的墨玉吊坠孤零零地躺在黑色丝绒垫上。你把它拿起来——坠子在掌心是温的，不像在地下室放了二十多年的东西。它曾经被放在八棺阵阵眼之上作为辅助法器——二十年来，它吸收了太多不该吸收的东西。\n\n现在它在你手里。\n\n[获得道具：墨玉吊坠 — item_black_jade]"
+  },
+  {
+    "id": "E_choice_02",
+    "from_node_id": "E",
+    "text": "拍下消防栓上的刻字",
+    "short_text": "拍涂鸦",
+    "next_node_id": "E",
+    "condition": null,
+    "effects": [
+      { "type": "add_item", "target": "item_graffiti_photo", "value": 1 }
+    ],
+    "priority": 2,
+    "transition_text": "你掏出手机对准消防栓。锐器刻出的字迹在闪光灯下清晰地浮现：\n\n> \"别下去。下面不是B2。不要相信时间。不要相信时间。不要相信时间。\"\n\n三遍\"不要相信时间\"——一遍比一遍用力。和502室床底那张便签上的三遍\"不要看窗外\"如出一辙。\n\n是同一个人刻的吗？还是循环把所有困在这里的人都逼成了同样的样子？\n\n[获得道具：涂鸦照片 — item_graffiti_photo]"
+  },
+  {
+    "id": "E_choice_03",
+    "from_node_id": "E",
+    "text": "捡起废弃楼梯旁的黄色安全帽",
+    "short_text": "捡安全帽",
+    "next_node_id": "E",
+    "condition": null,
+    "effects": [
+      { "type": "add_item", "target": "item_hardhat", "value": 1 },
+      { "type": "set_flag", "target": "knew_missing_worker", "value": true }
+    ],
+    "priority": 3,
+    "transition_text": "通往八棺穹顶的废弃楼梯旁，一顶变形的黄色安全帽靠墙放着。帽子上印着\"穗南建筑\"。你翻过来看帽内——用马克笔写着：\"林国强。1993.9.14。\"\n\n1993年9月14日是那份旧报纸上施工塌方的日期。三名工人失踪。林国强是其中之一。他的安全帽被留在了这里——在时间裂隙的边缘。人去了哪里？去了1650年？还是去了更深的、连时间裂隙都到不了的地方？\n\n你把安全帽放下，但记下了这个名字。\n\n[获得道具：施工安全帽 — item_hardhat] [flag: knew_missing_worker]"
+  },
+  {
+    "id": "E_choice_04",
+    "from_node_id": "E",
+    "text": "在八棺阵中等待3:15的穿越",
+    "short_text": "等待穿越",
+    "next_node_id": "E",
+    "condition": null,
+    "effects": [],
+    "priority": 10,
+    "hint": "凌晨3:15，八卦阵中央会出现时间裂隙",
+    "transition_text": "你靠着青砖墙坐下，盯着手机上的时间。3:14。3:15。\n\n东侧地砖下传来震动。空气开始变冷——冷到你能看到自己呼出的白气。八卦阵的中央地面上出现了一道裂缝——不是物理的裂缝，是光的裂缝。裂缝中涌出的光是暗红色的，像凝固的血在缓慢流动。裂缝在扩大。暗红色的光吞没了整个地下穹顶。\n\n你听到了声音——马蹄声、哭喊声、金属碰撞声。和502室墙壁里录到的一模一样。\n\n然后一切都消失了。\n\n你睁开眼睛。空气中有烧焦的木头味。脚下是泥地，头顶是阴沉沉的冬日天空。远处——广州城墙的轮廓在灰色的天光中若隐若现。\n\n现在是顺治七年十一月。公元1650年。清兵昨天刚破了广州城。\n\n你可以看到几个身影在附近的院落和巷子里——一个在柴房后面发抖的少年、一个在巷口木箱旁翻找的年轻人、一间偏房里透出的烛光、一个在巷口诵经的僧人、一个魁梧的巡逻清兵、还有一个蹲在废墟边的疯子。\n\n你能接近其中一两人——时间有限。"
+  },
+  {
+    "id": "E_choice_05",
+    "from_node_id": "E",
+    "text": "穿越后接近柴房旁发抖的少年（阿六）",
+    "short_text": "接近阿六",
+    "next_node_id": "E",
+    "condition": "at_node:E",
+    "effects": [
+      { "type": "add_item", "target": "item_amulet", "value": 1 }
+    ],
+    "priority": 20,
+    "hint": "一个穿号衣的瘦小少年躲在柴房后面",
+    "transition_text": "你轻轻走近柴房。少年约莫十八岁，身上套着一件不合身的清兵号衣。他在发抖——双手抱着膝盖，指节发白。\n\n他看到你时猛地往后缩——但他没有喊人。他太害怕了，怕到连喊都喊不出来。\n\n\"我不是清兵。\"你低声说。他盯着你身上的衣服——你穿的当然不是清代的衣服，但在这个混乱的清晨，他太恐惧了，已经没有精力质疑你的来历。\n\n\"我不想杀人。\"他的声音很轻，像是怕被隔壁院子里的人听到。\"他们逼我砍了一个人。我吐了。他们把那个人的东西搜出来——几个铜钱、一个平安符——丢在柴房后面。我把平安符捡起来了。那个人已经死了。他不需要平安了。但我——\"\n\n他把一块巴掌大的桃木牌递给你。他说不出口的是——他不敢留着。他怕死人的东西会招来死人的魂。\n\n你把桃木牌收进口袋。正面刻着\"平安\"二字。\n\n[获得道具：阿六的护身符 — item_amulet — cross_surface=true]"
+  },
+  {
+    "id": "E_choice_06",
+    "from_node_id": "E",
+    "text": "穿越后帮巷子里的李二狗捡鞋子",
+    "short_text": "帮李二狗",
+    "next_node_id": "E",
+    "condition": "at_node:E",
+    "effects": [
+      { "type": "add_item", "target": "item_tunnel_map", "value": 1 },
+      { "type": "set_flag", "target": "helped_ergou", "value": true },
+      { "type": "set_flag", "target": "know_secret_tunnel", "value": true }
+    ],
+    "priority": 21,
+    "hint": "一个穿破衣的年轻人在巷口翻找木箱",
+    "transition_text": "一个穿着破烂棉袄的年轻人蹲在巷口的破木箱旁边。他看到你走过来时没有逃跑——也许是已经没有力气逃了。\n\n\"那是我女儿的小布鞋。她两岁。昨天还在穿。现在在清兵的岗哨那边——被他们踩在地上。你能帮我拿回来吗？\"\n\n他的声音是平的——不是冷静，是超过了某个极限之后的麻木。他全家都死了。只有他了。\n\n你翻过岗哨旁边的土堆，在淤泥里找到了一只巴掌大的红色小布鞋。鞋面上绣着一只歪歪扭扭的小老虎。\n\n你把它递给他。他接过去的时候手指在颤抖——几十个小时以来的第一次颤抖。\n\n他把一张破布塞进你手里。\"地下通道。龙牙口下面有一条密道——从东侧地砖下去。通往城外的榕树根。很多人都走过——有些人走通了。这个给你。\"\n\n破布上用炭笔画着潦草的地图。\n\n[获得道具：密道地图 — item_tunnel_map] [flag: helped_ergou] [flag: know_secret_tunnel]"
+  },
+  {
+    "id": "E_choice_07",
+    "from_node_id": "E",
+    "text": "穿越后听刘启盛讲解阵法",
+    "short_text": "听刘启盛讲道",
+    "next_node_id": "E",
+    "condition": "at_node:E",
+    "effects": [
+      { "type": "add_item", "target": "item_talisman", "value": 3 },
+      { "type": "add_item", "target": "item_old_key", "value": 1 },
+      { "type": "set_flag", "target": "taoist_chant", "value": true }
+    ],
+    "priority": 22,
+    "hint": "偏房里坐着一位老道士，他在等你开口",
+    "transition_text": "偏房的门半开着，里面透出烛光。一个穿青布道袍的老人盘腿坐在蒲团上。他在等你——你们之前从未见过，但他看到你跨进门槛的那一刻，点了点头，像是终于等到了一个迟到了很久的客人。\n\n\"贫道刘启盛。全真龙门派。你从什么时候来的？不要说——不要告诉我具体的年份。时间一被写下来就会被听见。\"\n\n他花了大约一刻钟给你讲解了八棺阵的原理：八具死囚棺木压在八颗龙牙之上，以恶人的煞气喂养地龙。但阵法现在正在崩溃——1993年的施工扰动了地基，三百六十八年的封印开始松裂。\n\n他把三张符纸放在你手里。\"用一张少一张。但总比没有强。\"\n\n他顿了顿。\"还有一个口诀。不能写在纸上——你只能记在心里。\"\n\n他念了一段话。你跟着念了一遍。他笑了——三百年来第一次笑。\n\n[获得道具：镇魂符纸×3 — item_talisman] [获得道具：锈蚀铜钥匙 — item_old_key] [flag: taoist_chant]"
+  },
+  {
+    "id": "E_choice_08",
+    "from_node_id": "E",
+    "text": "穿越后跟随诵经的僧人（慧觉）",
+    "short_text": "跟随慧觉",
+    "next_node_id": "E",
+    "condition": "at_node:E",
+    "effects": [
+      { "type": "add_item", "target": "item_beads", "value": 1 }
+    ],
+    "priority": 23,
+    "hint": "巷口有位僧人在为死者诵经",
+    "transition_text": "巷口站着一位老僧。他面对着一堵烧焦的墙，低声诵着《金刚经》。墙上有一大片暗色的痕迹——不是火烧的。\n\n你站在他身后听了很久。他诵完一卷后才转过身来。他的眼睛很平静——不是麻木，是看过了太多之后的悲悯。\n\n\"施主。你身上的时间——不太对。\"\n\n他没有追问你的来历。他只是把手腕上那串念珠褪下来，放在你手心。\n\n\"108颗菩提子。108种烦恼。施主的烦恼——有一些是这一个时辰的，有一些是三百六十八年之后的。\"\n\n他合十。\"这也是一种修行。\"\n\n念珠在指尖微微发温——不是体温，是佛法的温度。\n\n[获得道具：菩提子念珠 — item_beads — cross_surface=true]"
+  },
+  {
+    "id": "E_choice_09",
+    "from_node_id": "E",
+    "text": "穿越后听沈半仙的疯话",
+    "short_text": "听沈半仙",
+    "next_node_id": "E",
+    "condition": "at_node:E",
+    "effects": [
+      { "type": "add_item", "target": "item_denim_rag", "value": 1 },
+      { "type": "set_flag", "target": "heard_banxian_ramble", "value": true }
+    ],
+    "priority": 24,
+    "hint": "十八甫街角蹲着一个自言自语的疯子",
+    "transition_text": "你在废墟边找到了他。一个蓬头垢面的流浪汉，身上裹着一层又一层的破烂布料。他正对着空气说话——前言不搭后语，话题在\"刀\"和\"马\"和\"江边的窝棚\"之间来回跳跃。\n\n你在他旁边蹲下来。他看了你一眼——那一眼很奇怪，像是他认得你但懒得确认。\n\n他继续自言自语。你听了大约五分钟。大部分话都没有意义——至少听起来没有。但有一两句让你后背发凉：\n\n\"走了也会回来的。走去哪？走不掉的。试过了。\"\n\n他从身上那堆破布里扯下一块布角。灰蓝色的，质地粗厚。你接过来翻来覆去看了很久——这触感太熟悉了。这好像是牛仔裤的布料。但现在是1650年。这种面料还要等两百多年才被发明。\n\n你把布收进口袋。也许只是一个疯子在垃圾堆里捡到的奇怪的东西。也许不是。\n\n[获得道具：一块破布 — item_denim_rag — cross_surface=true] [flag: heard_banxian_ramble]"
+  },
+  {
+    "id": "E_choice_10",
+    "from_node_id": "E",
+    "text": "穿越后尝试与清兵队长德楞对话",
+    "short_text": "与德楞对话",
+    "next_node_id": "E",
+    "condition": "at_node:E",
+    "effects": [
+      { "type": "set_flag", "target": "qing_exposed", "value": true },
+      { "type": "damage", "target": "sanity", "value": 5 }
+    ],
+    "priority": 25,
+    "hint": "一个魁梧的清兵队长在巷口巡逻——危险",
+    "transition_text": "你朝那个魁梧的军官走去。他的手下都在别处——他一个人站在巷口，手里握着一把出鞘的腰刀。\n\n他看到你时没有立刻拔刀。他的眼神不是愤怒——是疲惫。但这不意味着他是安全的。\n\n\"你是什么人。\"这不是一个问题——是一个判决前的最后陈述。\n\n你试图解释。但无论你说什么——你的口音、你的衣服、你整个人——在这个清晨的广州街头都太不对劲了。\n\n他举起了刀。你没有死——但他记住了你的脸。在下一次循环中，清兵的影子会更加频繁地出现在鬼市之中。他们感受到了你的存在。\n\n[sanity -5] [flag: qing_exposed]"
+  },
+  {
+    "id": "E_choice_11",
+    "from_node_id": "E",
+    "text": "走密道捷径返回正门",
+    "short_text": "密道捷径",
+    "next_node_id": "J",
+    "condition": "or:has_flag:know_secret_tunnel,has_item:item_tunnel_map",
+    "effects": [],
+    "priority": 30,
+    "is_hidden_when_locked": true,
+    "hint": "东侧地砖下有一条密道",
+    "transition_text": "你推开东侧那块松动的地砖。下面是青砖砌成的密道——宽约半米，仅容一人弯腰通过。\n\n你深吸一口气，钻了进去。"
+  },
+  {
+    "id": "E_choice_12",
+    "from_node_id": "E",
+    "text": "前往沙面珠江边",
+    "short_text": "前往江边",
+    "next_node_id": "F",
+    "condition": null,
+    "effects": [],
+    "priority": 99,
+    "transition_text": "你从穿越中回来，身体还残留着1650年冬天清晨的寒意。手中多了来自那个时代的东西——也许是一块护身符，也许是一张符纸，也许只是一块破布。\n\n你最后看了一眼八棺阵。{{#if has_flag:helped_ergou}}乾位那口棺材的符纸上——多了一道新的笔画。封印被人加固了。{{/if}}\n\n你爬上简易梯子，穿过B1废弃卖场，走出荔湾广场。沙面在西南方向——珠江边。你朝那个方向走去。"
+  }
+]

@@ -508,7 +508,7 @@ _（我不记得写过这个。但这是我写的。上一轮的我写的。）_
 
 #### 4.2.1 跨面道具自动出现
 
-如果上一轮从E节点获得了 `cross_surface=true` 的道具——护身符 `item_amulet`、念珠 `item_beads`、通宝 `item_qing_coin`、青花瓷片 `item_porcelain_shard`、破布 `item_denim_rag`——本轮回合在A节点开始时，这些道具**自动出现在主角的口袋或背包中**。
+如果上一轮获得了 `cross_surface=true` 的道具——护身符 `item_amulet`（E·阿六）、念珠 `item_beads`（E·慧觉）、通宝 `item_qing_coin`（A·台阶砖缝）、青花瓷片 `item_porcelain_shard`（D·鬼市地面）、破布 `item_denim_rag`（E·沈半仙）、传家玉佩 `item_jade_pendant`（S5·李铭宸）——本轮回合在A节点开始时，这些道具**自动出现在主角的口袋或背包中**。
 
 主角的感觉描写：主角不记得这些道具是怎么到口袋里的——"像是一直就在那里"。伴随着一种微弱的既视感——"我上次来过这里"。
 

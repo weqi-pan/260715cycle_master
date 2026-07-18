@@ -1,0 +1,38 @@
+[
+  {
+    "id": "S3_choice_01",
+    "from_node_id": "S3",
+    "text": "试着与穿羽绒服的人交谈",
+    "short_text": "交谈",
+    "next_node_id": "S3",
+    "condition": null,
+    "effects": [
+      { "type": "set_flag", "target": "saw_subway_looper", "value": true }
+    ],
+    "priority": 1,
+    "hint": "他困在另一个循环里"
+  },
+  {
+    "id": "S3_choice_02",
+    "from_node_id": "S3",
+    "text": "翻看他行李箱的东西",
+    "short_text": "翻行李箱",
+    "next_node_id": "S3",
+    "condition": "has_flag:saw_subway_looper",
+    "effects": [
+      { "type": "set_flag", "target": "subway_looper_locker_found", "value": true }
+    ],
+    "priority": 2,
+    "hint": "羽绒服口袋里好像有东西"
+  },
+  {
+    "id": "S3_choice_03",
+    "from_node_id": "S3",
+    "text": "离开地铁站",
+    "short_text": "离开",
+    "next_node_id": "C",
+    "condition": null,
+    "effects": [],
+    "priority": 99
+  }
+]

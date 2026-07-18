@@ -1,0 +1,25 @@
+[
+  {
+    "id": "S10_choice_01",
+    "from_node_id": "S10",
+    "text": "取出售票窗口缝隙里的旧船票",
+    "short_text": "取船票",
+    "next_node_id": "S10",
+    "condition": null,
+    "effects": [
+      { "type": "add_item", "target": "item_ferry_ticket", "value": 1 }
+    ],
+    "priority": 1,
+    "hint": "这张票从来没有被用过"
+  },
+  {
+    "id": "S10_choice_02",
+    "from_node_id": "S10",
+    "text": "离开码头",
+    "short_text": "离开",
+    "next_node_id": "F",
+    "condition": null,
+    "effects": [],
+    "priority": 99
+  }
+]

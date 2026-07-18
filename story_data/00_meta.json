@@ -1,0 +1,18 @@
+{
+  "story_name": "荔湾·四日轮回",
+  "story_version": "1.2",
+  "format_version": "1.0",
+  "author": "",
+  "created_date": "2026-07-18",
+  "description": "中式恐怖 × 无限循环 × 历史残响。荔湾广场之下镇压着一道时间裂隙，被困者在一个四天四夜的莫比乌斯环中不断循环。",
+  "total_nodes": {
+    "main": 8,
+    "special": 2,
+    "sub": 20,
+    "normal": 0
+  },
+  "total_items": 42,
+  "total_flags": 30,
+  "total_npcs": 11,
+  "player_attributes": ["sanity", "courage", "insight"]
+}

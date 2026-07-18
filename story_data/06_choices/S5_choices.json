@@ -1,0 +1,38 @@
+[
+  {
+    "id": "S5_choice_01",
+    "from_node_id": "S5",
+    "text": "收下传家玉佩，感谢李铭宸",
+    "short_text": "收下玉佩",
+    "next_node_id": "D",
+    "condition": null,
+    "effects": [
+      { "type": "add_item", "target": "item_jade_pendant", "value": 1 }
+    ],
+    "priority": 1,
+    "hint": "这面玉佩传了十一代——它在等你"
+  },
+  {
+    "id": "S5_choice_02",
+    "from_node_id": "S5",
+    "text": "追问李氏家族与八棺阵的历史",
+    "short_text": "追问历史",
+    "next_node_id": "S5",
+    "condition": "has_flag:helped_ergou",
+    "effects": [
+      { "type": "set_flag", "target": "li_mingchen_story_heard", "value": true }
+    ],
+    "priority": 2,
+    "hint": "了解更多关于1650年封印的秘辛"
+  },
+  {
+    "id": "S5_choice_03",
+    "from_node_id": "S5",
+    "text": "婉拒玉佩，离开",
+    "short_text": "婉拒离开",
+    "next_node_id": "D",
+    "condition": null,
+    "effects": [],
+    "priority": 99
+  }
+]

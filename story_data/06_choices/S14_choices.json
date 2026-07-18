@@ -1,0 +1,25 @@
+[
+  {
+    "id": "S14_choice_01",
+    "from_node_id": "S14",
+    "text": "向老师傅要走那张底片",
+    "short_text": "要底片",
+    "next_node_id": "S14",
+    "condition": null,
+    "effects": [
+      { "type": "add_item", "target": "item_photo_negative", "value": 1 }
+    ],
+    "priority": 1,
+    "hint": "每次冲洗出来的画面都不同——她在移动"
+  },
+  {
+    "id": "S14_choice_02",
+    "from_node_id": "S14",
+    "text": "离开照相馆",
+    "short_text": "离开",
+    "next_node_id": "G",
+    "condition": null,
+    "effects": [],
+    "priority": 99
+  }
+]

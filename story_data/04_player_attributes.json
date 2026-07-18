@@ -1,0 +1,38 @@
+[
+  {
+    "id": "sanity",
+    "name": "理智值",
+    "abbr": "SAN",
+    "description": "精神稳定程度。归零时触发疯狂事件。",
+    "initial_value": 100,
+    "max_value": 100,
+    "min_value": 0,
+    "display_as": "bar",
+    "warn_threshold": 30,
+    "critical_threshold": 10
+  },
+  {
+    "id": "courage",
+    "name": "勇气",
+    "abbr": "COU",
+    "description": "面对恐怖时保持行动的能力。通过直面危险的选择逐步提升。",
+    "initial_value": 5,
+    "max_value": 10,
+    "min_value": 0,
+    "display_as": "bar",
+    "warn_threshold": 3,
+    "critical_threshold": 1
+  },
+  {
+    "id": "insight",
+    "name": "灵感",
+    "abbr": "INS",
+    "description": "对超自然现象和循环本质的感知能力。越高越容易发现隐藏线索，但也越容易触发幻觉。",
+    "initial_value": 3,
+    "max_value": 10,
+    "min_value": 0,
+    "display_as": "number",
+    "warn_threshold": null,
+    "critical_threshold": null
+  }
+]

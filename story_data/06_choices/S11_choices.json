@@ -1,0 +1,36 @@
+[
+  {
+    "id": "S11_choice_01",
+    "from_node_id": "S11",
+    "text": "拿起窗台上的石化烟斗",
+    "short_text": "取烟斗",
+    "next_node_id": "S11",
+    "condition": null,
+    "effects": [
+      { "type": "add_item", "target": "item_fossil_pipe", "value": 1 }
+    ],
+    "priority": 1,
+    "hint": "一支被时间加速石化了几百万年的烟斗"
+  },
+  {
+    "id": "S11_choice_02",
+    "from_node_id": "S11",
+    "text": "在窗边等待闪回结束",
+    "short_text": "等待闪回",
+    "next_node_id": "S11",
+    "condition": null,
+    "effects": [],
+    "priority": 2,
+    "hint": "窗外出现了1650年的广州城墙——很短暂"
+  },
+  {
+    "id": "S11_choice_03",
+    "from_node_id": "S11",
+    "text": "离开老建筑",
+    "short_text": "离开",
+    "next_node_id": "F",
+    "condition": null,
+    "effects": [],
+    "priority": 99
+  }
+]

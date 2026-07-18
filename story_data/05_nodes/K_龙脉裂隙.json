@@ -1,0 +1,26 @@
+{
+  "id": "K",
+  "name": "龙脉裂隙",
+  "position": -1.0,
+  "node_type": "special_warp",
+  "time_label": "无时间·裂隙之中",
+  "content": "你踏入一片灰白色的虚空。脚下是一条暗红色的光脉——像血管，像河流，像一条被埋得太久的龙。\n\n八个方位各有一团大小不一的光。有些明亮，有些暗得几乎看不见。这些光团对应着八棺阵的八个方位——乾、兑、离、震、巽、坎、艮、坤。光团的亮度代表封印的完整程度。\n\n这里没有时间。良久与须臾是同一件事。\n\n暗红色的光脉在你脚下缓慢搏动——不是你的心跳，是地底深处某种存在的脉搏。龙脉——广州地下的风水能量流。时间裂隙就是从龙脉的一处伤口中裂开的。\n\n你背包里的某些东西在微微发光——那些跨面道具。它们在这里有共鸣。你可以把它们献祭给暗下去的光团——用时间的力量修复时间的裂隙。",
+  "speaker": null,
+  "background": "/assets/bg/dragon_vein.jpg",
+  "cycle_variants": {},
+  "color_palette": "灰白虚空+暗红光脉",
+  "atmosphere": ["虚空", "无时间", "龙脉的搏动", "献祭与跃迁"],
+  "sensory": "脚下光脉的微弱搏动、虚空中没有声音却有一种持续的嗡鸣感、道具在背包中微微发光",
+  "warp_config": {
+    "entry_condition": "or:has_flag:taoist_chant,and:attr:courage>=8,cycle>=3,and:has_item:item_beads,has_flag:river_crossed",
+    "entry_text": "踏入突然出现的裂隙",
+    "warp_targets": ["A", "B", "C", "D", "E", "F", "G", "H"],
+    "warp_target_filter": null,
+    "warp_cost": {
+      "type": "san_max_reduce",
+      "value": 1
+    },
+    "sacrifice_enabled": true,
+    "sacrifice_target": "repair_light_orbs"
+  }
+}

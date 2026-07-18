@@ -1,0 +1,26 @@
+[
+  {
+    "id": "S12_choice_01",
+    "from_node_id": "S12",
+    "text": "喝下那杯水",
+    "short_text": "喝水",
+    "next_node_id": "S12",
+    "condition": null,
+    "effects": [
+      { "type": "set_flag", "target": "drank_river_water", "value": true },
+      { "type": "damage", "target": "sanity", "value": 5 }
+    ],
+    "priority": 1,
+    "hint": "喝下珠江的记忆——你会看到1650年。之后几秒，san值会下降——但H节点不会触发血月。"
+  },
+  {
+    "id": "S12_choice_02",
+    "from_node_id": "S12",
+    "text": "离开酒吧",
+    "short_text": "离开",
+    "next_node_id": "F",
+    "condition": null,
+    "effects": [],
+    "priority": 99
+  }
+]
