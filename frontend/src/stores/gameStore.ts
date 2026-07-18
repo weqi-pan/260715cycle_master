@@ -14,6 +14,7 @@ export const useGameStore = defineStore('game', () => {
   const currentState = computed<GameState | null>(() => currentFrame.value?.state ?? null)
   const choices = computed<ChoiceResult[]>(() => currentFrame.value?.available_choices ?? [])
   const cycleEvent = computed(() => currentFrame.value?.cycle_event ?? null)
+  const transitionText = computed(() => currentFrame.value?.transition_text ?? null)
 
   async function init() {
     loading.value = true
@@ -45,5 +46,5 @@ export const useGameStore = defineStore('game', () => {
     }
   }
 
-  return { currentFrame, loading, error, history, currentNode, currentState, choices, cycleEvent, init, choose }
+  return { currentFrame, loading, error, history, currentNode, currentState, choices, cycleEvent, transitionText, init, choose }
 })

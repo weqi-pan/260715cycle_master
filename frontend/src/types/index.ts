@@ -54,4 +54,5 @@ export interface Frame {
   available_choices: ChoiceResult[]
   persistent_found: PersistentFound
   cycle_event: CycleEvent | null
+  transition_text?: string
 }

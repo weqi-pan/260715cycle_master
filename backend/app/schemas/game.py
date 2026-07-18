@@ -53,6 +53,7 @@ class Frame(BaseModel):
     available_choices: list[ChoiceResult] = []
     persistent_found: PersistentFound = PersistentFound()
     cycle_event: Optional[dict] = None
+    transition_text: Optional[str] = None
 
 
 class ChooseRequest(BaseModel):

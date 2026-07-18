@@ -71,6 +71,7 @@ class GameEngine:
             available_choices=available,
             persistent_found=PersistentFound(),
             cycle_event=cycle_event,
+            transition_text=choice.transition_text,
         )
 
     def resolve_available_choices(
