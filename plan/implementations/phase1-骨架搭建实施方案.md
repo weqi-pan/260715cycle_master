@@ -2551,4 +2551,4 @@ git commit -m "feat: Phase 1 complete — ring demo traversable, 30 nodes loaded
 
 > **版本**: v1.0
 > **创建日期**: 2026-07-18
-> **关联文档**: [技术实现方案.md](../design_docs/技术实现方案.md) | [故事内容格式规范.md](../design_docs/故事内容格式规范.md)
+> **关联文档**: [技术实现方案.md](../../docs/design/技术实现方案.md) | [故事内容格式规范.md](../../docs/design/故事内容格式规范.md)

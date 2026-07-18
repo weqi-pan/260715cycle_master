@@ -46,30 +46,51 @@
 
 ```
 cycle_master/
-├── design_docs/                          # 设计文档
-│   ├── cycle_master设计稿.md              # 初始设计需求
-│   ├── 技术实现方案.md                     # 技术实现方案 v1.1
-│   ├── 故事实现方案.md                     # 故事剧本与循环结构
-│   ├── 故事内容格式规范.md                  # JSON 数据格式规范
-│   ├── 故事地图.md                        # 荔湾广场地理布局
-│   ├── 故事材料.md                        # 历史考据与参考材料
-│   ├── 故事道具.md                        # 道具系统设计
-│   └── 节点具体故事/                       # 各节点详细故事文本
-│       ├── 目录索引.md
-│       ├── 道具分布总图.md
-│       ├── 00_全局设定/                    # 全局变量与状态索引
-│       ├── A_荔湾广场正门/
-│       ├── B_德星路出租屋/
-│       ├── C_华林寺/
-│       ├── D_上下九步行街/
-│       ├── E_八棺之地/
-│       ├── F_沙面珠江边/
-│       ├── G_陈家祠/
-│       ├── H_康王路归途/
-│       ├── J_地宫暗道/
-│       └── K_龙脉裂隙/
-├── frontend/                             # Vue 3 前端（待开发）
-├── backend/                              # Python FastAPI 后端（待开发）
+├── backend/                     # Python FastAPI 后端
+│   ├── app/
+│   │   ├── main.py              #   FastAPI 入口
+│   │   ├── config.py            #   配置
+│   │   ├── database.py          #   数据库会话
+│   │   ├── paths.py             #   路径解析
+│   │   ├── engine/              #   图引擎核心
+│   │   ├── models/              #   ORM 模型
+│   │   ├── routers/             #   REST API 路由
+│   │   └── schemas/             #   Pydantic Schema
+│   ├── scripts/                 #   后端工具脚本
+│   │   └── import_story.py      #   JSON → SQLite 导入
+│   └── tests/                   #   后端单元测试
+├── frontend/                    # Vue 3 前端
+│   └── src/
+│       ├── api/                 #   API 调用层
+│       ├── components/          #   组件
+│       │   ├── editor/          #     编辑器组件
+│       │   ├── player/          #     播放器组件
+│       │   └── shared/          #     共享组件
+│       ├── composables/         #   组合式函数
+│       ├── router/              #   路由
+│       ├── stores/              #   Pinia 状态管理
+│       └── views/               #   页面视图
+├── data/                        # 数据（统一管理）
+│   ├── story_data/              #   游戏内容 JSON（节点 + 选项）
+│   ├── assets/                  #   静态资源（背景/立绘/音频）
+│   │   ├── backgrounds/
+│   │   ├── sprites/
+│   │   └── audio/
+│   ├── exports/                 #   数据导出
+│   └── cycle_master.db          #   SQLite 数据库
+├── docs/                        # 文档
+│   ├── design/                  #   设计文档（技术方案、故事方案等）
+│   ├── story/                   #   故事大纲（A-K + S1-S20 节点详细故事）
+│   └── specs/                   #   技术规格
+├── plan/                        # 开发计划
+│   ├── 00_总览与路线图.md
+│   ├── 01~09_阶段计划.md
+│   ├── implementations/         #   实施方案归档
+│   ├── checklists/              #   测试清单归档
+│   └── reports/                 #   项目报告归档
+├── tests/                       # E2E 端到端测试
+├── scripts/                     # 启动/部署脚本
+├── CHANGELOG.md                 # 版本变更日志
 ├── README.md
 └── .gitignore
 ```

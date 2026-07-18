@@ -38,7 +38,6 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 .pnpm-debug.log*
-package-lock.json
 yarn.lock
 pnpm-lock.yaml
 dist-ssr/
@@ -64,12 +63,10 @@ dist-ssr/
 .classpath
 .settings/
 
-# VS Code — keep workspace settings but ignore user prefs
+# VS Code — 保留推荐配置，忽略用户偏好
 .vscode/settings.json
 .vscode/tasks.json
 .vscode/launch.json
-.vscode/extensions.json
-.vscode/
 
 # ----------------------------------
 # OS
@@ -83,15 +80,31 @@ Desktop.ini
 $RECYCLE.BIN/
 
 # ----------------------------------
-# Logs & Databases
+# 日志
 # ----------------------------------
 *.log
-*.sqlite
-*.sqlite3
-*.db
 
 # ----------------------------------
-# Tauri (future)
+# 数据库（运行时生成）
+# ----------------------------------
+data/*.db
+data/*.sqlite
+data/*.sqlite3
+
+# ----------------------------------
+# 数据导出
+# ----------------------------------
+data/exports/*.csv
+data/exports/*.json
+
+# ----------------------------------
+# 测试
+# ----------------------------------
+.pytest_cache/
+.pytest_cache/
+
+# ----------------------------------
+# Tauri (未来桌面打包)
 # ----------------------------------
 src-tauri/target/
 src-tauri/WixTools/

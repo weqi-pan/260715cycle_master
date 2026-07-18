@@ -15,16 +15,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from .database import init_db
 from .routers import game, saves, editor
-from .paths import PROJECT_ROOT
+from .paths import ASSETS_DIR
 
 # ── 创建 FastAPI 应用实例 ────────────────────────────────────
 app = FastAPI(title="Cycle Master API", version="0.4.0")
 
 # ── 挂载静态资源目录 ─────────────────────────────────────────
 # 前端通过 /assets/bg_xxx.png 等路径访问背景图、立绘、音频文件
-assets_dir = PROJECT_ROOT / "assets"
-assets_dir.mkdir(exist_ok=True)
-app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="assets")
+# 静态资源统一放在 data/assets/ 下
+ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+app.mount("/assets", StaticFiles(directory=str(ASSETS_DIR)), name="assets")
 
 # ── CORS 中间件 ──────────────────────────────────────────────
 # 开发环境下 Vue 3 dev server 运行在 localhost:5173
