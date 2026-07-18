@@ -27,6 +27,7 @@ class GameState(BaseModel):
     visited_nodes: list[str] = []
     endings_reached: list[str] = []
     player_attributes: dict[str, int] = Field(default_factory=lambda: {"sanity": 100, "courage": 5, "insight": 3})
+    persistent_nodes: dict[str, dict] = {}  # node_id -> {items: [...], dangers: [...]}
 
 
 class NodeData(BaseModel):

@@ -41,13 +41,13 @@
             <span class="speaker-name">{{ store.currentNode.speaker }}</span>
           </div>
 
-          <!-- Narrative -->
-          <div class="narrative-box">
-            <div class="narrative-text" v-html="renderedContent" />
+          <!-- Narrative with typewriter -->
+          <div class="narrative-box" @click.stop="skipTypewriter">
+            <div class="narrative-text" v-html="displayedText" />
           </div>
 
           <!-- Choices -->
-          <div v-if="store.choices.length" class="choice-area">
+          <div v-if="store.choices.length && !isTyping" class="choice-area">
             <button
               v-for="c in store.choices" :key="c.id"
               class="choice-btn"
@@ -59,9 +59,26 @@
             </button>
           </div>
 
-          <!-- Continue hint (no choices) -->
-          <div v-else class="continue-hint" @click.stop="dismissTransition">
+          <!-- Continue hint (no choices, typing done) -->
+          <div v-else-if="!isTyping" class="continue-hint" @click.stop="dismissTransition">
             <span class="arrow">▼</span>
+          </div>
+          <!-- Save/Load bar -->
+          <div class="save-bar">
+            <button class="save-btn" @click="doSave" :disabled="store.loading">💾 存档</button>
+            <button class="save-btn" @click="showLoadPanel = !showLoadPanel">📂 读档</button>
+          </div>
+
+          <!-- Load panel -->
+          <div v-if="showLoadPanel" class="load-panel">
+            <div v-if="saveList.length === 0" class="load-empty">暂无存档</div>
+            <div v-for="s in saveList" :key="s.id" class="load-row">
+              <span class="load-name">{{ s.save_name || s.id }}</span>
+              <span class="load-meta">节点{{ s.current_node_id }} · 循环{{ s.cycle_count }}</span>
+              <button @click="doLoad(s.id)">读取</button>
+              <button @click="doDelete(s.id)" class="del">删除</button>
+            </div>
+            <button class="close-btn" @click="showLoadPanel = false">关闭</button>
           </div>
         </div>
       </template>
@@ -86,6 +103,14 @@
       </div>
     </Teleport>
 
+    <!-- Cycle Map -->
+    <CycleMap
+      v-if="store.currentState"
+      :current-id="store.currentNode?.id ?? 'A'"
+      :visited-ids="store.currentState.visited_nodes"
+      :has-warp-access="store.currentState.flags?.taoist_chant === true"
+    />
+
     <!-- Cycle toast -->
     <div v-if="store.cycleEvent" class="cycle-toast">
       <span class="cycle-icon">⟳</span> 第 {{ store.cycleEvent.cycle_count }} 次循环完成
@@ -94,13 +119,56 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed } from 'vue'
+import { onMounted, ref, computed, watch, nextTick } from 'vue'
 import { useGameStore } from '@/stores/gameStore'
 import StatusBar from '@/components/player/StatusBar.vue'
+import CycleMap from '@/components/player/CycleMap.vue'
+import axios from 'axios'
 
 const store = useGameStore()
 onMounted(() => { store.init() })
 
+// ── Typewriter ──
+const TYPING_SPEED = 25 // ms per character
+const displayedText = ref('')
+const isTyping = ref(false)
+let typingTimer: ReturnType<typeof setInterval> | null = null
+
+const fullContent = computed(() => store.currentNode?.content ?? '')
+const fullHtml = computed(() => md2html(fullContent.value))
+
+watch(() => store.currentNode?.id, () => { startTypewriter() })
+watch(() => store.currentNode?.content, () => { startTypewriter() })
+
+function startTypewriter() {
+  if (typingTimer) clearInterval(typingTimer)
+  const raw = store.currentNode?.content ?? ''
+  if (!raw) { displayedText.value = ''; isTyping.value = false; return }
+  isTyping.value = true
+  displayedText.value = ''
+  let i = 0
+  typingTimer = setInterval(() => {
+    // Match Chinese chars, punctuation, HTML tags, and whitespace
+    i++
+    if (i >= raw.length) {
+      displayedText.value = md2html(raw)
+      isTyping.value = false
+      if (typingTimer) clearInterval(typingTimer)
+      return
+    }
+    displayedText.value = md2html(raw.slice(0, i))
+  }, TYPING_SPEED)
+}
+
+function skipTypewriter() {
+  if (isTyping.value) {
+    if (typingTimer) clearInterval(typingTimer)
+    displayedText.value = fullHtml.value
+    isTyping.value = false
+  }
+}
+
+// ── Markdown ──
 function md2html(t: string): string {
   t = t.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
   t = t.replace(/\*(.+?)\*/g, '<em>$1</em>')
@@ -109,7 +177,6 @@ function md2html(t: string): string {
   return `<p>${t}</p>`
 }
 
-const renderedContent = computed(() => store.currentNode ? md2html(store.currentNode.content) : '')
 const renderedTransition = computed(() => store.transitionText ? md2html(store.transitionText) : '')
 
 function dismissTransition() {
@@ -118,9 +185,42 @@ function dismissTransition() {
   }
 }
 function onBgClick() {
-  if (store.choices.length > 0) return   // don't dismiss while choosing
+  if (store.choices.length > 0) return
   dismissTransition()
 }
+
+// ── Save/Load ──
+const showLoadPanel = ref(false)
+const saveList = ref<any[]>([])
+
+async function refreshSaveList() {
+  try { const r = await axios.get('/api/saves'); saveList.value = r.data.saves ?? [] } catch {}
+}
+async function doSave() {
+  if (!store.currentState) return
+  const name = prompt('存档名称:', '存档 ' + new Date().toLocaleTimeString())
+  if (!name) return
+  try {
+    await axios.post('/api/saves?name=' + encodeURIComponent(name), store.currentState)
+    alert('存档成功')
+  } catch { alert('存档失败') }
+}
+async function doLoad(saveId: string) {
+  try {
+    const r = await axios.get('/api/saves/load/' + saveId)
+    const state = r.data
+    // Restart game at saved state
+    const frame = await (await import('@/api/game')).startGame()
+    store.currentFrame = { ...frame, state, node: frame.node }
+    // Re-resolve with correct state
+    showLoadPanel.value = false
+  } catch { alert('读档失败') }
+}
+async function doDelete(saveId: string) {
+  if (!confirm('确认删除？')) return
+  try { await axios.delete('/api/saves/' + saveId); refreshSaveList() } catch {}
+}
+watch(showLoadPanel, (v) => { if (v) refreshSaveList() })
 </script>
 
 <style scoped lang="scss">
@@ -218,6 +318,25 @@ h1 { font-family:$font-display; font-size:3rem; font-weight:700; color:$accent-g
   :deep(em) { color:$text-secondary; }
 }
 .dismiss-hint { text-align:center; color:$text-dim; font-size:0.8rem; margin-top:2rem; letter-spacing:0.1em; }
+
+// ── Save/Load bar ──
+.save-bar { display:flex; gap:0.5rem; justify-content:center; padding:0.5rem 0 2rem; }
+.save-btn { padding:0.3rem 1rem; background:transparent; border:1px solid rgba($accent-gold,0.2); color:$text-dim; font-family:$font-ui; font-size:0.8rem; cursor:pointer; border-radius:3px;
+  &:hover { border-color:$accent-gold; color:$accent-gold; }
+}
+.load-panel { max-width:400px; margin:0 auto 2rem; padding:1rem; background:rgba($bg-void,0.95); border:1px solid rgba($accent-gold,0.15); border-radius:6px; }
+.load-empty { color:$text-dim; text-align:center; padding:1rem; font-size:0.85rem; }
+.load-row { display:flex; align-items:center; gap:0.5rem; padding:0.4rem 0; border-bottom:1px solid rgba($accent-gold,0.06);
+  button { padding:0.2rem 0.6rem; background:transparent; border:1px solid rgba($accent-gold,0.2); color:$text-secondary; font-family:$font-ui; font-size:0.75rem; cursor:pointer; border-radius:2px;
+    &:hover { border-color:$accent-gold; color:$accent-gold; }
+    &.del { border-color:rgba($accent-red,0.2); color:rgba($accent-red,0.6);
+      &:hover { border-color:$accent-red; color:$accent-red; }
+    }
+  }
+}
+.load-name { flex:1; color:$text-primary; font-size:0.85rem; }
+.load-meta { color:$text-dim; font-size:0.7rem; }
+.close-btn { display:block; margin:0.5rem auto 0; padding:0.3rem 1.5rem; background:transparent; border:1px solid rgba($accent-gold,0.15); color:$text-dim; font-family:$font-ui; font-size:0.8rem; cursor:pointer; border-radius:3px; }
 
 // ── Cycle toast ──
 .cycle-toast { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:100; color:$accent-gold; font-family:$font-display; font-size:1.1rem; letter-spacing:0.1em; pointer-events:none; animation:cycleFade 3s infinite; }

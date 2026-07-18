@@ -52,10 +52,25 @@ class GameEngine:
                 "half_cycle_count": state.half_cycle_count,
             }
 
-        # ⑦ 解析可用选项
+        # ⑦ 检查节点遗留状态（跨循环持久化 + 跨面道具）
+        persistent = PersistentFound()
+        node_state = state.persistent_nodes.get(next_bundle.id, {})
+        persistent.items = node_state.get("items", [])
+
+        # A↔E cross-surface: items at A with cross_surface=true appear at E, and vice versa
+        if next_bundle.id in ("A", "E"):
+            mirror_id = "E" if next_bundle.id == "A" else "A"
+            mirror_state = state.persistent_nodes.get(mirror_id, {})
+            mirror_items = mirror_state.get("items", [])
+            persistent.cross_surface_items = [
+                i for i in mirror_items if i.get("cross_surface")
+            ]
+        persistent.dangers = node_state.get("dangers", [])
+
+        # ⑧ 解析可用选项
         available = self.resolve_available_choices(graph, next_bundle.id, state)
 
-        # ⑧ 构建 Frame
+        # ⑨ 构建 Frame
         return Frame(
             node=NodeData(
                 id=next_bundle.id,
@@ -69,7 +84,7 @@ class GameEngine:
             ),
             state=state,
             available_choices=available,
-            persistent_found=PersistentFound(),
+            persistent_found=persistent,
             cycle_event=cycle_event,
             transition_text=choice.transition_text,
         )
@@ -131,6 +146,13 @@ class GameEngine:
                 state.player_attributes[target] = max(attr - value, 0)
             elif etype == "set_attr":
                 state.player_attributes[target] = value
+            elif etype == "leave_item":
+                # Store item in current node for future cycles
+                pd = state.persistent_nodes.setdefault(node_id, {"items": [], "dangers": []})
+                pd["items"].append({"id": target, "name": value or target})
+            elif etype == "leave_danger":
+                pd = state.persistent_nodes.setdefault(node_id, {"items": [], "dangers": []})
+                pd["dangers"].append({"id": target, "name": value or target})
 
     def _resolve_content(self, bundle: GraphBundle, state: GameState) -> str:
         """解析 cycle_variants + {{变量}} 替换。"""
