@@ -6,14 +6,18 @@
     <StatusBar v-if="store.currentState"
       :cycle-count="store.currentState.cycle_count" :half-cycle-count="store.currentState.half_cycle_count"
       :attributes="store.currentState.player_attributes" :inventory="store.currentState.inventory"
-      :node-name="store.currentNode?.name" @toggle-map="showMap = !showMap" />
+      :node-name="store.currentNode?.name"
+      @toggle-map="showMap = !showMap"
+      @toggle-backpack="showBackpack = !showBackpack"
+      @save="doSave"
+      @load="showLoadPanel = !showLoadPanel" />
 
     <div class="game-main" ref="mainRef">
       <div v-if="store.loading && !store.currentNode" class="loading"><span class="dot">·</span></div>
       <div v-else-if="store.error" class="error"><p>{{ store.error }}</p><button @click="store.init()">重试</button></div>
 
       <template v-else-if="store.currentNode">
-        <div class="content-wrapper">
+        <div class="content-wrapper" :class="sceneClass">
           <div v-if="store.currentNode.time_label" class="time-label">◈ {{ store.currentNode.time_label }}</div>
           <div v-if="store.currentNode.speaker" class="speaker-row">
             <div class="speaker-avatar">{{ store.currentNode.speaker[0] }}</div>
@@ -51,12 +55,6 @@
           </div>
         </div>
 
-        <!-- Action bar -->
-        <div class="save-bar">
-          <button class="save-btn" @click="showBackpack = !showBackpack">🎒 背包</button>
-          <button class="save-btn" @click="doSave">💾 存档</button>
-          <button class="save-btn" @click="showLoadPanel = !showLoadPanel">📂 读档</button>
-        </div>
         <div v-if="showBackpack" class="load-panel">
           <div v-if="!store.currentState || store.currentState.inventory.length === 0" class="load-empty">背包空空如也</div>
           <div v-for="(item, idx) in (store.currentState?.inventory ?? [])" :key="idx" class="load-row">
@@ -104,6 +102,7 @@ const transitions = ref<Array<{ label: string; text: string }>>([])
 const chosenIds = ref<Set<string>>(new Set())
 const displayedText = ref('')
 const isTyping = ref(false)
+const sceneClass = ref('')
 let typingTimer: ReturnType<typeof setInterval> | null = null
 let prevNodeId = ''
 
@@ -157,14 +156,19 @@ async function handleChoice(choice: any) {
   await store.choose(choice.id)
 
   const newNode = store.currentNode?.id
-  // Node changed — full reset
+  // Node changed — scene transition animation + full reset
   if (newNode && newNode !== prevNode) {
-    prevNodeId = newNode
-    transitions.value = []
-    chosenIds.value = new Set()
-    displayedText.value = ''
-    startTypewriter()
-    scrollDown()
+    sceneClass.value = 'scene-out'
+    setTimeout(() => {
+      prevNodeId = newNode
+      transitions.value = []
+      chosenIds.value = new Set()
+      displayedText.value = ''
+      startTypewriter()
+      sceneClass.value = 'scene-in'
+      setTimeout(() => { sceneClass.value = '' }, 600)
+      scrollDown()
+    }, 400)
     return
   }
 
@@ -199,6 +203,11 @@ function scrollDown() {
 }
 
 function md2html(t: string): string {
+  // Strip engine meta markers: [courage +2], [sanity -3], [flag: xxx], [获得道具...]
+  t = t.replace(/^\[.*?\]\s*$/gm, '')
+  t = t.replace(/\[(courage|sanity|insight|sanity_max)\s*[+-]?\d+\]/gi, '')
+  t = t.replace(/\[flag:\s*\w+.*?\]/gi, '')
+  t = t.replace(/\n{3,}/g, '\n\n')
   t = t.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
   t = t.replace(/\*(.+?)\*/g, '<em>$1</em>')
   t = t.replace(/---/g, '<span class="scene-break">· · ·</span>')
@@ -303,11 +312,12 @@ watch(showLoadPanel, (v) => { if (v) refreshSaves() })
 .chosen-mark { position:absolute; right:0.8rem; top:50%; transform:translateY(-50%); color:$accent-gold; font-size:0.8rem; }
 .warp-tag { position:absolute; right:0.8rem; top:50%; transform:translateY(-50%); font-family:$font-ui; font-size:0.65rem; color:rgba($accent-ghost,0.6); border:1px solid rgba($accent-ghost,0.25); padding:0.1rem 0.4rem; border-radius:2px; }
 
-// Action bar
-.save-bar { display:flex; gap:0.5rem; justify-content:center; padding:0.5rem 0 2rem; }
-.save-btn { padding:0.3rem 1rem; background:transparent; border:1px solid rgba($accent-gold,0.2); color:$text-dim; font-family:$font-ui; font-size:0.8rem; cursor:pointer; border-radius:3px;
-  &:hover { border-color:$accent-gold; color:$accent-gold; }
-}
+// Scene transitions
+.content-wrapper.scene-out { animation: sceneOut 0.4s ease-in forwards; }
+@keyframes sceneOut { to { opacity:0; transform:translateY(-4px); } }
+.content-wrapper.scene-in { animation: sceneIn 0.6s ease-out forwards; }
+@keyframes sceneIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+
 .load-panel { max-width:400px; margin:0 auto 1rem; padding:1rem; background:rgba($bg-void,0.95); border:1px solid rgba($accent-gold,0.15); border-radius:6px; }
 .load-empty { color:$text-dim; text-align:center; padding:1rem; font-size:0.85rem; }
 .load-row { display:flex; align-items:center; gap:0.5rem; padding:0.4rem 0; border-bottom:1px solid rgba($accent-gold,0.06);
