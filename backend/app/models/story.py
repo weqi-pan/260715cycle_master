@@ -54,6 +54,7 @@ class StoryNode(Base):
     # ── 视觉/氛围 ─────────────────────────────────────────────
     color_palette = Column(String, nullable=True)  # 色调主题名
     ambient = Column(String, nullable=True)  # 环境音效资源文件名
+    dialogue_lines_json = Column(Text, nullable=True)  # 角色对话行 JSON [{speaker, text}]
     atmosphere_json = Column(Text, nullable=True, default="[]")  # 氛围效果列表 JSON
     sensory = Column(Text, nullable=True)  # 感官描述文本
 

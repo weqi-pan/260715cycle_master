@@ -27,6 +27,7 @@ export interface NodeData {
   background?: string
   ambient?: string
   color_palette?: string
+  dialogue_lines?: Array<{ speaker: string; text: string }>
 }
 
 export interface ChoiceResult {

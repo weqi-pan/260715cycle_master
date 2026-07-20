@@ -74,6 +74,7 @@ def _start_frame(graph: dict, state: GameState) -> Frame:
             content=engine._resolve_content(bundle, state),
             speaker=bundle.speaker,
             background=bundle.background,
+            dialogue_lines=bundle.dialogue_lines,
         ),
         state=state,
         available_choices=available,

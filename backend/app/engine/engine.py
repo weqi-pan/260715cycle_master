@@ -176,6 +176,7 @@ class GameEngine:
                 speaker=next_bundle.speaker,
                 background=next_bundle.background,
                 ambient=next_bundle.ambient,
+                dialogue_lines=next_bundle.dialogue_lines,
             ),
             state=state,
             available_choices=available,

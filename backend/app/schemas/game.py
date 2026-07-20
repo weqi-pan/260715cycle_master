@@ -99,6 +99,7 @@ class NodeData(BaseModel):
     speaker_avatar: Optional[str] = None  # 说话人头像资源路径
     background: Optional[str] = None  # 背景图资源路径
     ambient: Optional[str] = None    # 环境音效资源路径
+    dialogue_lines: list[dict] = []  # 角色对话行 [{speaker, text}]
 
 
 class ChoiceResult(BaseModel):
