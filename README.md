@@ -57,7 +57,7 @@ cycle_master/
 │   │   ├── routers/             #   REST API 路由
 │   │   └── schemas/             #   Pydantic Schema
 │   ├── scripts/                 #   后端工具脚本
-│   │   └── import_story.py      #   JSON → SQLite 导入
+│   │   └── validate_story_v2.py #   v2 剧情严格校验
 │   └── tests/                   #   后端单元测试
 ├── frontend/                    # Vue 3 前端
 │   └── src/
@@ -71,7 +71,7 @@ cycle_master/
 │       ├── stores/              #   Pinia 状态管理
 │       └── views/               #   页面视图
 ├── data/                        # 数据（统一管理）
-│   ├── story_data/              #   游戏内容 JSON（节点 + 选项）
+│   ├── story_data_v2/           #   游戏内容 JSON（运行时唯一剧情源）
 │   ├── assets/                  #   静态资源（背景/立绘/音频）
 │   │   ├── backgrounds/
 │   │   ├── sprites/

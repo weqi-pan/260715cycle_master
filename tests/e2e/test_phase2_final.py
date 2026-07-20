@@ -157,9 +157,9 @@ class TestG_Regression:
         expect(page.locator(".game-play")).to_be_visible(timeout=5000)
 
     def test_g5_json_files_valid(self):
-        """G5: story_data JSON 文件无语法错误"""
+        """G5: story_data_v2 JSON 文件无语法错误"""
         story_dir = os.path.abspath(os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "..", "..", "story_data"
+            os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "story_data_v2"
         ))
         errors = []
         for root, dirs, files in os.walk(story_dir):

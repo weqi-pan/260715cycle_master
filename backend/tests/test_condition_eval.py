@@ -83,9 +83,20 @@ def test_cycle_gte_false(evaluator):
     assert evaluator.evaluate("cycle>=3", make_state(cycle_count=1)) == False
 
 
+def test_cycle_equality(evaluator):
+    assert evaluator.evaluate("cycle==2", make_state(cycle_count=2)) is True
+    assert evaluator.evaluate("cycle!=2", make_state(cycle_count=3)) is True
+
+
 # --- half_cycle ---
 def test_half_cycle_true(evaluator):
     assert evaluator.evaluate("half_cycle>=1", make_state(half_cycle_count=2)) == True
+
+
+def test_half_cycle_comparison(evaluator):
+    assert evaluator.evaluate(
+        "half_cycle<2", make_state(half_cycle_count=1)
+    ) is True
 
 
 # --- at_node ---
@@ -133,4 +144,22 @@ def test_nested_and_or(evaluator):
         player_attributes={"courage": 5},
         cycle_count=5,
     )
-    assert evaluator.evaluate("and:has_item:item_beads,or:attr:courage>=8,cycle>=3", state) == True
+    assert evaluator.evaluate("and:has_item:item_beads,(or:attr:courage>=8,cycle>=3)", state) == True
+
+
+@pytest.mark.parametrize(
+    ("state", "expected"),
+    [
+        (make_state(flags={"taoist_chant": True}), True),
+        (make_state(cycle_count=3, player_attributes={"courage": 8}), True),
+        (make_state(inventory=[{"id": "item_beads"}], flags={"river_crossed": True}), True),
+        (make_state(cycle_count=3, player_attributes={"courage": 7}), False),
+    ],
+)
+def test_warp_condition_has_three_independent_routes(evaluator, state, expected):
+    condition = (
+        "or:has_flag:taoist_chant,"
+        "(and:attr:courage>=8,cycle>=3),"
+        "(and:has_item:item_beads,has_flag:river_crossed)"
+    )
+    assert evaluator.evaluate(condition, state) is expected

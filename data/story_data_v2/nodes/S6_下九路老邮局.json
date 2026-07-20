@@ -1,0 +1,179 @@
+{
+  "schema_version": 2,
+  "id": "S6",
+  "meta": {
+    "name": "下九路老邮局",
+    "node_type": "normal",
+    "position": 50.0,
+    "time_label": "第二天·下午",
+    "parent_node_id": "C",
+    "trigger_condition": "与燕妍同行离开C节点时她提议去下九路老邮局"
+  },
+  "scene": {
+    "background": null,
+    "palette": null,
+    "ambient": null,
+    "atmosphere": []
+  },
+  "entry_sequences": [
+    {
+      "id": "S6.entry.default",
+      "when": null,
+      "priority": 0,
+      "blocks": [
+        {
+          "id": "S6.entry.default.paragraph.01.01",
+          "type": "narration",
+          "text": "下九路这家老邮局已经开了将近一百年。木质柜台被磨得发亮，墙上的老式挂钟还在嘀嗒走动——虽然时间已经不准了。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S6.entry.default.paragraph.02.01",
+          "type": "narration",
+          "text": "燕妍径直走到\"逾期邮件\"的玻璃柜前——里面锁着一些因为地址不详、收件人已故等原因永远无法送达的信件。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S6.entry.default.paragraph.03.01.dialogue",
+          "type": "dialogue",
+          "text": "你看这封——",
+          "speaker_id": "npc_yan_yan",
+          "when": null
+        },
+        {
+          "id": "S6.entry.default.paragraph.03.02.narration",
+          "type": "narration",
+          "text": "她指着最角落的一个泛黄信封。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S6.entry.default.paragraph.04.01",
+          "type": "narration",
+          "text": "信封上：寄信人——陈伯陶。收信人——陈水生（转交）。邮戳日期——1925年3月15日。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S6.entry.default.paragraph.05.01.dialogue",
+          "type": "dialogue",
+          "text": "这封信在这里等了一百年。",
+          "speaker_id": "npc_yan_yan",
+          "when": null
+        },
+        {
+          "id": "S6.entry.default.paragraph.05.02.narration",
+          "type": "narration",
+          "text": "燕妍说。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S6.entry.default.paragraph.05.03.dialogue",
+          "type": "dialogue",
+          "text": "收信人在1650年就已经——",
+          "speaker_id": "npc_yan_yan",
+          "when": null
+        },
+        {
+          "id": "S6.entry.default.paragraph.05.04.narration",
+          "type": "narration",
+          "text": "她没说下去。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S6.entry.default.paragraph.06.01",
+          "type": "narration",
+          "text": "你打开信封。里面只有三行字。最后一行被什么液体洇开了——不像是水，是比水更咸的东西。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S6.entry.default.paragraph.07.01",
+          "type": "narration",
+          "text": "_\"你等了两百七十五年。我让你等了更久。对不起。\"_",
+          "speaker_id": null,
+          "when": null
+        }
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "id": "S6_choice_01",
+      "label": "取出并阅读陈伯陶给陈水生的回信",
+      "short_label": "读回信",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 1,
+      "hint": "这封信用了一百年才寄到",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_chen_letter",
+          "value": 1
+        }
+      ],
+      "next": {
+        "node_id": "S6",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "S6_choice_02",
+      "label": "替陈水生写一封回信寄给陈伯陶",
+      "short_label": "写回信",
+      "condition": "has_item:item_chen_letter",
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 2,
+      "hint": "替一个死去的人回一封信——也许能改变什么",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "set_flag",
+          "target": "replied_to_chen_botao",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "S6",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "S6_choice_03",
+      "label": "离开邮局",
+      "short_label": "离开",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 99,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "D",
+        "mode": "travel"
+      }
+    }
+  ],
+  "routing": {
+    "crossing": null,
+    "shortcut": null,
+    "warp": null
+  },
+  "authoring": {
+    "linked_sub_nodes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "npc_item_mapping": null,
+    "sensory": null,
+    "gender_variant": null
+  }
+}

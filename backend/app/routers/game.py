@@ -17,38 +17,29 @@
 """
 
 # backend/app/routers/game.py
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from ..database import get_db
-from ..engine.graph import GraphLoader
+from fastapi import APIRouter, HTTPException
 from ..engine.engine import GameEngine
+from ..engine.story_v2_loader import StoryV2Loader
 from ..schemas.game import Frame, ChooseRequest, GameState, NodeData
 
 router = APIRouter(prefix="/api/game", tags=["game"])
 
 # ── 模块级单例 ──────────────────────────────────────────────
-# GraphLoader 和 GameEngine 都是无状态对象，创建一次即可复用
-loader = GraphLoader()
+# v2 是唯一剧情数据源；SQLite 仅保存玩家存档。
 engine = GameEngine()
+story_v2 = StoryV2Loader()
 
 
-def _get_graph(db: Session):
+def _get_graph():
     """
-    每次请求重新加载完整的图结构。
-
-    当前采用全量加载策略（Phase 1），因为数据量小（< 500 节点），
-    每次从 SQLite 查询全量数据的延迟在 1ms 以内。
-    后续可在 GraphLoader 中引入缓存优化。
-
-    参数:
-        db: 数据库会话
+    从启动时严格校验过的 v2 节点构建完整图结构。
     返回:
         {node_id: GraphBundle} 字典
     """
-    return loader.load_all(db)
+    return story_v2.load_graph()
 
 
-def _start_frame(graph: dict, state: GameState) -> Frame:
+def _state_frame(graph: dict, state: GameState) -> Frame:
     """
     构造起始帧（新游戏或加载存档后进入游戏时使用）。
 
@@ -61,9 +52,10 @@ def _start_frame(graph: dict, state: GameState) -> Frame:
     返回:
         起始 Frame（节点 A + 初始状态 + 可用选项）
     """
-    bundle = graph["A"]
-    state.current_node_id = "A"
-    available = engine.resolve_available_choices(graph, "A", state)
+    if state.current_node_id not in graph:
+        raise ValueError(f"Node '{state.current_node_id}' not found")
+    bundle = graph[state.current_node_id]
+    available = engine.resolve_available_choices(graph, bundle.id, state)
     return Frame(
         node=NodeData(
             id=bundle.id,
@@ -74,7 +66,10 @@ def _start_frame(graph: dict, state: GameState) -> Frame:
             content=engine._resolve_content(bundle, state),
             speaker=bundle.speaker,
             background=bundle.background,
+            ambient=bundle.ambient,
+            color_palette=bundle.color_palette,
             dialogue_lines=bundle.dialogue_lines,
+            entry_blocks=story_v2.entry_blocks(bundle.id, state, engine.evaluator),
         ),
         state=state,
         available_choices=available,
@@ -86,7 +81,7 @@ def _start_frame(graph: dict, state: GameState) -> Frame:
 # ============================================================
 
 @router.get("/start", response_model=Frame)
-def start_game(db: Session = Depends(get_db)):
+def start_game():
     """
     开始新游戏。
 
@@ -100,13 +95,23 @@ def start_game(db: Session = Depends(get_db)):
         - 用户点击"新游戏"
         - 用户加载存档后（由前端构造 GameState 调用 choose 而非此接口）
     """
-    graph = _get_graph(db)
+    graph = _get_graph()
     state = GameState(current_node_id="A")
-    return _start_frame(graph, state)
+    return _state_frame(graph, state)
+
+
+@router.post("/resume", response_model=Frame)
+def resume_game(state: GameState):
+    """根据完整存档状态重建当前节点画面，不推进剧情、不重置到 A。"""
+    graph = _get_graph()
+    try:
+        return _state_frame(graph, state)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
 
 
 @router.post("/choose/{node_id}", response_model=Frame)
-def choose_action(node_id: str, req: ChooseRequest, db: Session = Depends(get_db)):
+def choose_action(node_id: str, req: ChooseRequest):
     """
     玩家选择分支选项。
 
@@ -130,10 +135,16 @@ def choose_action(node_id: str, req: ChooseRequest, db: Session = Depends(get_db
         - 每次玩家在选项列表中做出选择时
         - 加载存档后进入游戏时（前端将存档还原为 GameState 后调用此接口）
     """
-    graph = _get_graph(db)
+    graph = _get_graph()
     state = req.state  # 使用客户端传入的状态（Stateful API）
     try:
         frame = engine.process_choice(graph, node_id, req.choice_id, state)
+        frame.node.entry_blocks = story_v2.entry_blocks(
+            frame.node.id, frame.state, engine.evaluator
+        )
+        frame.result_blocks = story_v2.result_blocks(
+            node_id, req.choice_id, frame.state, engine.evaluator
+        )
         return frame
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

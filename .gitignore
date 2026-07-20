@@ -88,6 +88,8 @@ $RECYCLE.BIN/
 # 数据库（运行时生成）
 # ----------------------------------
 data/*.db
+data/*.db-wal
+data/*.db-shm
 data/*.sqlite
 data/*.sqlite3
 

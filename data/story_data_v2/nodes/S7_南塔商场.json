@@ -1,0 +1,106 @@
+{
+  "schema_version": 2,
+  "id": "S7",
+  "meta": {
+    "name": "荔湾广场南塔商场",
+    "node_type": "normal",
+    "position": 75.0,
+    "time_label": "第二天·夜晚",
+    "parent_node_id": "D",
+    "trigger_condition": "D节点探索南塔商场时可选进入"
+  },
+  "scene": {
+    "background": null,
+    "palette": null,
+    "ambient": null,
+    "atmosphere": []
+  },
+  "entry_sequences": [
+    {
+      "id": "S7.entry.default",
+      "when": null,
+      "priority": 0,
+      "blocks": [
+        {
+          "id": "S7.entry.default.paragraph.01.01",
+          "type": "narration",
+          "text": "南塔商场在夜晚依然营业——服装店、手机配件铺、奶茶店挤在一起，霓虹灯牌的光打在过道上来回扫射。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S7.entry.default.paragraph.02.01",
+          "type": "narration",
+          "text": "但你注意到了一些不对劲的东西。二楼过道尽头的落地镜——镜面有些模糊。不是脏——是镜子里的画面和外面不一样。镜子里的人流比外面的人流慢了两秒。外面的你已经走过去了——镜子里的你还在原地站着，看着你自己。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S7.entry.default.paragraph.03.01",
+          "type": "narration",
+          "text": "更远的地方——镜子深处——有个穿白裙的身影一闪而过。裙摆拖在地上，看不到脚踝。她穿过人群，没有人注意到她。她在2014年7月15日那天从北塔天台跳了下来。但她的残影还在南塔商场的镜子里走动——走在同一天的同一时刻，永无止境。",
+          "speaker_id": null,
+          "when": null
+        }
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "id": "S7_choice_01",
+      "label": "走近落地镜仔细观察",
+      "short_label": "走近镜子",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 1,
+      "hint": "镜子里的人流比外面慢了——你看到了不该看到的东西",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "set_flag",
+          "target": "saw_2014_girl",
+          "value": true
+        },
+        {
+          "type": "damage",
+          "target": "sanity",
+          "value": 3
+        }
+      ],
+      "next": {
+        "node_id": "S7",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "S7_choice_02",
+      "label": "离开南塔商场",
+      "short_label": "离开",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 99,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "D",
+        "mode": "travel"
+      }
+    }
+  ],
+  "routing": {
+    "crossing": null,
+    "shortcut": null,
+    "warp": null
+  },
+  "authoring": {
+    "linked_sub_nodes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "npc_item_mapping": null,
+    "sensory": null,
+    "gender_variant": null
+  }
+}

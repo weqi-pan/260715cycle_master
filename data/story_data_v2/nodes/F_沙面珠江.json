@@ -1,0 +1,421 @@
+{
+  "schema_version": 2,
+  "id": "F",
+  "meta": {
+    "name": "沙面·珠江边",
+    "node_type": "main",
+    "position": 125.0,
+    "time_label": "第三天·夜晚 19:00-23:00",
+    "parent_node_id": null,
+    "trigger_condition": null
+  },
+  "scene": {
+    "background": "/assets/bg/shamian_river.jpg",
+    "palette": "墨蓝+银白+榕树深绿",
+    "ambient": null,
+    "atmosphere": [
+      "静谧",
+      "江风",
+      "钓鱼人的秘密",
+      "历史在水下发光"
+    ]
+  },
+  "entry_sequences": [
+    {
+      "id": "F.entry.default",
+      "when": null,
+      "priority": 0,
+      "blocks": [
+        {
+          "id": "F.entry.default.paragraph.01.01",
+          "type": "narration",
+          "text": "珠江在夜色中缓慢流淌。对岸的灯火倒映在水面上——拉成一条条颤动的光带。江风带着水汽和淡淡的腥味拂过沙面的老榕树。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F.entry.default.paragraph.02.01",
+          "type": "narration",
+          "text": "沙面是珠江边的沙洲小岛，满是殖民时代留下的欧式老建筑。夜晚的沙面安静得不像是广州市中心——除了远处偶尔传来的轮渡汽笛声，只剩下江水拍打石堤的节奏。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F.entry.default.paragraph.03.01",
+          "type": "narration",
+          "text": "你沿着江边石栏慢慢走。石栏的缝隙里长着青苔——有些石柱是清代的老件，被一百多年的江水冲刷得圆润光滑。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F.entry.default.paragraph.04.01",
+          "type": "narration",
+          "text": "---",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F.entry.default.paragraph.05.01",
+          "type": "narration",
+          "text": "在一盏忽明忽暗的路灯下，江边长椅上坐着一个钓鱼的老人。他的鱼竿架在石栏上，鱼线垂入漆黑的江水中。但他没有在看鱼漂——他在看江对面。江对面什么都没有。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F.entry.default.paragraph.06.01.dialogue",
+          "type": "dialogue",
+          "text": "水底下有光。",
+          "speaker_id": "npc_river_fisher",
+          "when": null
+        },
+        {
+          "id": "F.entry.default.paragraph.06.02.narration",
+          "type": "narration",
+          "text": "老人头也不回地说。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F.entry.default.paragraph.06.03.dialogue",
+          "type": "dialogue",
+          "text": "很多年了——只有几个人能看到。你能看到吗？",
+          "speaker_id": "npc_river_fisher",
+          "when": null
+        },
+        {
+          "id": "F.entry.default.paragraph.07.01",
+          "type": "narration",
+          "text": "他转过头。他的眼睛很浑浊——但浑浊深处有一点很亮很亮的光。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F.entry.default.paragraph.08.01.dialogue",
+          "type": "dialogue",
+          "text": "我从1650年就在这里钓鱼了。",
+          "speaker_id": "npc_river_fisher",
+          "when": null
+        },
+        {
+          "id": "F.entry.default.paragraph.08.02.narration",
+          "type": "narration",
+          "text": "他说。",
+          "speaker_id": null,
+          "when": null
+        }
+      ]
+    },
+    {
+      "id": "F.entry.cycle_2",
+      "when": "cycle==2",
+      "priority": 20,
+      "blocks": [
+        {
+          "id": "F.entry.cycle_2.paragraph.01.01",
+          "type": "narration",
+          "text": "你再次来到珠江边。钓鱼的老人还在——同一个位置，同一根鱼竿。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F.entry.cycle_2.paragraph.02.01",
+          "type": "narration",
+          "text": "这次你注意到：他的鱼线上没有鱼钩。只有一根线垂入水中——像是在钓什么看不见的东西。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F.entry.cycle_2.paragraph.03.01.dialogue",
+          "type": "dialogue",
+          "text": "你又来了。",
+          "speaker_id": "npc_river_fisher",
+          "when": null
+        },
+        {
+          "id": "F.entry.cycle_2.paragraph.03.02.narration",
+          "type": "narration",
+          "text": "他说。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F.entry.cycle_2.paragraph.03.03.dialogue",
+          "type": "dialogue",
+          "text": "大多数人只来一次。你不一样——你还在找。",
+          "speaker_id": "npc_river_fisher",
+          "when": null
+        }
+      ]
+    },
+    {
+      "id": "F.entry.cycle_3+",
+      "when": "cycle>=3",
+      "priority": 30,
+      "blocks": [
+        {
+          "id": "F.entry.cycle_3+.paragraph.01.01",
+          "type": "narration",
+          "text": "第{{cycle_count}}次来到珠江边。钓鱼的老人已经不再介绍自己了——他直接进入正题。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F.entry.cycle_3+.paragraph.02.01.dialogue",
+          "type": "dialogue",
+          "text": "江底有一件袈裟——慧觉的。他在1650年冬天把它沉入江中，用来标记时间裂隙的位置。袈裟在水底发光——三百多年了，还在发光。",
+          "speaker_id": "npc_river_fisher",
+          "when": null
+        },
+        {
+          "id": "F.entry.cycle_3+.paragraph.03.01",
+          "type": "narration",
+          "text": "你看着老人——突然明白了。他不是\"钓鱼人\"。他是陈水生的倒影。真正的陈水生在1650年就已经死了——困在时间裂隙里的人，只能以倒影的形式存在。",
+          "speaker_id": null,
+          "when": null
+        }
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "id": "F_choice_01",
+      "label": "与钓鱼老人（陈水生）交谈",
+      "short_label": "与老人交谈",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 1,
+      "hint": "他从1650年就在这里钓鱼了",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "set_flag",
+          "target": "found_chen_shuisheng_identity",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "F",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "F_choice_02",
+      "label": "从江边石缝中撬出明代碗底残片",
+      "short_label": "撬出瓷片",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 2,
+      "hint": "石缝里有块碎瓷片——和鬼市那块好像是一对的",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_river_porcelain",
+          "value": 1
+        }
+      ],
+      "next": {
+        "node_id": "F",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "F_choice_03",
+      "label": "查看沙面废弃建筑的法文门牌",
+      "short_label": "查看门牌",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 3,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_shamian_doorplate",
+          "value": 1
+        }
+      ],
+      "next": {
+        "node_id": "F",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "F_choice_04",
+      "label": "走向白鹅潭边界",
+      "short_label": "走向白鹅潭",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 4,
+      "hint": "走到白鹅潭尽头——体验渡江。水面倒影中会出现1650年的广州城墙。",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "set_flag",
+          "target": "river_crossed",
+          "value": true
+        },
+        {
+          "type": "damage",
+          "target": "sanity",
+          "value": 8
+        }
+      ],
+      "next": {
+        "node_id": "F",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "F_choice_05",
+      "label": "在露德圣母堂门口静坐恢复",
+      "short_label": "教堂静坐",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 5,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "heal",
+          "target": "sanity",
+          "value": 5
+        }
+      ],
+      "next": {
+        "node_id": "F",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "F_choice_06",
+      "label": "接收江面漂来的河灯纸条",
+      "short_label": "取河灯纸条",
+      "condition": "has_flag:helped_ergou",
+      "locked_visibility": "hide",
+      "repeat_policy": "once_per_visit",
+      "priority": 0,
+      "hint": "江面漂来一盏荷叶河灯——上面好像有东西",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_river_lantern_note",
+          "value": 1
+        },
+        {
+          "type": "set_flag",
+          "target": "ergou_debt_paid",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "F",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "F_choice_07",
+      "label": "前往珠江轮渡码头",
+      "short_label": "轮渡码头",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 20,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "S10",
+        "mode": "travel"
+      }
+    },
+    {
+      "id": "F_choice_08",
+      "label": "探索沙面老建筑内部",
+      "short_label": "沙面老楼",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 21,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "S11",
+        "mode": "travel"
+      }
+    },
+    {
+      "id": "F_choice_09",
+      "label": "去白鹅潭废弃酒吧看看",
+      "short_label": "废弃酒吧",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 22,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "S12",
+        "mode": "travel"
+      }
+    },
+    {
+      "id": "F_choice_10",
+      "label": "前往陈家祠",
+      "short_label": "前往陈家祠",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 99,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "G",
+        "mode": "travel"
+      }
+    }
+  ],
+  "routing": {
+    "crossing": null,
+    "shortcut": null,
+    "warp": null
+  },
+  "authoring": {
+    "linked_sub_nodes": [
+      {
+        "node_id": "S10",
+        "trigger": "经过珠江轮渡码头时可选进入"
+      },
+      {
+        "node_id": "S11",
+        "trigger": "探索沙面老建筑内部"
+      },
+      {
+        "node_id": "S12",
+        "trigger": "进入白鹅潭废弃酒吧"
+      },
+      {
+        "node_id": "S13",
+        "trigger": "经过荔湾湖公园"
+      },
+      {
+        "node_id": "S14",
+        "trigger": "经过恩宁路老照相馆"
+      }
+    ],
+    "npcs_present": [],
+    "scene_items": [],
+    "npc_item_mapping": null,
+    "sensory": "江水腥味、老榕树的气根在风中摇晃、石栏冰凉、远处轮渡汽笛、水面倒影在颤动",
+    "gender_variant": null
+  }
+}

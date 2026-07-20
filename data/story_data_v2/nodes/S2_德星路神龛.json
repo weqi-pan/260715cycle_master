@@ -1,0 +1,144 @@
+{
+  "schema_version": 2,
+  "id": "S2",
+  "meta": {
+    "name": "德星路小巷神龛",
+    "node_type": "normal",
+    "position": 0.0,
+    "time_label": "第一天·傍晚",
+    "parent_node_id": "A",
+    "trigger_condition": "A节点选择'走小巷抄近路'可进入"
+  },
+  "scene": {
+    "background": null,
+    "palette": null,
+    "ambient": null,
+    "atmosphere": []
+  },
+  "entry_sequences": [
+    {
+      "id": "S2.entry.default",
+      "when": null,
+      "priority": 0,
+      "blocks": [
+        {
+          "id": "S2.entry.default.paragraph.01.01",
+          "type": "narration",
+          "text": "德星路岔巷深处，一面老墙上嵌着一座约半人高的砖砌神龛。神龛里面供着一尊看不清面目的神像——被香火熏了几十年，五官已经完全模糊了。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S2.entry.default.paragraph.02.01",
+          "type": "narration",
+          "text": "神龛前的石台上积了厚厚一层香灰——底部是被雨水浸过的硬块，表面是干燥的细粉。旁边散落着几个供果——橘子已经干瘪了，苹果上爬着蚂蚁。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S2.entry.default.paragraph.03.01",
+          "type": "narration",
+          "text": "神龛下方的石碑上刻满了字——大部分是\"保佑平安\"一类的祈福语，密密麻麻地叠了一层又一层。但碑底有一行字不太一样——刻痕很新，像是最近几天才刻上去的：",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S2.entry.default.paragraph.04.01",
+          "type": "narration",
+          "text": "\"2018.7.15 第一天 我不知道发生了什么\"",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S2.entry.default.paragraph.05.01",
+          "type": "narration",
+          "text": "---",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S2.entry.default.paragraph.06.01",
+          "type": "narration",
+          "text": "_（这行字——是和我一样被困在循环里的人刻的？还是上任租客？）_",
+          "speaker_id": null,
+          "when": null
+        }
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "id": "S2_choice_01",
+      "label": "取一些神龛中的香灰",
+      "short_label": "取香灰",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 1,
+      "hint": "供奉多年的香灰——或许有某种力量",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_shrine_incense",
+          "value": 1
+        }
+      ],
+      "next": {
+        "node_id": "S2",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "S2_choice_02",
+      "label": "在石碑底部刻下今天的日期",
+      "short_label": "刻日期",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 2,
+      "hint": "在碑底留下一个标记",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "set_flag",
+          "target": "added_to_shrine_stele",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "S2",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "S2_choice_03",
+      "label": "离开小巷，继续前往德星路",
+      "short_label": "离开",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 99,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "B",
+        "mode": "travel"
+      }
+    }
+  ],
+  "routing": {
+    "crossing": null,
+    "shortcut": null,
+    "warp": null
+  },
+  "authoring": {
+    "linked_sub_nodes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "npc_item_mapping": null,
+    "sensory": null,
+    "gender_variant": null
+  }
+}

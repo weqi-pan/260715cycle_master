@@ -1,0 +1,122 @@
+{
+  "schema_version": 2,
+  "id": "S20",
+  "meta": {
+    "name": "锦纶会馆",
+    "node_type": "normal",
+    "position": 150.0,
+    "time_label": "任意时间·san<40%触发",
+    "parent_node_id": "G",
+    "trigger_condition": "attr:sanity<40 且位于西侧路径时静默开放"
+  },
+  "scene": {
+    "background": null,
+    "palette": null,
+    "ambient": null,
+    "atmosphere": []
+  },
+  "entry_sequences": [
+    {
+      "id": "S20.entry.default",
+      "when": null,
+      "priority": 0,
+      "blocks": [
+        {
+          "id": "S20.entry.default.paragraph.01.01",
+          "type": "narration",
+          "text": "锦纶会馆是广州现存最完整的清代行业会馆——建于雍正年间，原是丝绸商人的聚会场所。现在它被夹在两栋现代高层之间——像一颗被遗忘在牙缝里的米粒。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S20.entry.default.paragraph.02.01",
+          "type": "narration",
+          "text": "会馆的庭院里有一口老井。井口被铁栅栏封着——但铁栅栏的锁是开的。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S20.entry.default.paragraph.03.01",
+          "type": "narration",
+          "text": "井水在深处泛着幽暗的光。如果你趴在井口往下看——能看到水面倒映出的不是你的脸。是一个穿清朝官服的人的脸——在井底仰头看着你。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S20.entry.default.paragraph.04.01",
+          "type": "narration",
+          "text": "_（这口井在地下连通着龙脉。井水从时间裂隙中流过——带着不同时间层的信息。）_",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S20.entry.default.paragraph.05.01",
+          "type": "narration",
+          "text": "如果你打一桶水上来——它会比正常的井水凉得多。凉到能冻伤手指。这是从时间裂隙中渗出的\"原水\"——不是饮水用的。是用来\"清洗\"的。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S20.entry.default.paragraph.06.01",
+          "type": "narration",
+          "text": "用它洗一把脸——你能暂时看到平时看不到的东西。持续大约一个时辰。但每一轮只能使用一次——第二次用就没效果了。",
+          "speaker_id": null,
+          "when": null
+        }
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "id": "S20_choice_01",
+      "label": "打一桶古井水洗脸",
+      "short_label": "打水洗脸",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 1,
+      "hint": "井水很冷——冷到骨头里。洗完脸之后，你暂时能\"看到\"平时看不到的东西。",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "heal",
+          "target": "sanity",
+          "value": 5
+        }
+      ],
+      "next": {
+        "node_id": "S20",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "S20_choice_02",
+      "label": "离开会馆",
+      "short_label": "离开",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 99,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "G",
+        "mode": "travel"
+      }
+    }
+  ],
+  "routing": {
+    "crossing": null,
+    "shortcut": null,
+    "warp": null
+  },
+  "authoring": {
+    "linked_sub_nodes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "npc_item_mapping": null,
+    "sensory": null,
+    "gender_variant": null
+  }
+}

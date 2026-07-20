@@ -1,1 +1,5 @@
-"""后端工具脚本。\n\n独立于 FastAPI 应用的命令行工具。\n\nScripts:\n    import_story — 将 story_data/ JSON 批量导入 SQLite 数据库\n                   用法: python -m backend.scripts.import_story\n"""
+"""后端工具脚本。
+
+剧情 v2 文件由运行时直接读取；使用 ``validate_story_v2.py`` 做严格校验，
+不再把剧情导入 SQLite。
+"""

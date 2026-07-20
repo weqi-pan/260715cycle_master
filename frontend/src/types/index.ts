@@ -7,6 +7,7 @@ export interface GameState {
   visited_nodes: string[]
   endings_reached: string[]
   player_attributes: Record<string, number>
+  persistent_nodes: Record<string, { items: ItemBrief[]; dangers: any[] }>
 }
 
 export interface ItemBrief {
@@ -28,6 +29,14 @@ export interface NodeData {
   ambient?: string
   color_palette?: string
   dialogue_lines?: Array<{ speaker: string; text: string }>
+  entry_blocks?: ContentBlock[]
+}
+
+export interface ContentBlock {
+  id: string
+  type: 'narration' | 'dialogue' | 'system'
+  text: string
+  speaker_id?: string | null
 }
 
 export interface ChoiceResult {
@@ -60,4 +69,5 @@ export interface Frame {
   cycle_event: CycleEvent | null
   transition_text?: string
   scene_effects?: Array<{ type: string; target?: string; value?: any }>
+  result_blocks?: ContentBlock[]
 }

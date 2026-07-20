@@ -8,6 +8,11 @@ export async function startGame(): Promise<Frame> {
   return res.data
 }
 
+export async function resumeGame(state: GameState): Promise<Frame> {
+  const res = await api.post<Frame>('/game/resume', state)
+  return res.data
+}
+
 export async function chooseAction(nodeId: string, choiceId: string, state: GameState): Promise<Frame> {
   const res = await api.post<Frame>(`/game/choose/${nodeId}`, {
     choice_id: choiceId,

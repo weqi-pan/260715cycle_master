@@ -17,8 +17,13 @@
 
 # backend/app/engine/graph.py
 import json
+from typing import TYPE_CHECKING
+
 from sqlalchemy.orm import Session
 from ..models.story import StoryNode as StoryNodeModel, Choice as ChoiceModel
+
+if TYPE_CHECKING:
+    from ..schemas.story_v2 import StoryNodeV2
 
 
 class GraphBundle:
@@ -99,6 +104,60 @@ class GraphBundle:
                 transition_text=c.transition_text,
                 choice_group=c.choice_group,
             ))
+
+    @classmethod
+    def from_story_v2(cls, node: "StoryNodeV2") -> "GraphBundle":
+        """将规范化 v2 节点适配为现有引擎使用的运行时对象。"""
+        bundle = cls.__new__(cls)
+        bundle.id = node.id
+        bundle.name = node.meta.name
+        bundle.position = node.meta.position
+        bundle.node_type = node.meta.node_type
+        bundle.time_label = node.meta.time_label
+
+        default_sequence = next(
+            sequence for sequence in node.entry_sequences if sequence.when is None
+        )
+        bundle.content = "\n\n".join(
+            block.text for block in default_sequence.blocks
+        )
+        bundle.speaker = None
+        bundle.background = node.scene.background
+        bundle.cycle_variants = {}
+        bundle.color_palette = node.scene.palette
+        bundle.ambient = node.scene.ambient
+        bundle.dialogue_lines = []
+        bundle.atmosphere = node.scene.atmosphere
+        bundle.sensory = node.authoring.sensory
+        bundle.gender_variant = node.authoring.gender_variant
+        bundle.parent_node_id = node.meta.parent_node_id
+        bundle.trigger_condition = node.meta.trigger_condition
+        bundle.crossing_config = node.routing.crossing
+        bundle.warp_config = node.routing.warp
+        bundle.shortcut_config = node.routing.shortcut
+        bundle.npc_item_mapping = node.authoring.npc_item_mapping
+        bundle.scene_items = node.authoring.scene_items
+        bundle.choices = [
+            ChoiceData(
+                id=choice.id,
+                from_node_id=node.id,
+                text=choice.label,
+                short_text=choice.short_label,
+                next_node_id=choice.next.node_id,
+                condition=choice.condition,
+                effects=[
+                    effect.model_dump(exclude_none=True)
+                    for effect in choice.effects
+                ],
+                priority=choice.priority,
+                hint=choice.hint,
+                is_hidden_when_locked=choice.locked_visibility == "hide",
+                transition_text=None,
+                choice_group=None,
+            )
+            for choice in sorted(node.choices, key=lambda item: item.priority)
+        ]
+        return bundle
 
     @staticmethod
     def _safe_json(raw: str | None, default):

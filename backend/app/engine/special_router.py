@@ -134,6 +134,12 @@ class SpecialRouter:
         """
         # ── 进入跃迁枢纽 ─────────────────────────────────────
         if choice_id == "__warp_K_enter":
+            warp_node = graph.get("K")
+            if bundle.id == "K" or not warp_node or not warp_node.warp_config:
+                raise ValueError("Warp entry is not available from current node")
+            entry_condition = warp_node.warp_config.get("entry_condition")
+            if not entry_condition or not self.evaluator.check(entry_condition, state):
+                raise ValueError("Warp entry condition is not met")
             return ChoiceData(
                 id=choice_id,
                 from_node_id=bundle.id,
@@ -151,6 +157,12 @@ class SpecialRouter:
         # ── 离开跃迁枢纽 ─────────────────────────────────────
         if choice_id.startswith("__warp_K_exit_"):
             target_id = choice_id.replace("__warp_K_exit_", "")
+            warp_node = graph.get("K")
+            if bundle.id != "K" or not warp_node or not warp_node.warp_config:
+                raise ValueError("Warp exit is only available inside K")
+            targets = warp_node.warp_config.get("warp_targets", [])
+            if target_id not in targets or target_id not in graph:
+                raise ValueError(f"Warp target '{target_id}' is not available")
             return ChoiceData(
                 id=choice_id,
                 from_node_id="K",
@@ -160,7 +172,7 @@ class SpecialRouter:
                 condition=None,
                 effects=[
                     # 跃迁消耗：理智上限 -1（不可逆属性损伤）
-                    {"type": "set_attr", "target": "sanity_max", "value": -1}
+                    {"type": "modify_attr", "target": "sanity_max", "value": -1}
                 ],
                 priority=10,
                 hint="消耗san值上限-1",

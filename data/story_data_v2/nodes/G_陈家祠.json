@@ -1,0 +1,392 @@
+{
+  "schema_version": 2,
+  "id": "G",
+  "meta": {
+    "name": "陈家祠",
+    "node_type": "main",
+    "position": 150.0,
+    "time_label": "第四天·白天 09:00-17:00",
+    "parent_node_id": null,
+    "trigger_condition": null
+  },
+  "scene": {
+    "background": "/assets/bg/chen_academy.jpg",
+    "palette": "青灰+檀木棕+灰塑彩",
+    "ambient": null,
+    "atmosphere": [
+      "厚重",
+      "家族秘密",
+      "历史的交叉点",
+      "信息拼图"
+    ]
+  },
+  "entry_sequences": [
+    {
+      "id": "G.entry.default",
+      "when": null,
+      "priority": 0,
+      "blocks": [
+        {
+          "id": "G.entry.default.paragraph.01.01",
+          "type": "narration",
+          "text": "陈家祠是广州保存最完好的清代宗祠建筑。灰塑的屋脊上盘踞着麒麟和凤凰——它们的琉璃釉彩在百年风雨中依然鲜艳。青砖墙面被岁月打磨得光滑而温润。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "G.entry.default.paragraph.02.01",
+          "type": "narration",
+          "text": "跨进正门——庭院正中是陈氏历代祖先的牌位。空气中有旧木头和古书的气味，混着庭院里桂花树的幽香。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "G.entry.default.paragraph.03.01",
+          "type": "narration",
+          "text": "藏书楼在东侧——不对外开放，门上的锁已经锈死了。但你知道怎么进去：后院的窗栓是假的，轻轻一推就开。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "G.entry.default.paragraph.04.01",
+          "type": "narration",
+          "text": "---",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "G.entry.default.paragraph.05.01",
+          "type": "narration",
+          "text": "中堂墙上嵌着一块巨大的石碑——陈氏谱系图。从一世祖陈伯陶开始，一代一代往下排。在第13代的位置——一个名字被人用刀刮掉了。刀痕很深，几乎穿透了石面。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "G.entry.default.paragraph.06.01",
+          "type": "narration",
+          "text": "被刮掉的名字是陈水生。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "G.entry.default.paragraph.07.01",
+          "type": "narration",
+          "text": "原因写着\"附逆\"——在清兵入城时，他救了不该救的人，藏了不该藏的东西。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "G.entry.default.paragraph.08.01",
+          "type": "narration",
+          "text": "---",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "G.entry.default.paragraph.09.01.narration",
+          "type": "narration",
+          "text": "后院老榕树下，一个扎着脏辫、脖子上挂着GoPro的年轻人正举着手机对着屋脊上的灰塑。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "G.entry.default.paragraph.09.02.dialogue",
+          "type": "dialogue",
+          "text": "各位老铁——我现在在陈家祠！据说这个屋顶上的麒麟眼睛在晚上会发光——不是反光，是自己发光！",
+          "speaker_id": "npc_wu_yingzhi",
+          "when": null
+        },
+        {
+          "id": "G.entry.default.paragraph.09.03.narration",
+          "type": "narration",
+          "text": "他看到你，立刻把镜头转了过来——",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "G.entry.default.paragraph.09.04.dialogue",
+          "type": "dialogue",
+          "text": "哎！这位朋友，你也对广州的灵异传说感兴趣吗？",
+          "speaker_id": "npc_wu_yingzhi",
+          "when": null
+        }
+      ]
+    },
+    {
+      "id": "G.entry.cycle_2",
+      "when": "cycle==2",
+      "priority": 20,
+      "blocks": [
+        {
+          "id": "G.entry.cycle_2.paragraph.01.01",
+          "type": "narration",
+          "text": "你再次来到陈家祠。藏书楼的窗栓还是坏的——上次你进去过了。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "G.entry.cycle_2.paragraph.02.01.narration",
+          "type": "narration",
+          "text": "吴应执今天来得特别早。他架好了三台摄像机——",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "G.entry.cycle_2.paragraph.02.02.dialogue",
+          "type": "dialogue",
+          "text": "这次我要拍到那对眼睛发光的麒麟！老铁们说昨天晚上的直播画面里有个人影——但我没在现场看到任何人。",
+          "speaker_id": "npc_wu_yingzhi",
+          "when": null
+        },
+        {
+          "id": "G.entry.cycle_2.paragraph.03.01",
+          "type": "narration",
+          "text": "你知道那人影是谁。是陈伯陶。他每天在闭馆后都会从某个地方走出来——在庭院里散步。他在等一封回信。等了将近一百年。",
+          "speaker_id": null,
+          "when": null
+        }
+      ]
+    },
+    {
+      "id": "G.entry.cycle_3+",
+      "when": "cycle>=3",
+      "priority": 30,
+      "blocks": [
+        {
+          "id": "G.entry.cycle_3+.paragraph.01.01",
+          "type": "narration",
+          "text": "第{{cycle_count}}次来陈家祠。老榕树的根又粗了一圈——不，这是你的错觉。树根没有变化。变化的是你——你开始能感觉到树根下面的东西了。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "G.entry.cycle_3+.paragraph.02.01",
+          "type": "narration",
+          "text": "后院的那颗雨花石还在树根旁——它被摩挲了几十年，表面光滑得像一面微缩的镜子。你把所有碎片信息在脑海中排列——八棺阵、陈水生、时间裂隙、龙脉——它们开始拼成一幅完整的图。",
+          "speaker_id": null,
+          "when": null
+        }
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "id": "G_choice_01",
+      "label": "潜入藏书楼翻阅陈伯陶日记",
+      "short_label": "翻阅日记",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 1,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_scholar_diary",
+          "value": 1
+        }
+      ],
+      "next": {
+        "node_id": "G",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "G_choice_02",
+      "label": "抄录藏书楼中的县志时间线",
+      "short_label": "抄录县志",
+      "condition": "has_item:item_scholar_diary",
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 2,
+      "hint": "县志中记录了八棺阵的完整时间线——从1650年的封印到1993年的重启",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "set_flag",
+          "target": "timeline_mapped",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "G",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "G_choice_03",
+      "label": "拓印中堂陈氏谱系图",
+      "short_label": "拓印谱系",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 3,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_family_tree",
+          "value": 1
+        },
+        {
+          "type": "set_flag",
+          "target": "found_chen_shuisheng_identity",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "G",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "G_choice_04",
+      "label": "在后院老榕树下静坐沉思",
+      "short_label": "静坐沉思",
+      "condition": "cycle>=3",
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 4,
+      "hint": "把所有碎片信息在脑海中拼在一起——是时候了",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_rainbow_stone",
+          "value": 1
+        },
+        {
+          "type": "set_flag",
+          "target": "memory_synthesis",
+          "value": true
+        },
+        {
+          "type": "heal",
+          "target": "sanity",
+          "value": 10
+        }
+      ],
+      "next": {
+        "node_id": "G",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "G_choice_05",
+      "label": "与吴应执合作拍摄红外异常",
+      "short_label": "合作拍摄",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 5,
+      "hint": "吴应执的摄像机在晚上能拍到肉眼看不到的东西",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "set_flag",
+          "target": "wuying_cooperated",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "G",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "G_choice_06",
+      "label": "前往荔湾湖公园",
+      "short_label": "荔湾湖",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 20,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "S13",
+        "mode": "travel"
+      }
+    },
+    {
+      "id": "G_choice_07",
+      "label": "去恩宁路老照相馆",
+      "short_label": "老照相馆",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 21,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "S14",
+        "mode": "travel"
+      }
+    },
+    {
+      "id": "G_choice_08",
+      "label": "去中山七路天桥",
+      "short_label": "天桥",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 22,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "S15",
+        "mode": "travel"
+      }
+    },
+    {
+      "id": "G_choice_09",
+      "label": "返回康王路方向",
+      "short_label": "前往康王路",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 99,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "H",
+        "mode": "travel"
+      }
+    }
+  ],
+  "routing": {
+    "crossing": null,
+    "shortcut": null,
+    "warp": null
+  },
+  "authoring": {
+    "linked_sub_nodes": [
+      {
+        "node_id": "S13",
+        "trigger": "途经荔湾湖公园"
+      },
+      {
+        "node_id": "S14",
+        "trigger": "途经恩宁路老照相馆"
+      },
+      {
+        "node_id": "S15",
+        "trigger": "途经中山七路天桥"
+      }
+    ],
+    "npcs_present": [
+      "npc_wu_yingzhi",
+      "npc_zhou_mingyuan"
+    ],
+    "scene_items": [],
+    "npc_item_mapping": null,
+    "sensory": "旧木头味、桂花香、古书的纸浆味、灰塑屋脊在阳光下鲜艳得不像清代的东西",
+    "gender_variant": null
+  }
+}

@@ -17,7 +17,7 @@
     │   └── tests/                 ← 单元测试
     ├── frontend/                  ← FRONTEND_DIR
     ├── data/                      ← DATA_DIR
-    │   ├── story_data/            ← 游戏内容 JSON
+    │   ├── story_data_v2/         ← 游戏内容 JSON（唯一数据源）
     │   ├── assets/                ← 静态资源
     │   └── cycle_master.db        ← SQLite 数据库
     ├── docs/                      ← DOCS_DIR
@@ -37,7 +37,9 @@ PROJECT_ROOT = BACKEND_DIR.parent       # cycle_master/
 
 # ── 数据目录（统一管理所有非代码数据） ──────────────────────
 DATA_DIR = PROJECT_ROOT / "data"
-STORY_DATA_DIR = DATA_DIR / "story_data"        # 游戏内容 JSON
+STORY_DATA_V2_DIR = DATA_DIR / "story_data_v2"  # 游戏内容 JSON（v2）
+# 兼容既有导入名；路径已明确指向 v2，不再支持 v1 目录。
+STORY_DATA_DIR = STORY_DATA_V2_DIR
 ASSETS_DIR = DATA_DIR / "assets"                # 静态资源（背景/立绘/音频）
 DATABASE_PATH = DATA_DIR / "cycle_master.db"    # SQLite 数据库
 EXPORTS_DIR = DATA_DIR / "exports"              # 数据导出
@@ -58,7 +60,7 @@ TESTS_DIR = PROJECT_ROOT / "tests"              # E2E 测试
 _required = {
     "BACKEND_DIR": BACKEND_DIR,
     "DATA_DIR": DATA_DIR,
-    "STORY_DATA_DIR": STORY_DATA_DIR,
+    "STORY_DATA_V2_DIR": STORY_DATA_V2_DIR,
 }
 _missing = [f"{name}: {path}" for name, path in _required.items() if not path.exists()]
 if _missing:
@@ -81,6 +83,7 @@ def print_paths():
     p("BACKEND_DIR", BACKEND_DIR)
     p("DATA_DIR", DATA_DIR)
     p("STORY_DATA_DIR", STORY_DATA_DIR)
+    p("STORY_DATA_V2_DIR", STORY_DATA_V2_DIR)
     p("ASSETS_DIR", ASSETS_DIR)
     p("DATABASE_PATH", DATABASE_PATH)
     p("EXPORTS_DIR", EXPORTS_DIR)

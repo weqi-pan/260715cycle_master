@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "test:unit": "node --test tests/playbackTimeline.test.ts",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview"
   },

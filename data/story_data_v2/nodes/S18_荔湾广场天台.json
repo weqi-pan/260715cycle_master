@@ -1,0 +1,134 @@
+{
+  "schema_version": 2,
+  "id": "S18",
+  "meta": {
+    "name": "荔湾广场天台",
+    "node_type": "normal",
+    "position": 175.0,
+    "time_label": "第四天·深夜",
+    "parent_node_id": "H",
+    "trigger_condition": "and:has_flag:saw_2014_girl,H节点天台楼梯间开放"
+  },
+  "scene": {
+    "background": null,
+    "palette": null,
+    "ambient": null,
+    "atmosphere": []
+  },
+  "entry_sequences": [
+    {
+      "id": "S18.entry.default",
+      "when": null,
+      "priority": 0,
+      "blocks": [
+        {
+          "id": "S18.entry.default.paragraph.01.01",
+          "type": "narration",
+          "text": "天台楼梯间的门今晚没有锁。门轴发出刺耳的呻吟——像是一个很久没有人来过的入口。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S18.entry.default.paragraph.02.01",
+          "type": "narration",
+          "text": "天台的风很大——站在上面能看到整个荔湾广场的穹顶在自己脚下。北塔的轮廓在月光中延伸到远处的德星路。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S18.entry.default.paragraph.03.01",
+          "type": "narration",
+          "text": "在一个空调外机的后面——墙角的位置——有人用砖头压着几块红色的陶瓦。瓦面上用修正液写着字。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S18.entry.default.paragraph.04.01",
+          "type": "narration",
+          "text": "\"如果你看到这个，请记得我。我叫——\"",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S18.entry.default.paragraph.05.01",
+          "type": "narration",
+          "text": "名字被雨水冲掉了。修正液在红色陶瓦上留下的白色字迹——只差最后一个字就完成的名字——在雨水反复冲刷后被彻底抹去了。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S18.entry.default.paragraph.06.01",
+          "type": "narration",
+          "text": "_（她知道自己要被忘记了。被所有人——包括时间。所以她把名字写在了不会被循环重置的东西上。但时间找到了办法。）_",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S18.entry.default.paragraph.07.01",
+          "type": "narration",
+          "text": "瓦片旁边放着一只沾满灰尘的毛绒兔子挂件——和消防员在S16说的那只是一样的。它也在循环中出现。",
+          "speaker_id": null,
+          "when": null
+        }
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "id": "S18_choice_01",
+      "label": "取走写着半截名字的红瓦片",
+      "short_label": "取瓦片",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 1,
+      "hint": "带上她的名字——至少还有一个人记得她",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_rooftop_tile",
+          "value": 1
+        },
+        {
+          "type": "set_flag",
+          "target": "found_rooftop_memorial",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "S18",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "S18_choice_02",
+      "label": "放下瓦片，离开天台",
+      "short_label": "离开天台",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 99,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "H",
+        "mode": "travel"
+      }
+    }
+  ],
+  "routing": {
+    "crossing": null,
+    "shortcut": null,
+    "warp": null
+  },
+  "authoring": {
+    "linked_sub_nodes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "npc_item_mapping": null,
+    "sensory": null,
+    "gender_variant": null
+  }
+}

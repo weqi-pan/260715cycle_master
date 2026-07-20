@@ -1,0 +1,991 @@
+{
+  "schema_version": 2,
+  "id": "A",
+  "meta": {
+    "name": "荔湾广场正门",
+    "node_type": "main",
+    "position": 0.0,
+    "time_label": "第一天·傍晚 18:30",
+    "parent_node_id": null,
+    "trigger_condition": null
+  },
+  "scene": {
+    "background": "/assets/bg/liwan_square_sunset.jpg",
+    "palette": "暗红+金色",
+    "ambient": null,
+    "atmosphere": [
+      "暮色",
+      "既视感",
+      "轮回将至",
+      "起点与终点的叠加"
+    ]
+  },
+  "entry_sequences": [
+    {
+      "id": "A.entry.default",
+      "when": null,
+      "priority": 0,
+      "blocks": [
+        {
+          "id": "A.entry.default.paragraph.01.01",
+          "type": "narration",
+          "text": "夕阳将荔湾广场圆弧形穹顶染成暗红色。你站在德星路9号的正门前，抬头看着\"荔湾广场\"四个金色大字——它们在暮色中闪着廉价但诚恳的光。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A.entry.default.paragraph.02.01",
+          "type": "narration",
+          "text": "手机上是租房APP的确认信息：**德星路502房，月租600元**。押一付一。房东的微信头像是一只橘猫。屏幕右上角的时间停在——",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A.entry.default.paragraph.03.01",
+          "type": "narration",
+          "text": "**2018年7月15日，傍晚18:30**",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A.entry.default.paragraph.04.01",
+          "type": "narration",
+          "text": "你刚从地铁站出来，背着一个双肩包，拖着一只行李箱。找到工作了——一家互联网公司的Java开发岗，试用期月薪七千。600块的房租在西关这种位置简直是白捡的。虽然你隐约觉得便宜得有点不对劲——但你告诉自己，老城区嘛，老房子嘛，便宜是正常的。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A.entry.default.paragraph.05.01",
+          "type": "narration",
+          "text": "_（先把入住办了。明天还要去公司报到。）_",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A.entry.default.paragraph.06.01",
+          "type": "narration",
+          "text": "---",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A.entry.default.paragraph.07.01",
+          "type": "narration",
+          "text": "广场B1入口人来人往。卖手机壳的小贩在刷快手，发传单的小哥靠着栏杆打哈欠。一个推着婴儿车的老人从你身边经过，婴儿车里坐着一只白猫——不是婴儿。老人在对猫说粤语。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A.entry.default.paragraph.08.01",
+          "type": "narration",
+          "text": "一切都再正常不过。正常的夏日黄昏，正常的荔湾老城区。正常得仿佛接下来四天发生的一切都只是一个荒唐的梦。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A.entry.default.paragraph.09.01",
+          "type": "narration",
+          "text": "只有门口那对铜狮——在夕阳下沉默地盯着广场深处，像在看管着什么东西。",
+          "speaker_id": null,
+          "when": null
+        }
+      ]
+    },
+    {
+      "id": "A.entry.cycle_2",
+      "when": "cycle==2",
+      "priority": 20,
+      "blocks": [
+        {
+          "id": "A.entry.cycle_2.paragraph.01.01",
+          "type": "narration",
+          "text": "你站在荔湾广场正门前。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A.entry.cycle_2.paragraph.02.01",
+          "type": "narration",
+          "text": "手机上的日期——2018年7月15日，傍晚18:30。和\"上一次\"一模一样。和\"上上一次\"大概也一样。你不太确定上一次是什么时候。那些记忆像是隔着一层毛玻璃——轮廓在，细节没有。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A.entry.cycle_2.paragraph.03.01",
+          "type": "narration",
+          "text": "_（又回来了。这是第几次？）_",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A.entry.cycle_2.paragraph.04.01",
+          "type": "narration",
+          "text": "你的手无意识地伸进口袋——指尖碰到一块粗糙的木头。掏出来看，是一块巴掌大的桃木牌。上面刻着歪歪扭扭的\"平安\"二字。你不记得它是什么时候被放进口袋的。但你知道那是你的。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A.entry.cycle_2.paragraph.05.01",
+          "type": "narration",
+          "text": "---",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A.entry.cycle_2.paragraph.06.01",
+          "type": "narration",
+          "text": "铜狮还在。穹顶还在。夕阳还是那个颜色。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A.entry.cycle_2.paragraph.07.01",
+          "type": "narration",
+          "text": "不一样的是这一次你注意到了——铜狮面朝的方向是反的。一般的石狮子不都面朝外吗？",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A.entry.cycle_2.paragraph.08.01",
+          "type": "narration",
+          "text": "_（它们在看什么？在看广场里面？）_",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A.entry.cycle_2.paragraph.09.01",
+          "type": "narration",
+          "text": "你感到一阵说不清的焦虑。不是恐惧——是一种模糊的、黏着的预感。好像有件很重要的事被忘在记忆深处，怎么也想不起来。",
+          "speaker_id": null,
+          "when": null
+        }
+      ]
+    },
+    {
+      "id": "A.entry.cycle_3+",
+      "when": "cycle>=3",
+      "priority": 30,
+      "blocks": [
+        {
+          "id": "A.entry.cycle_3+.paragraph.01.01",
+          "type": "narration",
+          "text": "第{{cycle_count}}次。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A.entry.cycle_3+.paragraph.02.01",
+          "type": "narration",
+          "text": "你站在荔湾广场正门前。夕阳染红穹顶。手机上的日期停在7月15日18:30。铜狮盯着广场深处。卖手机壳的小贩还在刷快手——他每次都在刷同一个视频。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A.entry.cycle_3+.paragraph.03.01",
+          "type": "narration",
+          "text": "你已经不再对\"回到起点\"感到惊讶。甚至不再感到恐惧。取而代之的是一种奇怪的——习惯。就像每天早上在同一个时间被闹钟叫醒。只是你的\"闹钟\"是死亡或者时间的尽头。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A.entry.cycle_3+.paragraph.04.01",
+          "type": "narration",
+          "text": "_（这次能找到什么不一样的东西？）_",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A.entry.cycle_3+.paragraph.05.01",
+          "type": "narration",
+          "text": "你开始观察那些在第一轮被忽略的东西：铜狮底座上几乎磨平的刻痕、招牌上\"广\"字在特定光线下的变形、台阶砖缝里那枚颜色不对的铜钱——",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A.entry.cycle_3+.paragraph.06.01",
+          "type": "narration",
+          "text": "它们每一轮看起来都一样。但你知道它们不是。",
+          "speaker_id": null,
+          "when": null
+        }
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "id": "A_choice_01",
+      "label": "直接进入广场办理入住",
+      "short_label": "办理入住",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 1,
+      "hint": null,
+      "result_blocks": [
+        {
+          "id": "A_choice_01.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你拉起行李箱，穿过正门的自动感应门。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_01.result.paragraph.02.01",
+          "type": "narration",
+          "text": "广场大厅是典型的九十年代商场装修——米黄色水磨石地面，天花板上隔两米一盏日光灯。有几盏在闪。空气中有一股混合了清洁剂和霉味的气息，不重，但若有若无地飘在鼻腔深处。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_01.result.paragraph.03.01",
+          "type": "narration",
+          "text": "电梯是胶囊形的透明观光梯——曾经是九十年代广州最时髦的设计。玻璃罩上蒙着一层擦不干净的灰。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_01.result.paragraph.04.01",
+          "type": "narration",
+          "text": "电梯门在你面前打开。里面没有人。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_01.result.paragraph.05.01",
+          "type": "narration",
+          "text": "你拖着箱子走了进去。按下5楼。门缓缓合上。透过观光梯的弧形玻璃，你看到大厅地面上自己的影子被黄昏的光拉得很长。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_01.result.paragraph.06.01",
+          "type": "narration",
+          "text": "_（先去房间把东西放下。）_",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
+      "effects": [
+        {
+          "type": "set_flag",
+          "target": "started_standard_path",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "B",
+        "mode": "travel"
+      }
+    },
+    {
+      "id": "A_choice_02",
+      "label": "先在周边转转，熟悉环境",
+      "short_label": "周边转转",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 2,
+      "hint": "可能会发现一些有用的东西",
+      "result_blocks": [
+        {
+          "id": "A_choice_02.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你把行李箱靠在铜狮旁边的石墩上，决定先在广场正门周围走一圈。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_02.result.paragraph.02.01",
+          "type": "narration",
+          "text": "傍晚的荔湾广场正门小广场不大——大约半个篮球场的面积。正中间是一个早已干涸的喷泉池，池底积了一层灰黑色的泥垢和几枚一毛钱的硬币。广场边缘种了一圈矮灌木，修剪得还算整齐。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_02.result.paragraph.03.01",
+          "type": "narration",
+          "text": "你绕着广场慢慢走了一圈。铜狮在西侧，B1入口在东侧。一切都正常——过于正常，像一个精心布置的舞台布景。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_02.result.paragraph.04.01",
+          "type": "narration",
+          "text": "_（再看看还有什么。）_",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_02.result.paragraph.05.01",
+          "type": "narration",
+          "text": "你注意到铜狮的底座上好像有字——虽然几乎被磨平了。台阶上的地砖缝隙颜色不太一样。还有一个位置的砖缝里，好像卡着什么东西，在夕阳下微微反光。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
+      "effects": [
+        {
+          "type": "set_flag",
+          "target": "exploring_surroundings",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "A",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "A_choice_03",
+      "label": "蹲下来仔细看铜狮底座上的刻字",
+      "short_label": "观察铜狮",
+      "condition": "has_flag:exploring_surroundings",
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 3,
+      "hint": "铜狮底座上好像有字",
+      "result_blocks": [
+        {
+          "id": "A_choice_03.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你蹲在铜狮旁边。膝盖压在滚烫的花岗岩地面上——白天暴晒了一整天的石头隔着裤子都能感觉到热度。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_03.result.paragraph.02.01",
+          "type": "narration",
+          "text": "底座侧面确实有一行字。但你凑近了也看不清——不是视力的问题，是刻痕被几十年的风雨和无数只手摸过来摸过去，几乎完全抹平了。你用手指顺着凹痕的方向摸过去——先是指腹，然后是指甲。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_03.result.paragraph.03.01",
+          "type": "narration",
+          "text": "\"镇……守……龙……牙……\"",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_03.result.paragraph.04.01",
+          "type": "narration",
+          "text": "后面的字更难辨认。你换了几个角度，借着夕阳斜打过来的光线——光线沿着石面切过去时，凹陷处的阴影会稍微深一些——",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_03.result.paragraph.05.01",
+          "type": "narration",
+          "text": "_\"永世不出。\"_",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_03.result.paragraph.06.01",
+          "type": "narration",
+          "text": "你站起来，揉了揉蹲麻的膝盖。一行刻在铜狮底座上的字：**\"镇守龙牙，永世不出\"**。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_03.result.paragraph.07.01",
+          "type": "narration",
+          "text": "_（这对铜狮不简单。它们不是装饰品——是镇物。）_",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
+      "effects": [
+        {
+          "type": "set_flag",
+          "target": "found_lion_inscription",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "A",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "A_choice_04",
+      "label": "用纸拓印铜狮底座刻字",
+      "short_label": "拓印刻字",
+      "condition": "has_flag:found_lion_inscription",
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 4,
+      "hint": null,
+      "result_blocks": [
+        {
+          "id": "A_choice_04.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你从背包里翻出一个笔记本——本来是准备记工作笔记的——撕下一页空白纸。没有铅笔。你用钥匙的尖端代替，小心地把纸按在刻字的位置上，沿着字痕的方向用力刮过纸面。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_04.result.paragraph.02.01",
+          "type": "narration",
+          "text": "纸面上渐渐浮出八个凹下去的白字——",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_04.result.paragraph.03.01",
+          "type": "narration",
+          "text": "**\"镇守龙牙，永世不出\"**",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_04.result.paragraph.04.01",
+          "type": "narration",
+          "text": "字迹歪歪扭扭的——不是刻字的工匠歪，是你的拓法太业余。但八个字清清楚楚。你把拓片折好，放进背包的夹层里。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_04.result.paragraph.05.01",
+          "type": "narration",
+          "text": "_（\"永世不出\"。什么东西被关在下面，需要一对铜狮盯着？）_",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_lion_inscription",
+          "value": 1
+        }
+      ],
+      "next": {
+        "node_id": "A",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "A_choice_05",
+      "label": "检查台阶砖缝",
+      "short_label": "检查台阶",
+      "condition": "has_flag:exploring_surroundings",
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 5,
+      "hint": "砖缝里好像卡着什么东西",
+      "result_blocks": [
+        {
+          "id": "A_choice_05.result.paragraph.01.01",
+          "type": "narration",
+          "text": "正门外是六级花岗岩台阶。台阶表面被踩了二十多年，中间部分已经微微凹陷。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_05.result.paragraph.02.01",
+          "type": "narration",
+          "text": "你从第一级台阶开始，一级一级地仔细看砖缝。前两级没什么特别的——几根烟头，一片干枯的榕树叶。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_05.result.paragraph.03.01",
+          "type": "narration",
+          "text": "第三级台阶。在靠近右侧的位置——两块地砖之间的缝隙里——卡着一枚铜钱。绿色的铜锈让它几乎和砖缝的颜色融为一体。如果不是刻意寻找，绝对不会注意到。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_05.result.paragraph.04.01",
+          "type": "narration",
+          "text": "你蹲得更低了一些。铜钱是外圆内方的——清代的形制。正面四个字依稀可辨：\"顺治通宝\"。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_05.result.paragraph.05.01",
+          "type": "narration",
+          "text": "_（三百多年前的铜钱——为什么会在2018年的台阶砖缝里？）_",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_05.result.paragraph.06.01",
+          "type": "narration",
+          "text": "另外——靠近第三级台阶左边，砖缝看起来比周围的要干净一些。不太对。除非——有人最近动过这里的砖缝。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_05.result.paragraph.07.01",
+          "type": "narration",
+          "text": "那下面好像塞着一张折叠的纸条。",
+          "speaker_id": null,
+          "when": "has_flag:A_note_from_H_exists"
+        }
+      ],
+      "effects": [],
+      "next": {
+        "node_id": "A",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "A_choice_06",
+      "label": "用钥匙撬出砖缝里的铜钱",
+      "short_label": "撬出铜钱",
+      "condition": "and:has_flag:exploring_surroundings,not:has_item:item_qing_coin",
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 6,
+      "hint": null,
+      "result_blocks": [
+        {
+          "id": "A_choice_06.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你把出租屋钥匙插进砖缝——钥匙尖端刚好能碰到铜钱的边缘。小心地用力——铜钱在砖缝里轻微转动了一下，发出极细的金属摩擦声。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_06.result.paragraph.02.01",
+          "type": "narration",
+          "text": "来回撬了几次之后，铜钱松动。你用指甲捏住边缘，把它从砖缝里抽了出来。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_06.result.paragraph.03.01",
+          "type": "narration",
+          "text": "铜钱比想象中重。绿色的铜锈覆盖了大部分表面，但\"顺治通宝\"四个楷体字依然清晰。背面是满文，已经被锈蚀得无法辨认。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_06.result.paragraph.04.01",
+          "type": "narration",
+          "text": "你把铜钱放在手心。它是凉的——不是金属的凉，是你在夏天的傍晚摸到一口深井井水的那种凉。那种凉意从掌心一直蔓延到手腕，然后消失。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_06.result.paragraph.05.01",
+          "type": "narration",
+          "text": "铜钱还在砖缝里。和你上次取走的那枚一模一样。你把它撬出来，它在掌心是凉的——和上一枚完全相同的凉意。它们是同一枚铜钱，但现在是两枚了。循环在复制它。",
+          "speaker_id": null,
+          "when": "cycle>=2"
+        }
+      ],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_qing_coin",
+          "value": 1
+        }
+      ],
+      "next": {
+        "node_id": "A",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "A_choice_07",
+      "label": "仔细查看租房信息",
+      "short_label": "查看信息",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 7,
+      "hint": null,
+      "result_blocks": [
+        {
+          "id": "A_choice_07.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你靠在铜狮旁边的石墩上，重新点开租房APP。",
+          "speaker_id": null,
+          "when": "cycle==1"
+        },
+        {
+          "id": "A_choice_07.result.paragraph.02.01",
+          "type": "narration",
+          "text": "订单详情：地址——广州市荔湾区德星路502号。房型——单间，15平方米。月租——**600元**。押一付一。",
+          "speaker_id": null,
+          "when": "cycle==1"
+        },
+        {
+          "id": "A_choice_07.result.paragraph.03.01",
+          "type": "narration",
+          "text": "你盯着\"600元\"这个数字看了很久。广州荔湾——虽然西关是老城区，但德星路这种位置，一个单间的正常月租至少也要1200到1500。",
+          "speaker_id": null,
+          "when": "cycle==1"
+        },
+        {
+          "id": "A_choice_07.result.paragraph.04.01",
+          "type": "narration",
+          "text": "_（太便宜了。便宜得不正常。）_",
+          "speaker_id": null,
+          "when": "cycle==1"
+        },
+        {
+          "id": "A_choice_07.result.paragraph.05.01",
+          "type": "narration",
+          "text": "但你当时还是在APP上点了预订。因为刚毕业，卡里只剩两千块，没有选择。你告诉自己——\"老房子嘛，条件差嘛，便宜是正常的。\"",
+          "speaker_id": null,
+          "when": "cycle==1"
+        },
+        {
+          "id": "A_choice_07.result.paragraph.06.01",
+          "type": "narration",
+          "text": "你再次点开租房APP。同一个订单，同一个价格——月租600元。",
+          "speaker_id": null,
+          "when": "not:cycle==1"
+        },
+        {
+          "id": "A_choice_07.result.paragraph.07.01",
+          "type": "narration",
+          "text": "你的拇指在屏幕上停住了。这个价格不是可疑。这个价格是一个陷阱的参数。六百块的代价是被困在四天四夜的循环里——每个月。",
+          "speaker_id": null,
+          "when": "not:cycle==1"
+        },
+        {
+          "id": "A_choice_07.result.paragraph.08.01",
+          "type": "narration",
+          "text": "你开始翻手机里其他东西。通话记录正常。微信正常。然后你打开了备忘录——",
+          "speaker_id": null,
+          "when": "not:cycle==1"
+        },
+        {
+          "id": "A_choice_07.result.paragraph.09.01",
+          "type": "narration",
+          "text": "备忘录app图标右上角有一个红色小数字。有一条备忘录——你没有印象写过它。",
+          "speaker_id": null,
+          "when": "not:cycle==1"
+        }
+      ],
+      "effects": [
+        {
+          "type": "set_flag",
+          "target": "checked_rental_info",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "A",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "A_choice_08",
+      "label": "查看手机备忘录",
+      "short_label": "查看备忘录",
+      "condition": "and:cycle>=2,has_flag:checked_rental_info",
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 8,
+      "hint": "备忘录图标上有一个红色数字...",
+      "result_blocks": [
+        {
+          "id": "A_choice_08.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你用微微发抖的拇指点开那条备忘录。",
+          "speaker_id": null,
+          "when": "has_flag:memory_synthesis"
+        },
+        {
+          "id": "A_choice_08.result.paragraph.02.01",
+          "type": "narration",
+          "text": "里面的内容不是完整的句子。是一些潦草的词——用拼音和汉字混着打的，像是某个人在极度匆忙之中记下的：",
+          "speaker_id": null,
+          "when": "has_flag:memory_synthesis"
+        },
+        {
+          "id": "A_choice_08.result.paragraph.03.01",
+          "type": "narration",
+          "text": "> \"3:15...地下...八...不要让...镜子...下次提前去华林...\"",
+          "speaker_id": null,
+          "when": "has_flag:memory_synthesis"
+        },
+        {
+          "id": "A_choice_08.result.paragraph.04.01",
+          "type": "narration",
+          "text": "你看不懂这行字——但你的身体看得懂。心跳加速了。手心出汗了。身体记得这些词意味着什么，脑子不记得。",
+          "speaker_id": null,
+          "when": "has_flag:memory_synthesis"
+        },
+        {
+          "id": "A_choice_08.result.paragraph.05.01",
+          "type": "narration",
+          "text": "_（这是我自己写的。上一轮的自己。）_",
+          "speaker_id": null,
+          "when": "has_flag:memory_synthesis"
+        },
+        {
+          "id": "A_choice_08.result.paragraph.06.01",
+          "type": "narration",
+          "text": "备忘录里的内容很碎。只有几个关键词——\"砖缝\"\"别信时间\"\"找刘\"\"小心德\"。你盯着这几个字看了很久。它们什么具体信息都没有——但你知道每个字后面的意思。身体知道。",
+          "speaker_id": null,
+          "when": "not:has_flag:memory_synthesis"
+        }
+      ],
+      "effects": [
+        {
+          "type": "set_flag",
+          "target": "deja_vu_triggered",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "A",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "A_choice_09",
+      "label": "检查口袋里的护身符",
+      "short_label": "检查护身符",
+      "condition": "or:has_item:item_amulet,has_item:item_beads",
+      "locked_visibility": "hide",
+      "repeat_policy": "once_per_visit",
+      "priority": 0,
+      "hint": null,
+      "result_blocks": [
+        {
+          "id": "A_choice_09.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你把那块巴掌大的桃木牌从口袋里掏出来。",
+          "speaker_id": null,
+          "when": "has_item:item_amulet"
+        },
+        {
+          "id": "A_choice_09.result.paragraph.02.01",
+          "type": "narration",
+          "text": "木牌正面刻着歪歪扭扭的\"平安\"二字——刻痕很浅，像是在仓促之间匆匆完成的。边缘因常年被握在手中而磨得光滑发亮。",
+          "speaker_id": null,
+          "when": "has_item:item_amulet"
+        },
+        {
+          "id": "A_choice_09.result.paragraph.03.01",
+          "type": "narration",
+          "text": "护身符是阿六的。一个被强征入伍的农家少年，在1650年的冬天躲在柴房后面发抖。他的母亲在他被征走那天早上，用厨房的菜刀匆匆刻了这块木牌塞进他手里——\"平安。\"",
+          "speaker_id": null,
+          "when": "has_item:item_amulet"
+        },
+        {
+          "id": "A_choice_09.result.paragraph.04.01",
+          "type": "narration",
+          "text": "你握着护身符。它微微发温——不是物理温度。在每一次循环重置、一切回到原点的时候——这块木牌没有消失。它在你口袋里，像是在提醒你：_（上一次循环发生的事——是真的。不是梦。）_",
+          "speaker_id": null,
+          "when": "has_item:item_amulet"
+        },
+        {
+          "id": "A_choice_09.result.paragraph.05.01",
+          "type": "narration",
+          "text": "你把手伸进口袋，指尖碰到一串光滑温润的珠子。",
+          "speaker_id": null,
+          "when": "not:has_item:item_amulet"
+        },
+        {
+          "id": "A_choice_09.result.paragraph.06.01",
+          "type": "narration",
+          "text": "菩提子念珠——108颗，深褐色的。慧觉和尚的念珠。他在1650年冬天的巷口诵经，捻着这串珠子，为死者超度。他把念珠交给你的时候说了一句话——\"这也是一种修行。\"",
+          "speaker_id": null,
+          "when": "not:has_item:item_amulet"
+        },
+        {
+          "id": "A_choice_09.result.paragraph.07.01",
+          "type": "narration",
+          "text": "108颗菩提子——代表108种烦恼。每捻过一圈，烦恼就少一轮。但你的烦恼是循环的——每四天重置一次，像念珠绕了一圈回到原点。",
+          "speaker_id": null,
+          "when": "not:has_item:item_amulet"
+        },
+        {
+          "id": "A_choice_09.result.paragraph.08.01",
+          "type": "narration",
+          "text": "它在你手指间留下的触感——温润、沉默、坚定——让你短暂地感到了一丝安定。",
+          "speaker_id": null,
+          "when": "not:has_item:item_amulet"
+        }
+      ],
+      "effects": [
+        {
+          "type": "heal",
+          "target": "sanity",
+          "value": 3
+        },
+        {
+          "type": "set_flag",
+          "target": "checked_pocket_item",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "A",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "A_choice_10",
+      "label": "检查台阶砖缝中的遗留纸条",
+      "short_label": "检查纸条",
+      "condition": "and:has_flag:exploring_surroundings,has_flag:A_note_from_H_exists",
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 5,
+      "hint": "那个砖缝看起来被动过...",
+      "result_blocks": [
+        {
+          "id": "A_choice_10.result.paragraph.01.01",
+          "type": "narration",
+          "text": "纸条上的字迹已经模糊了——热敏纸上的圆珠笔油墨在砖缝里待了太久，被潮气洇开了。你只能依稀辨认出一两个字——\"3:15\"、\"小心\"——其余的都成了一团蓝色污渍。",
+          "speaker_id": null,
+          "when": "half_cycle>=2"
+        },
+        {
+          "id": "A_choice_10.result.paragraph.02.01",
+          "type": "narration",
+          "text": "_（太晚了。上一轮的自己留下的信息——过期了。）_",
+          "speaker_id": null,
+          "when": "half_cycle>=2"
+        },
+        {
+          "id": "A_choice_10.result.paragraph.03.01",
+          "type": "narration",
+          "text": "你蹲下来，用指尖轻轻拨开表面的浮土。下面是一张折叠得整整齐齐的小纸条——便利店收据的背面，用圆珠笔写的字。字迹潦草但能辨认——是你的笔迹。",
+          "speaker_id": null,
+          "when": "not:half_cycle>=2"
+        },
+        {
+          "id": "A_choice_10.result.paragraph.04.01",
+          "type": "narration",
+          "text": "你从来没有在这里写过字。但这就是你的笔迹——圆珠笔用力很深，每个字的收笔都习惯性地往右上方挑一下。",
+          "speaker_id": null,
+          "when": "not:half_cycle>=2"
+        },
+        {
+          "id": "A_choice_10.result.paragraph.05.01",
+          "type": "narration",
+          "text": "_（我不记得写过这个。但这是我写的。上一轮的我写的。）_",
+          "speaker_id": null,
+          "when": "not:half_cycle>=2"
+        },
+        {
+          "id": "A_choice_10.result.paragraph.06.01",
+          "type": "narration",
+          "text": "你把纸条重新叠好，放进口袋。这张纸条比任何道具都重要——它是\"上一个自己\"留给\"现在的自己\"的信息。",
+          "speaker_id": null,
+          "when": "not:half_cycle>=2"
+        }
+      ],
+      "effects": [
+        {
+          "type": "set_flag",
+          "target": "found_own_note",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "A",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "A_choice_11",
+      "label": "前往B1入口看看",
+      "short_label": "B1入口",
+      "condition": "has_flag:exploring_surroundings",
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 20,
+      "hint": "往负一层的电梯还在运行",
+      "result_blocks": [
+        {
+          "id": "A_choice_11.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你朝B1入口走去。扶手电梯往下，通往负一层珠宝卖场。傍晚六点半，还有几个顾客从下面走上来——手里提着珠宝店的纸袋。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_11.result.paragraph.02.01",
+          "type": "narration",
+          "text": "电梯旁的消防通道门虚掩着，门缝里透出一股异常阴冷的风。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_11.result.paragraph.03.01",
+          "type": "narration",
+          "text": "你往下走了一步。B1层的空气比地面凉了好几度——不是空调的凉，是地下室的那种凉。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
+      "effects": [],
+      "next": {
+        "node_id": "S1",
+        "mode": "travel"
+      }
+    },
+    {
+      "id": "A_choice_12",
+      "label": "走小巷抄近路去德星路",
+      "short_label": "走小巷",
+      "condition": "has_flag:exploring_surroundings",
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 21,
+      "hint": "旁边有一条岔巷",
+      "result_blocks": [
+        {
+          "id": "A_choice_12.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你拐进正门旁边的小巷。巷子很窄，两侧是旧居民楼。这里比大街上安静得多——安静得让人不自觉地放轻了脚步。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_12.result.paragraph.02.01",
+          "type": "narration",
+          "text": "巷子深处好像有什么东西——一个小小的、嵌在墙上的神龛。不是供神像的。供的是一块石碑。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "A_choice_12.result.paragraph.03.01",
+          "type": "narration",
+          "text": "你朝它走去。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
+      "effects": [],
+      "next": {
+        "node_id": "S2",
+        "mode": "travel"
+      }
+    }
+  ],
+  "routing": {
+    "crossing": null,
+    "shortcut": null,
+    "warp": null
+  },
+  "authoring": {
+    "linked_sub_nodes": [
+      {
+        "node_id": "S1",
+        "trigger": "A节点选择'先在周边转转'后可进入B1入口探索"
+      },
+      {
+        "node_id": "S2",
+        "trigger": "A节点选择'走小巷抄近路'可进入德星路神龛"
+      }
+    ],
+    "npcs_present": [],
+    "scene_items": [],
+    "npc_item_mapping": null,
+    "sensory": "暖风、远处人声、卤味八角香、B1入口涌上的地下凉风、铜狮被晒热的金属气味",
+    "gender_variant": null
+  }
+}

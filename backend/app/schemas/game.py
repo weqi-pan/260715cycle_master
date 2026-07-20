@@ -16,6 +16,7 @@ Frame 是一帧完整的游戏画面数据，包含当前节点、更新后的�
 # backend/app/schemas/game.py
 from pydantic import BaseModel, Field
 from typing import Optional, Any
+from .story_v2 import ContentBlock
 
 
 # ============================================================
@@ -66,15 +67,15 @@ class GameState(BaseModel):
     current_node_id: str
     cycle_count: int = 0
     half_cycle_count: int = 0
-    inventory: list[dict] = []
-    flags: dict[str, Any] = {}
-    visited_nodes: list[str] = []
-    endings_reached: list[str] = []
+    inventory: list[dict] = Field(default_factory=list)
+    flags: dict[str, Any] = Field(default_factory=dict)
+    visited_nodes: list[str] = Field(default_factory=list)
+    endings_reached: list[str] = Field(default_factory=list)
     # 玩家属性默认值：理智 100、勇气 5、灵感 3
     player_attributes: dict[str, int] = Field(
         default_factory=lambda: {"sanity": 100, "courage": 5, "insight": 3}
     )
-    persistent_nodes: dict[str, dict] = {}
+    persistent_nodes: dict[str, dict] = Field(default_factory=dict)
 
 
 # ============================================================
@@ -99,7 +100,9 @@ class NodeData(BaseModel):
     speaker_avatar: Optional[str] = None  # 说话人头像资源路径
     background: Optional[str] = None  # 背景图资源路径
     ambient: Optional[str] = None    # 环境音效资源路径
-    dialogue_lines: list[dict] = []  # 角色对话行 [{speaker, text}]
+    color_palette: Optional[str] = None  # 场景色调提示
+    dialogue_lines: list[dict] = Field(default_factory=list)  # 角色对话行 [{speaker, text}]
+    entry_blocks: list[ContentBlock] = Field(default_factory=list)
 
 
 class ChoiceResult(BaseModel):
@@ -125,9 +128,9 @@ class PersistentFound(BaseModel):
     当引擎将玩家推进到一个节点时，检查该节点是否有上一轮循环遗留的
     道具或危险。如果有，通过本结构告知前端以触发对应的 UI 展示。
     """
-    items: list[dict] = []              # 遗留的可拾取道具
-    cross_surface_items: list[dict] = []  # 跨面共享道具（A↔E 莫比乌斯扭转）
-    dangers: list[dict] = []            # 遗留的危险
+    items: list[dict] = Field(default_factory=list)              # 遗留的可拾取道具
+    cross_surface_items: list[dict] = Field(default_factory=list)  # 跨面共享道具（A↔E 莫比乌斯扭转）
+    dangers: list[dict] = Field(default_factory=list)            # 遗留的危险
 
 
 # ============================================================
@@ -152,11 +155,12 @@ class Frame(BaseModel):
     """
     node: NodeData
     state: GameState
-    available_choices: list[ChoiceResult] = []
-    persistent_found: PersistentFound = PersistentFound()
+    available_choices: list[ChoiceResult] = Field(default_factory=list)
+    persistent_found: PersistentFound = Field(default_factory=PersistentFound)
     cycle_event: Optional[dict] = None
     transition_text: Optional[str] = None
-    scene_effects: list[dict] = []
+    scene_effects: list[dict] = Field(default_factory=list)
+    result_blocks: list[ContentBlock] = Field(default_factory=list)
 
 
 # ============================================================

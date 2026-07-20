@@ -1,14 +1,7 @@
 <!-- CycleMap.vue — Mobius strip ring minimap -->
 <template>
-  <div class="cycle-map" :class="{ expanded: show }">
-    <button class="map-toggle" @click="show = !show" :title="show ? '收起' : '环形地图'">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <circle cx="12" cy="12" r="10" />
-        <path d="M2 12c0-3 2-6 6-8" stroke-dasharray="3 2" />
-        <circle cx="12" cy="12" r="2" fill="currentColor" />
-      </svg>
-    </button>
-    <svg v-if="show" class="map-svg" viewBox="-60 -60 120 120" width="160" height="160">
+  <div class="cycle-map expanded">
+    <svg class="map-svg" viewBox="-60 -60 120 120" width="160" height="160">
       <!-- Ring -->
       <circle cx="0" cy="0" r="45" fill="none" stroke="rgba(180,150,100,0.15)" stroke-width="1" />
       <!-- Mobius twist hint -->
@@ -31,15 +24,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps<{
   currentId: string
   visitedIds: string[]
   hasWarpAccess?: boolean
 }>()
-
-const show = ref(false)
 
 const nodePositions: Record<string, { angle: number; labelR: number }> = {
   A: { angle: -90,  labelR: 55 },  // top

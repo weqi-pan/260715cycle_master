@@ -23,6 +23,8 @@
 """
 
 # backend/app/engine/engine.py
+import re
+
 from .graph import GraphBundle, ChoiceData
 from .condition_eval import ConditionEvaluator
 from .special_router import SpecialRouter
@@ -57,6 +59,21 @@ class GameEngine:
         """初始化引擎，创建条件求值器和特殊路由器。"""
         self.evaluator = ConditionEvaluator()
         self.special_router = SpecialRouter(self.evaluator)
+
+    # 进入 A/E 本身不足以证明完成循环。只有明确的拓扑入口才产生领域事件。
+    # v2 Turn 契约接入后，这两个集合将由 NextAction.navigation 取代。
+    FULL_CYCLE_ENTRY_SOURCES = {"H"}
+    HALF_CYCLE_ENTRY_EDGES = {("D", "E"), ("J", "A")}
+    CONTROL_BLOCK_RE = re.compile(
+        r"\{\{#if\s+([^}]+)\}\}(.*?)\{\{/if\}\}",
+        re.IGNORECASE | re.DOTALL,
+    )
+    DISPLAY_EFFECT_RE = re.compile(
+        r"\[(?:flag\s*[：:]|san(?:值(?:上限)?|ity(?:_max)?)?\s*[+\-]|"
+        r"courage\s*[+\-]|insight\s*[+\-]|获得道具\s*[：:]|"
+        r"燕妍加入同行\s*[—-])[^\]]*\]",
+        re.IGNORECASE,
+    )
 
     # ============================================================
     # 核心入口：process_choice
@@ -96,6 +113,13 @@ class GameEngine:
         抛出:
             ValueError: 选项不存在或条件不满足
         """
+        if node_id not in graph:
+            raise ValueError(f"Node '{node_id}' not found")
+        if state.current_node_id != node_id:
+            raise ValueError(
+                f"State node mismatch: path='{node_id}', "
+                f"state='{state.current_node_id}'"
+            )
         bundle = graph[node_id]
 
         # ① 选项解析 — 区分常规选项与特殊路由选项
@@ -127,12 +151,21 @@ class GameEngine:
         self._apply_effects(all_effects, state, node_id)
 
         # ⑤ 节点跳转 — 将玩家移动到选项指向的目标节点
+        if choice.next_node_id not in graph:
+            raise ValueError(f"Target node '{choice.next_node_id}' not found")
         next_bundle = graph[choice.next_node_id]
         state.current_node_id = next_bundle.id
 
-        # ⑥ 循环检测 — 回到起点 A = 一次完整循环完成
+        # ⑥ 循环检测 — 排除 A→A/S1→A 等局部返回
         cycle_event = None
-        if next_bundle.id == "A" and len(state.visited_nodes) > 0:
+        if (node_id, next_bundle.id) in self.HALF_CYCLE_ENTRY_EDGES:
+            state.half_cycle_count += 1
+
+        if (
+            next_bundle.id == "A"
+            and node_id in self.FULL_CYCLE_ENTRY_SOURCES
+            and len(state.visited_nodes) > 0
+        ):
             state.cycle_count += 1          # 完整循环计数 +1
             state.visited_nodes = []        # 清空本轮访问记录（开始新一轮）
             cycle_event = {
@@ -176,13 +209,18 @@ class GameEngine:
                 speaker=next_bundle.speaker,
                 background=next_bundle.background,
                 ambient=next_bundle.ambient,
+                color_palette=next_bundle.color_palette,
                 dialogue_lines=next_bundle.dialogue_lines,
             ),
             state=state,
             available_choices=available,
             persistent_found=persistent,
             cycle_event=cycle_event,
-            transition_text=choice.transition_text,
+            transition_text=(
+                self._resolve_text(choice.transition_text, state)
+                if choice.transition_text
+                else None
+            ),
             scene_effects=scene_effects,
         )
 
@@ -219,7 +257,18 @@ class GameEngine:
         for c in bundle.choices:
             available = self.evaluator.check(c.condition, state)
             if not available:
-                continue  # 条件不满足的选项不显示
+                if c.is_hidden_when_locked:
+                    continue
+                results.append(ChoiceResult(
+                    id=c.id,
+                    text=c.text,
+                    short_text=c.short_text,
+                    next_node_id=c.next_node_id,
+                    available=False,
+                    reason=self.evaluator.describe_condition(c.condition),
+                    source="static",
+                ))
+                continue
             # 互斥选项组：如果同组已有选项被选中，则隐藏
             if c.choice_group and state.flags.get(f"_group_{c.choice_group}_chosen"):
                 continue
@@ -295,9 +344,19 @@ class GameEngine:
             value = effect.get("value")    # 效果值
 
             if etype == "add_item":
-                # 向背包添加道具（name 字段用于 UI 显示，映射为中文名）
+                # 相同 ID 合并数量，避免重复条目破坏背包语义。
                 item_name = ConditionEvaluator.ITEM_NAMES.get(target, target)
-                state.inventory.append({"id": target, "name": item_name, "count": value})
+                existing = next(
+                    (item for item in state.inventory if item.get("id") == target),
+                    None,
+                )
+                amount = value if isinstance(value, (int, float)) else 1
+                if existing:
+                    existing["count"] = existing.get("count", 1) + amount
+                else:
+                    state.inventory.append(
+                        {"id": target, "name": item_name, "count": amount}
+                    )
 
             elif etype == "remove_item":
                 # 从背包移除指定 ID 的道具
@@ -325,6 +384,18 @@ class GameEngine:
                 # 属性直接赋值
                 state.player_attributes[target] = value
 
+            elif etype == "modify_attr":
+                # 属性增量修改，用于 sanity_max -1 等不可逆代价。
+                # 旧存档没有 sanity_max 时，以当前 sanity（通常为 100）为上限基准，
+                # 避免第一次跃迁把上限从不存在直接改成 -1。
+                if target == "sanity_max":
+                    attr = state.player_attributes.get(
+                        target, state.player_attributes.get("sanity", 100)
+                    )
+                else:
+                    attr = state.player_attributes.get(target, 0)
+                state.player_attributes[target] = attr + value
+
             elif etype == "leave_item":
                 # 在当前节点遗留道具（下次访问该节点时可发现）
                 pd = state.persistent_nodes.setdefault(
@@ -342,6 +413,9 @@ class GameEngine:
             elif etype in ("notify", "shake", "flash"):
                 # 场景特效：不改变状态，仅在 scene_effects 列表中传递给前端
                 pass
+
+            else:
+                raise ValueError(f"Unknown effect type: {etype}")
 
     def _resolve_content(self, bundle: GraphBundle, state: GameState) -> str:
         """
@@ -383,10 +457,29 @@ class GameEngine:
                     if variants[key]:
                         content = variants[key]
 
-        # ── 第二步：{{变量}} 模板替换 ────────────────────────
-        content = content.replace("{{cycle_count}}", str(state.cycle_count))
-        content = content.replace("{{half_cycle_count}}", str(state.half_cycle_count))
-        for attr_name, attr_val in state.player_attributes.items():
-            content = content.replace(f"{{{{attr:{attr_name}}}}}", str(attr_val))
+        return self._resolve_text(content, state)
 
-        return content
+    def _resolve_text(self, text: str, state: GameState) -> str:
+        """解析 v1 兼容文本中的条件块、变量和重复效果标记。"""
+        previous = None
+        while previous != text:
+            previous = text
+
+            def replace_block(match: re.Match) -> str:
+                condition = match.group(1).strip()
+                body = match.group(2)
+                positive, separator, negative = body.partition("{{else}}")
+                return (
+                    positive
+                    if self.evaluator.evaluate(condition, state)
+                    else negative if separator else ""
+                )
+
+            text = self.CONTROL_BLOCK_RE.sub(replace_block, text)
+
+        text = text.replace("{{cycle_count}}", str(state.cycle_count))
+        text = text.replace("{{half_cycle_count}}", str(state.half_cycle_count))
+        for attr_name, attr_val in state.player_attributes.items():
+            text = text.replace(f"{{{{attr:{attr_name}}}}}", str(attr_val))
+        text = self.DISPLAY_EFFECT_RE.sub("", text)
+        return re.sub(r"\n{3,}", "\n\n", text).strip()

@@ -1,0 +1,120 @@
+{
+  "schema_version": 2,
+  "id": "S13",
+  "meta": {
+    "name": "荔湾湖公园",
+    "node_type": "normal",
+    "position": 125.0,
+    "time_label": "第四天·白天",
+    "parent_node_id": "F",
+    "trigger_condition": "F→G路径中可选经过荔湾湖公园"
+  },
+  "scene": {
+    "background": null,
+    "palette": null,
+    "ambient": null,
+    "atmosphere": []
+  },
+  "entry_sequences": [
+    {
+      "id": "S13.entry.default",
+      "when": null,
+      "priority": 0,
+      "blocks": [
+        {
+          "id": "S13.entry.default.paragraph.01.01",
+          "type": "narration",
+          "text": "荔湾湖公园在白天是老年人的天地——下棋的、唱粤剧的、遛鸟的。湖心亭里有人拉二胡，声音在水面上飘得很远。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S13.entry.default.paragraph.02.01",
+          "type": "narration",
+          "text": "但你走到湖边时——水面上的倒影不太对。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S13.entry.default.paragraph.03.01",
+          "type": "narration",
+          "text": "你自己的倒影有几秒的延迟。你举起手——水里的你慢了一拍。风吹过湖面，涟漪扩散——但你的倒影没有跟着涟漪一起动。它静止了。静止了大约两秒，然后突然追上了你的动作。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S13.entry.default.paragraph.04.01",
+          "type": "narration",
+          "text": "你不止在镜子里看到了延迟——你在水里也看到了。时间裂隙不仅在荔湾广场地下——它在蔓延。荔湾湖的湖水连通着地下水脉——而地下水脉连通着龙脉。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S13.entry.default.paragraph.05.01",
+          "type": "narration",
+          "text": "_（裂隙在扩大。每一次循环，它都在往外扩张几厘米。）_",
+          "speaker_id": null,
+          "when": null
+        }
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "id": "S13_choice_01",
+      "label": "长时间注视湖面倒影",
+      "short_label": "注视湖面",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 1,
+      "hint": "水面倒影的延迟越来越大——你看到了更多东西",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "set_flag",
+          "target": "lake_reflection_seen",
+          "value": true
+        },
+        {
+          "type": "damage",
+          "target": "sanity",
+          "value": 2
+        }
+      ],
+      "next": {
+        "node_id": "S13",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "S13_choice_02",
+      "label": "离开荔湾湖",
+      "short_label": "离开",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 99,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "G",
+        "mode": "travel"
+      }
+    }
+  ],
+  "routing": {
+    "crossing": null,
+    "shortcut": null,
+    "warp": null
+  },
+  "authoring": {
+    "linked_sub_nodes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "npc_item_mapping": null,
+    "sensory": null,
+    "gender_variant": null
+  }
+}

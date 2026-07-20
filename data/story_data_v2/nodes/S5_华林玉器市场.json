@@ -1,0 +1,137 @@
+{
+  "schema_version": 2,
+  "id": "S5",
+  "meta": {
+    "name": "华林玉器市场·李氏玉器摊",
+    "node_type": "normal",
+    "position": 50.0,
+    "time_label": "第二天·白天/下午",
+    "parent_node_id": "C",
+    "trigger_condition": "and:cycle>=3,has_flag:helped_ergou"
+  },
+  "scene": {
+    "background": null,
+    "palette": null,
+    "ambient": null,
+    "atmosphere": []
+  },
+  "entry_sequences": [
+    {
+      "id": "S5.entry.default",
+      "when": null,
+      "priority": 0,
+      "blocks": [
+        {
+          "id": "S5.entry.default.paragraph.01.01",
+          "type": "narration",
+          "text": "华林寺旁边的玉器市场，数百个摊位密密麻麻排列。翡翠、和田玉、玛瑙——各种玉石在射灯下闪着温润的光。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S5.entry.default.paragraph.02.01",
+          "type": "narration",
+          "text": "在一个不起眼的角落摊位上，坐着一个三十多岁的摊主。他正用绒布心不在焉地擦拭一块玉牌。摊位上的招牌写着\"李记玉器\"。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S5.entry.default.paragraph.03.01",
+          "type": "narration",
+          "text": "他抬头看了你一眼——目光在你身上停了一下。不是打量顾客的那种看。是那种——好像在确认什么东西。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S5.entry.default.paragraph.04.01.dialogue",
+          "type": "dialogue",
+          "text": "你是那个帮过我祖宗的人。",
+          "speaker_id": "npc_li_mingchen",
+          "when": null
+        },
+        {
+          "id": "S5.entry.default.paragraph.04.02.narration",
+          "type": "narration",
+          "text": "他说。不是你帮了他——是你帮了他的祖宗。三百六十八年前的事。他不知道你的脸。但他认得你身上的“不属于这个时代”的东西。",
+          "speaker_id": null,
+          "when": null
+        }
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "id": "S5_choice_01",
+      "label": "收下传家玉佩，感谢李铭宸",
+      "short_label": "收下玉佩",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 1,
+      "hint": "这面玉佩传了十一代——它在等你",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_jade_pendant",
+          "value": 1
+        }
+      ],
+      "next": {
+        "node_id": "D",
+        "mode": "travel"
+      }
+    },
+    {
+      "id": "S5_choice_02",
+      "label": "追问李氏家族与八棺阵的历史",
+      "short_label": "追问历史",
+      "condition": "has_flag:helped_ergou",
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 2,
+      "hint": "了解更多关于1650年封印的秘辛",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "set_flag",
+          "target": "li_mingchen_story_heard",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "S5",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "S5_choice_03",
+      "label": "婉拒玉佩，离开",
+      "short_label": "婉拒离开",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 99,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "D",
+        "mode": "travel"
+      }
+    }
+  ],
+  "routing": {
+    "crossing": null,
+    "shortcut": null,
+    "warp": null
+  },
+  "authoring": {
+    "linked_sub_nodes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "npc_item_mapping": null,
+    "sensory": null,
+    "gender_variant": null
+  }
+}

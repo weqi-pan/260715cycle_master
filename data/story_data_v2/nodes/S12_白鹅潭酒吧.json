@@ -1,0 +1,120 @@
+{
+  "schema_version": 2,
+  "id": "S12",
+  "meta": {
+    "name": "白鹅潭废弃酒吧",
+    "node_type": "normal",
+    "position": 125.0,
+    "time_label": "第三天·深夜",
+    "parent_node_id": "F",
+    "trigger_condition": "F节点延伸探索可选进入白鹅潭废弃酒吧"
+  },
+  "scene": {
+    "background": null,
+    "palette": null,
+    "ambient": null,
+    "atmosphere": []
+  },
+  "entry_sequences": [
+    {
+      "id": "S12.entry.default",
+      "when": null,
+      "priority": 0,
+      "blocks": [
+        {
+          "id": "S12.entry.default.paragraph.01.01",
+          "type": "narration",
+          "text": "白鹅潭边上一家已经废弃多年的酒吧。招牌只剩下一半——\"江\"字还在，\"景\"字掉在门口的花坛里。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S12.entry.default.paragraph.02.01",
+          "type": "narration",
+          "text": "酒吧内部昏暗潮湿。吧台上积了一层灰，但有一只玻璃杯是干净的——杯壁上还挂着水珠，像是刚有人用过。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S12.entry.default.paragraph.03.01",
+          "type": "narration",
+          "text": "吧台后面的酒架上，所有的酒瓶都空了——除了一瓶。那是一瓶没有标签的透明液体。不是酒——闻起来没有酒精味。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S12.entry.default.paragraph.04.01",
+          "type": "narration",
+          "text": "_（这是水。珠江的水。但它在这里放了很久——比这栋建筑还要久。）_",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S12.entry.default.paragraph.05.01",
+          "type": "narration",
+          "text": "如果你喝了这杯水——你会短暂地看到一些东西。不是幻觉——是记忆。珠江的记忆。这条江在1650年看到了什么。它在几百年间看到了什么。水流承载记忆——而时间裂隙把一部分记忆困在了这杯水里。",
+          "speaker_id": null,
+          "when": null
+        }
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "id": "S12_choice_01",
+      "label": "喝下那杯水",
+      "short_label": "喝水",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 1,
+      "hint": "喝下珠江的记忆——你会看到1650年。之后几秒，san值会下降——但H节点不会触发血月。",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "set_flag",
+          "target": "drank_river_water",
+          "value": true
+        },
+        {
+          "type": "damage",
+          "target": "sanity",
+          "value": 5
+        }
+      ],
+      "next": {
+        "node_id": "S12",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "S12_choice_02",
+      "label": "离开酒吧",
+      "short_label": "离开",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 99,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "F",
+        "mode": "travel"
+      }
+    }
+  ],
+  "routing": {
+    "crossing": null,
+    "shortcut": null,
+    "warp": null
+  },
+  "authoring": {
+    "linked_sub_nodes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "npc_item_mapping": null,
+    "sensory": null,
+    "gender_variant": null
+  }
+}

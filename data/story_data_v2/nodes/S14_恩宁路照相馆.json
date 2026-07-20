@@ -1,0 +1,136 @@
+{
+  "schema_version": 2,
+  "id": "S14",
+  "meta": {
+    "name": "恩宁路老照相馆",
+    "node_type": "normal",
+    "position": 125.0,
+    "time_label": "第四天·白天",
+    "parent_node_id": "F",
+    "trigger_condition": "F→G路径中经过恩宁路时可选进入"
+  },
+  "scene": {
+    "background": null,
+    "palette": null,
+    "ambient": null,
+    "atmosphere": []
+  },
+  "entry_sequences": [
+    {
+      "id": "S14.entry.default",
+      "when": null,
+      "priority": 0,
+      "blocks": [
+        {
+          "id": "S14.entry.default.paragraph.01.01",
+          "type": "narration",
+          "text": "恩宁路这家老照相馆已经开了三代人。橱窗里陈列着几十年前的老照片——黑白结婚照、全家福、毕业合影。每张照片上的人都在笑。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S14.entry.default.paragraph.02.01.narration",
+          "type": "narration",
+          "text": "照相馆的老师傅正在暗房里冲洗底片。他看到你进来，摘下手套——",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S14.entry.default.paragraph.02.02.dialogue",
+          "type": "dialogue",
+          "text": "后生仔，我冲洗了一辈子照片。但上个星期——不对，是昨天？不对——",
+          "speaker_id": "npc_photo_master",
+          "when": null
+        },
+        {
+          "id": "S14.entry.default.paragraph.02.03.narration",
+          "type": "narration",
+          "text": "他揉了揉眼睛。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S14.entry.default.paragraph.02.04.dialogue",
+          "type": "dialogue",
+          "text": "我这里有一张底片。我已经冲洗了三遍了。每一遍——照片上的人都不一样。",
+          "speaker_id": "npc_photo_master",
+          "when": null
+        },
+        {
+          "id": "S14.entry.default.paragraph.03.01",
+          "type": "narration",
+          "text": "他把底片递给你。对着红光灯看——底片上是一个女人。她穿着白色长裙，裙摆长得不自然，站在荔湾广场正门前。底片边缘标注着日期——\"2018.3.15\"。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S14.entry.default.paragraph.04.01",
+          "type": "narration",
+          "text": "但荔湾广场正门在2018年3月15日还没有重新装修。更重要的是——底片上的女人——她身后没有影子。照片角落的店主站在她旁边——店主有影子。她没有。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S14.entry.default.paragraph.05.01",
+          "type": "narration",
+          "text": "第三次冲洗的照片中——她站的位置变了。她不在正门前了——她在北塔天台边缘。",
+          "speaker_id": null,
+          "when": null
+        }
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "id": "S14_choice_01",
+      "label": "向老师傅要走那张底片",
+      "short_label": "要底片",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 1,
+      "hint": "每次冲洗出来的画面都不同——她在移动",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_photo_negative",
+          "value": 1
+        }
+      ],
+      "next": {
+        "node_id": "S14",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "S14_choice_02",
+      "label": "离开照相馆",
+      "short_label": "离开",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 99,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "G",
+        "mode": "travel"
+      }
+    }
+  ],
+  "routing": {
+    "crossing": null,
+    "shortcut": null,
+    "warp": null
+  },
+  "authoring": {
+    "linked_sub_nodes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "npc_item_mapping": null,
+    "sensory": null,
+    "gender_variant": null
+  }
+}

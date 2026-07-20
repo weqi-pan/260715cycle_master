@@ -2,7 +2,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Frame, GameState, NodeData, ChoiceResult } from '@/types'
-import { startGame, chooseAction } from '@/api/game'
+import axios from 'axios'
+import { startGame, resumeGame, chooseAction } from '@/api/game'
 
 export const useGameStore = defineStore('game', () => {
   const currentFrame = ref<Frame | null>(null)
@@ -16,15 +17,43 @@ export const useGameStore = defineStore('game', () => {
   const cycleEvent = computed(() => currentFrame.value?.cycle_event ?? null)
   const transitionText = computed(() => currentFrame.value?.transition_text ?? null)
 
+  function errorMessage(e: unknown, fallback: string) {
+    if (axios.isAxiosError(e)) {
+      return String(e.response?.data?.detail ?? e.message ?? fallback)
+    }
+    return e instanceof Error ? e.message : fallback
+  }
+
+  function acceptFrame(frame: Frame, resetHistory = false) {
+    currentFrame.value = frame
+    history.value = resetHistory
+      ? [frame]
+      : [...history.value.slice(-49), frame]
+  }
+
   async function init() {
     loading.value = true
     error.value = null
     try {
       const frame = await startGame()
-      currentFrame.value = frame
-      history.value = [frame]
-    } catch (e: any) {
-      error.value = e.message || 'Failed to start game'
+      acceptFrame(frame, true)
+    } catch (e: unknown) {
+      error.value = errorMessage(e, '无法开始游戏')
+    } finally {
+      loading.value = false
+    }
+  }
+
+
+  async function resume(state: GameState) {
+    loading.value = true
+    error.value = null
+    try {
+      const frame = await resumeGame(state)
+      acceptFrame(frame, true)
+    } catch (e: unknown) {
+      error.value = errorMessage(e, '无法加载存档')
+      throw e
     } finally {
       loading.value = false
     }
@@ -38,14 +67,13 @@ export const useGameStore = defineStore('game', () => {
     error.value = null
     try {
       const frame = await chooseAction(nodeId, choiceId, currentState)
-      currentFrame.value = frame
-      history.value.push(frame)
-    } catch (e: any) {
-      error.value = e.message || 'Failed to process choice'
+      acceptFrame(frame)
+    } catch (e: unknown) {
+      error.value = errorMessage(e, '无法处理选择')
     } finally {
       loading.value = false
     }
   }
 
-  return { currentFrame, loading, error, history, currentNode, currentState, choices, cycleEvent, transitionText, init, choose }
+  return { currentFrame, loading, error, history, currentNode, currentState, choices, cycleEvent, transitionText, init, resume, choose }
 })

@@ -1,0 +1,150 @@
+{
+  "schema_version": 2,
+  "id": "S16",
+  "meta": {
+    "name": "康王路消防站",
+    "node_type": "normal",
+    "position": 175.0,
+    "time_label": "第四天·深夜",
+    "parent_node_id": "H",
+    "trigger_condition": "H节点途经康王路消防站时可选进入"
+  },
+  "scene": {
+    "background": null,
+    "palette": null,
+    "ambient": null,
+    "atmosphere": []
+  },
+  "entry_sequences": [
+    {
+      "id": "S16.entry.default",
+      "when": null,
+      "priority": 0,
+      "blocks": [
+        {
+          "id": "S16.entry.default.paragraph.01.01",
+          "type": "narration",
+          "text": "康王路消防站的卷帘门半开着。车库里的消防车擦得锃亮——轮毂上反射着天花板的日光灯。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S16.entry.default.paragraph.02.01",
+          "type": "narration",
+          "text": "值班的消防员是个四十多岁的中年人。他正坐在值班室里喝茶——看到你在门口张望，招了招手让你进来坐。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S16.entry.default.paragraph.03.01.dialogue",
+          "type": "dialogue",
+          "text": "你是说——北塔那边？",
+          "speaker_id": "npc_firefighter",
+          "when": null
+        },
+        {
+          "id": "S16.entry.default.paragraph.03.02.narration",
+          "type": "narration",
+          "text": "他放下茶杯。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S16.entry.default.paragraph.03.03.dialogue",
+          "type": "dialogue",
+          "text": "2014年那个女孩——那天是我出警。她掉在北塔和南塔之间的天井里。周围散了一地奶茶。珍珠滚得到处都是。",
+          "speaker_id": "npc_firefighter",
+          "when": null
+        },
+        {
+          "id": "S16.entry.default.paragraph.04.01",
+          "type": "narration",
+          "text": "他沉默了一会儿。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S16.entry.default.paragraph.05.01.dialogue",
+          "type": "dialogue",
+          "text": "有一件事我从来没跟别人说过。",
+          "speaker_id": "npc_firefighter",
+          "when": null
+        },
+        {
+          "id": "S16.entry.default.paragraph.05.02.narration",
+          "type": "narration",
+          "text": "他说。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S16.entry.default.paragraph.05.03.dialogue",
+          "type": "dialogue",
+          "text": "我翻她口袋里找身份证的时候——从她口袋里掉出来一串钥匙。钥匙上拴着一个毛绒兔子挂件——那个挂件，我在1993年见过。一模一样的兔子——掉在一顶黄色安全帽旁边。那顶安全帽上写着林国强。",
+          "speaker_id": "npc_firefighter",
+          "when": null
+        },
+        {
+          "id": "S16.entry.default.paragraph.06.01",
+          "type": "narration",
+          "text": "_（同一个物品出现在两个相隔二十一年的事故现场。不是相似——是同一件。）_",
+          "speaker_id": null,
+          "when": null
+        }
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "id": "S16_choice_01",
+      "label": "听消防员讲完2014年跳楼事件的细节",
+      "short_label": "听故事",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 1,
+      "hint": "他见证了一个物品同时出现在两个时代",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "set_flag",
+          "target": "heard_firefighter_story",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "S16",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "S16_choice_02",
+      "label": "离开消防站",
+      "short_label": "离开",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 99,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "H",
+        "mode": "travel"
+      }
+    }
+  ],
+  "routing": {
+    "crossing": null,
+    "shortcut": null,
+    "warp": null
+  },
+  "authoring": {
+    "linked_sub_nodes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "npc_item_mapping": null,
+    "sensory": null,
+    "gender_variant": null
+  }
+}

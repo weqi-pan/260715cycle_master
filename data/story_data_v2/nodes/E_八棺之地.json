@@ -1,0 +1,1029 @@
+{
+  "schema_version": 2,
+  "id": "E",
+  "meta": {
+    "name": "八棺之地（地下层）",
+    "node_type": "main",
+    "position": 100.0,
+    "time_label": "第三天·凌晨 00:00-05:00",
+    "parent_node_id": null,
+    "trigger_condition": null
+  },
+  "scene": {
+    "background": "/assets/bg/eight_coffins.jpg",
+    "palette": "暗红+漆黑+古铜",
+    "ambient": null,
+    "atmosphere": [
+      "寂静",
+      "压迫",
+      "时间的裂隙",
+      "穿越"
+    ]
+  },
+  "entry_sequences": [
+    {
+      "id": "E.entry.default",
+      "when": null,
+      "priority": 0,
+      "blocks": [
+        {
+          "id": "E.entry.default.paragraph.01.01",
+          "type": "narration",
+          "text": "B1层的废弃珠宝卖场在凌晨的黑暗中沉寂着。玻璃柜台大部分已经空了——只剩几盏应急灯在角落里发出惨淡的白光。空气中有一股混合了灰尘、霉味和金属锈蚀的气味。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E.entry.default.paragraph.02.01",
+          "type": "narration",
+          "text": "你从消防通道往下走——楼梯在前任施工中被截断了，但旁边有一个用钢管临时搭的简易梯子，通往更深的地方。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E.entry.default.paragraph.03.01",
+          "type": "narration",
+          "text": "地下穹顶空间比上面任何一层都大——一个被人工凿出的圆形空间，直径约三十米。地面铺着老旧的青砖——和商场其他地方的现代地砖完全不同。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E.entry.default.paragraph.04.01",
+          "type": "narration",
+          "text": "正中央——八口棺材排成八卦方位。乾、兑、离、震、巽、坎、艮、坤。其中三口已经碎裂——棺盖掀翻在一边，里面的东西不见了。剩下的五口依然密封着。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E.entry.default.paragraph.05.01",
+          "type": "narration",
+          "text": "每口棺材的棺盖上贴着黄色的符纸——朱砂画的符文已褪色到几乎不可见。但你认得那些符文——铜狮底座刻字上的笔画风格，和这些符纸上的符文如出一辙。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E.entry.default.paragraph.06.01",
+          "type": "narration",
+          "text": "---",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E.entry.default.paragraph.07.01",
+          "type": "narration",
+          "text": "凌晨3:15。东侧地砖下传来震动。空气开始变冷——冷到你能看到自己呼出的白气。八卦阵的中央地面上出现了一道裂缝——不是物理的裂缝，是光的裂缝。裂缝中涌出的光是暗红色的，像凝固的血在缓慢流动。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E.entry.default.paragraph.08.01",
+          "type": "narration",
+          "text": "裂缝在扩大。暗红色的光吞没了整个地下穹顶。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E.entry.default.paragraph.09.01",
+          "type": "narration",
+          "text": "你听到了声音——马蹄声、哭喊声、金属碰撞声。和502室墙壁里录到的一模一样。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E.entry.default.paragraph.10.01",
+          "type": "narration",
+          "text": "然后一切都消失了。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E.entry.default.paragraph.11.01",
+          "type": "narration",
+          "text": "你睁开眼睛。空气中有烧焦的木头味。脚下是泥地，头顶是阴沉沉的冬日天空。远处——广州城墙的轮廓在灰色的天光中若隐若现。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E.entry.default.paragraph.12.01",
+          "type": "narration",
+          "text": "现在是顺治七年十一月。公元1650年。清兵昨天刚破了广州城。",
+          "speaker_id": null,
+          "when": null
+        }
+      ]
+    },
+    {
+      "id": "E.entry.cycle_2",
+      "when": "cycle==2",
+      "priority": 20,
+      "blocks": [
+        {
+          "id": "E.entry.cycle_2.paragraph.01.01",
+          "type": "narration",
+          "text": "你再次站在八棺面前。这次你知道3:15会发生什么。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E.entry.cycle_2.paragraph.02.01",
+          "type": "narration",
+          "text": "你注意到了一些上次没有看到的细节——乾位那口棺材的符纸上，有一个新添的符文笔画。不是三百多年前刻上去的——很新，像是最近几个月才补上的。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E.entry.cycle_2.paragraph.03.01",
+          "type": "narration",
+          "text": "刘启盛在1650年封印了这里——但有人在现代重新加固过封印。是谁？",
+          "speaker_id": null,
+          "when": null
+        }
+      ]
+    },
+    {
+      "id": "E.entry.cycle_3+",
+      "when": "cycle>=3",
+      "priority": 30,
+      "blocks": [
+        {
+          "id": "E.entry.cycle_3+.paragraph.01.01",
+          "type": "narration",
+          "text": "第{{cycle_count}}次面对八口棺材。你已经不再感到恐惧——取而代之的是一种奇怪的熟悉感。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E.entry.cycle_3+.paragraph.02.01",
+          "type": "narration",
+          "text": "八棺阵的每一口棺材你都认得。乾位的最大——里面躺着的人被符纸封住了面容。震位和巽位已经空了——里面的人可能在封印减弱时离开了。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E.entry.cycle_3+.paragraph.03.01",
+          "type": "narration",
+          "text": "你想起在陈家祠看到的县志——你知道现在可以选择穿越到哪个精确时间点。1650年11月？还是庚寅之劫之后的某个时间？",
+          "speaker_id": null,
+          "when": "has_flag:timeline_mapped"
+        }
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "id": "E_choice_01",
+      "label": "砸开B1珠宝柜台，取出墨玉吊坠",
+      "short_label": "砸开柜台",
+      "condition": "attr:courage>=3",
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 1,
+      "hint": "柜台锁着——需要勇气砸开它",
+      "result_blocks": [
+        {
+          "id": "E_choice_01.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你用钥匙柄对准展示柜的锁扣用力砸下去。玻璃没有碎——但锁扣变形了，柜门弹开。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_01.result.paragraph.02.01",
+          "type": "narration",
+          "text": "里面的墨玉吊坠孤零零地躺在黑色丝绒垫上。你把它拿起来——坠子在掌心是温的，不像在地下室放了二十多年的东西。它曾经被放在八棺阵阵眼之上作为辅助法器——二十年来，它吸收了太多不该吸收的东西。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_01.result.paragraph.03.01",
+          "type": "narration",
+          "text": "现在它在你手里。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_black_jade",
+          "value": 1
+        }
+      ],
+      "next": {
+        "node_id": "E",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "E_choice_02",
+      "label": "拍下消防栓上的刻字",
+      "short_label": "拍涂鸦",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 2,
+      "hint": null,
+      "result_blocks": [
+        {
+          "id": "E_choice_02.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你掏出手机对准消防栓。锐器刻出的字迹在闪光灯下清晰地浮现：",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_02.result.paragraph.02.01",
+          "type": "narration",
+          "text": "> \"别下去。下面不是B2。不要相信时间。不要相信时间。不要相信时间。\"",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_02.result.paragraph.03.01",
+          "type": "narration",
+          "text": "三遍\"不要相信时间\"——一遍比一遍用力。和502室床底那张便签上的三遍\"不要看窗外\"如出一辙。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_02.result.paragraph.04.01",
+          "type": "narration",
+          "text": "是同一个人刻的吗？还是循环把所有困在这里的人都逼成了同样的样子？",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_graffiti_photo",
+          "value": 1
+        }
+      ],
+      "next": {
+        "node_id": "E",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "E_choice_03",
+      "label": "捡起废弃楼梯旁的黄色安全帽",
+      "short_label": "捡安全帽",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 3,
+      "hint": null,
+      "result_blocks": [
+        {
+          "id": "E_choice_03.result.paragraph.01.01",
+          "type": "narration",
+          "text": "通往八棺穹顶的废弃楼梯旁，一顶变形的黄色安全帽靠墙放着。帽子上印着\"穗南建筑\"。你翻过来看帽内——用马克笔写着：\"林国强。1993.9.14。\"",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_03.result.paragraph.02.01",
+          "type": "narration",
+          "text": "1993年9月14日是那份旧报纸上施工塌方的日期。三名工人失踪。林国强是其中之一。他的安全帽被留在了这里——在时间裂隙的边缘。人去了哪里？去了1650年？还是去了更深的、连时间裂隙都到不了的地方？",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_03.result.paragraph.03.01",
+          "type": "narration",
+          "text": "你把安全帽放下，但记下了这个名字。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_hardhat",
+          "value": 1
+        },
+        {
+          "type": "set_flag",
+          "target": "knew_missing_worker",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "E",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "E_choice_04",
+      "label": "在八棺阵中等待3:15的穿越",
+      "short_label": "等待穿越",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 10,
+      "hint": "凌晨3:15，八卦阵中央会出现时间裂隙",
+      "result_blocks": [
+        {
+          "id": "E_choice_04.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你靠着青砖墙坐下，盯着手机上的时间。3:14。3:15。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_04.result.paragraph.02.01",
+          "type": "narration",
+          "text": "东侧地砖下传来震动。空气开始变冷——冷到你能看到自己呼出的白气。八卦阵的中央地面上出现了一道裂缝——不是物理的裂缝，是光的裂缝。裂缝中涌出的光是暗红色的，像凝固的血在缓慢流动。裂缝在扩大。暗红色的光吞没了整个地下穹顶。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_04.result.paragraph.03.01",
+          "type": "narration",
+          "text": "你听到了声音——马蹄声、哭喊声、金属碰撞声。和502室墙壁里录到的一模一样。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_04.result.paragraph.04.01",
+          "type": "narration",
+          "text": "然后一切都消失了。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_04.result.paragraph.05.01",
+          "type": "narration",
+          "text": "你睁开眼睛。空气中有烧焦的木头味。脚下是泥地，头顶是阴沉沉的冬日天空。远处——广州城墙的轮廓在灰色的天光中若隐若现。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_04.result.paragraph.06.01",
+          "type": "narration",
+          "text": "现在是顺治七年十一月。公元1650年。清兵昨天刚破了广州城。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_04.result.paragraph.07.01",
+          "type": "narration",
+          "text": "你可以看到几个身影在附近的院落和巷子里——一个在柴房后面发抖的少年、一个在巷口木箱旁翻找的年轻人、一间偏房里透出的烛光、一个在巷口诵经的僧人、一个魁梧的巡逻清兵、还有一个蹲在废墟边的疯子。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_04.result.paragraph.08.01",
+          "type": "narration",
+          "text": "你能接近其中一两人——时间有限。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
+      "effects": [],
+      "next": {
+        "node_id": "E",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "E_choice_05",
+      "label": "穿越后接近柴房旁发抖的少年（阿六）",
+      "short_label": "接近阿六",
+      "condition": "at_node:E",
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 20,
+      "hint": "一个穿号衣的瘦小少年躲在柴房后面",
+      "result_blocks": [
+        {
+          "id": "E_choice_05.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你轻轻走近柴房。少年约莫十八岁，身上套着一件不合身的清兵号衣。他在发抖——双手抱着膝盖，指节发白。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_05.result.paragraph.02.01",
+          "type": "narration",
+          "text": "他看到你时猛地往后缩——但他没有喊人。他太害怕了，怕到连喊都喊不出来。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_05.result.paragraph.03.01.dialogue",
+          "type": "dialogue",
+          "text": "我不是清兵。",
+          "speaker_id": "player",
+          "when": null
+        },
+        {
+          "id": "E_choice_05.result.paragraph.03.02.narration",
+          "type": "narration",
+          "text": "你低声说。他盯着你身上的衣服——你穿的当然不是清代的衣服，但在这个混乱的清晨，他太恐惧了，已经没有精力质疑你的来历。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_05.result.paragraph.04.01.dialogue",
+          "type": "dialogue",
+          "text": "我不想杀人。",
+          "speaker_id": "npc_a_liu",
+          "when": null
+        },
+        {
+          "id": "E_choice_05.result.paragraph.04.02.narration",
+          "type": "narration",
+          "text": "他的声音很轻，像是怕被隔壁院子里的人听到。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_05.result.paragraph.04.03.dialogue",
+          "type": "dialogue",
+          "text": "他们逼我砍了一个人。我吐了。他们把那个人的东西搜出来——几个铜钱、一个平安符——丢在柴房后面。我把平安符捡起来了。那个人已经死了。他不需要平安了。但我——",
+          "speaker_id": "npc_a_liu",
+          "when": null
+        },
+        {
+          "id": "E_choice_05.result.paragraph.05.01",
+          "type": "narration",
+          "text": "他把一块巴掌大的桃木牌递给你。他说不出口的是——他不敢留着。他怕死人的东西会招来死人的魂。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_05.result.paragraph.06.01",
+          "type": "narration",
+          "text": "你把桃木牌收进口袋。正面刻着\"平安\"二字。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_amulet",
+          "value": 1
+        }
+      ],
+      "next": {
+        "node_id": "E",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "E_choice_06",
+      "label": "穿越后帮巷子里的李二狗捡鞋子",
+      "short_label": "帮李二狗",
+      "condition": "at_node:E",
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 21,
+      "hint": "一个穿破衣的年轻人在巷口翻找木箱",
+      "result_blocks": [
+        {
+          "id": "E_choice_06.result.paragraph.01.01",
+          "type": "narration",
+          "text": "一个穿着破烂棉袄的年轻人蹲在巷口的破木箱旁边。他看到你走过来时没有逃跑——也许是已经没有力气逃了。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_06.result.paragraph.02.01.dialogue",
+          "type": "dialogue",
+          "text": "那是我女儿的小布鞋。她两岁。昨天还在穿。现在在清兵的岗哨那边——被他们踩在地上。你能帮我拿回来吗？",
+          "speaker_id": "npc_li_ergou",
+          "when": null
+        },
+        {
+          "id": "E_choice_06.result.paragraph.03.01",
+          "type": "narration",
+          "text": "他的声音是平的——不是冷静，是超过了某个极限之后的麻木。他全家都死了。只有他了。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_06.result.paragraph.04.01",
+          "type": "narration",
+          "text": "你翻过岗哨旁边的土堆，在淤泥里找到了一只巴掌大的红色小布鞋。鞋面上绣着一只歪歪扭扭的小老虎。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_06.result.paragraph.05.01",
+          "type": "narration",
+          "text": "你把它递给他。他接过去的时候手指在颤抖——几十个小时以来的第一次颤抖。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_06.result.paragraph.06.01.narration",
+          "type": "narration",
+          "text": "他把一张破布塞进你手里。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_06.result.paragraph.06.02.dialogue",
+          "type": "dialogue",
+          "text": "地下通道。龙牙口下面有一条密道——从东侧地砖下去。通往城外的榕树根。很多人都走过——有些人走通了。这个给你。",
+          "speaker_id": "npc_li_ergou",
+          "when": null
+        },
+        {
+          "id": "E_choice_06.result.paragraph.07.01",
+          "type": "narration",
+          "text": "破布上用炭笔画着潦草的地图。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_tunnel_map",
+          "value": 1
+        },
+        {
+          "type": "set_flag",
+          "target": "helped_ergou",
+          "value": true
+        },
+        {
+          "type": "set_flag",
+          "target": "know_secret_tunnel",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "E",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "E_choice_07",
+      "label": "穿越后听刘启盛讲解阵法",
+      "short_label": "听刘启盛讲道",
+      "condition": "at_node:E",
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 22,
+      "hint": "偏房里坐着一位老道士，他在等你开口",
+      "result_blocks": [
+        {
+          "id": "E_choice_07.result.paragraph.01.01",
+          "type": "narration",
+          "text": "偏房的门半开着，里面透出烛光。一个穿青布道袍的老人盘腿坐在蒲团上。他在等你——你们之前从未见过，但他看到你跨进门槛的那一刻，点了点头，像是终于等到了一个迟到了很久的客人。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_07.result.paragraph.02.01.dialogue",
+          "type": "dialogue",
+          "text": "贫道刘启盛。全真龙门派。你从什么时候来的？不要说——不要告诉我具体的年份。时间一被写下来就会被听见。",
+          "speaker_id": "npc_liu_qisheng",
+          "when": null
+        },
+        {
+          "id": "E_choice_07.result.paragraph.03.01",
+          "type": "narration",
+          "text": "他花了大约一刻钟给你讲解了八棺阵的原理：八具死囚棺木压在八颗龙牙之上，以恶人的煞气喂养地龙。但阵法现在正在崩溃——1993年的施工扰动了地基，三百六十八年的封印开始松裂。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_07.result.paragraph.04.01.narration",
+          "type": "narration",
+          "text": "他把三张符纸放在你手里。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_07.result.paragraph.04.02.dialogue",
+          "type": "dialogue",
+          "text": "用一张少一张。但总比没有强。",
+          "speaker_id": "npc_liu_qisheng",
+          "when": null
+        },
+        {
+          "id": "E_choice_07.result.paragraph.05.01.narration",
+          "type": "narration",
+          "text": "他顿了顿。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_07.result.paragraph.05.02.dialogue",
+          "type": "dialogue",
+          "text": "还有一个口诀。不能写在纸上——你只能记在心里。",
+          "speaker_id": "npc_liu_qisheng",
+          "when": null
+        },
+        {
+          "id": "E_choice_07.result.paragraph.06.01",
+          "type": "narration",
+          "text": "他念了一段话。你跟着念了一遍。他笑了——三百年来第一次笑。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_talisman",
+          "value": 3
+        },
+        {
+          "type": "add_item",
+          "target": "item_old_key",
+          "value": 1
+        },
+        {
+          "type": "set_flag",
+          "target": "taoist_chant",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "E",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "E_choice_08",
+      "label": "穿越后跟随诵经的僧人（慧觉）",
+      "short_label": "跟随慧觉",
+      "condition": "at_node:E",
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 23,
+      "hint": "巷口有位僧人在为死者诵经",
+      "result_blocks": [
+        {
+          "id": "E_choice_08.result.paragraph.01.01",
+          "type": "narration",
+          "text": "巷口站着一位老僧。他面对着一堵烧焦的墙，低声诵着《金刚经》。墙上有一大片暗色的痕迹——不是火烧的。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_08.result.paragraph.02.01",
+          "type": "narration",
+          "text": "你站在他身后听了很久。他诵完一卷后才转过身来。他的眼睛很平静——不是麻木，是看过了太多之后的悲悯。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_08.result.paragraph.03.01.dialogue",
+          "type": "dialogue",
+          "text": "施主。你身上的时间——不太对。",
+          "speaker_id": "npc_huijue",
+          "when": null
+        },
+        {
+          "id": "E_choice_08.result.paragraph.04.01",
+          "type": "narration",
+          "text": "他没有追问你的来历。他只是把手腕上那串念珠褪下来，放在你手心。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_08.result.paragraph.05.01.dialogue",
+          "type": "dialogue",
+          "text": "108颗菩提子。108种烦恼。施主的烦恼——有一些是这一个时辰的，有一些是三百六十八年之后的。",
+          "speaker_id": "npc_huijue",
+          "when": null
+        },
+        {
+          "id": "E_choice_08.result.paragraph.06.01.narration",
+          "type": "narration",
+          "text": "他合十。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_08.result.paragraph.06.02.dialogue",
+          "type": "dialogue",
+          "text": "这也是一种修行。",
+          "speaker_id": "npc_huijue",
+          "when": null
+        },
+        {
+          "id": "E_choice_08.result.paragraph.07.01",
+          "type": "narration",
+          "text": "念珠在指尖微微发温——不是体温，是佛法的温度。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_beads",
+          "value": 1
+        }
+      ],
+      "next": {
+        "node_id": "E",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "E_choice_09",
+      "label": "穿越后听沈半仙的疯话",
+      "short_label": "听沈半仙",
+      "condition": "at_node:E",
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 24,
+      "hint": "十八甫街角蹲着一个自言自语的疯子",
+      "result_blocks": [
+        {
+          "id": "E_choice_09.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你在废墟边找到了他。一个蓬头垢面的流浪汉，身上裹着一层又一层的破烂布料。他正对着空气说话——前言不搭后语，话题在\"刀\"和\"马\"和\"江边的窝棚\"之间来回跳跃。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_09.result.paragraph.02.01",
+          "type": "narration",
+          "text": "你在他旁边蹲下来。他看了你一眼——那一眼很奇怪，像是他认得你但懒得确认。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_09.result.paragraph.03.01",
+          "type": "narration",
+          "text": "他继续自言自语。你听了大约五分钟。大部分话都没有意义——至少听起来没有。但有一两句让你后背发凉：",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_09.result.paragraph.04.01.dialogue",
+          "type": "dialogue",
+          "text": "走了也会回来的。走去哪？走不掉的。试过了。",
+          "speaker_id": "npc_shen_banxian",
+          "when": null
+        },
+        {
+          "id": "E_choice_09.result.paragraph.05.01",
+          "type": "narration",
+          "text": "他从身上那堆破布里扯下一块布角。灰蓝色的，质地粗厚。你接过来翻来覆去看了很久——这触感太熟悉了。这好像是牛仔裤的布料。但现在是1650年。这种面料还要等两百多年才被发明。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_09.result.paragraph.06.01",
+          "type": "narration",
+          "text": "你把布收进口袋。也许只是一个疯子在垃圾堆里捡到的奇怪的东西。也许不是。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_denim_rag",
+          "value": 1
+        },
+        {
+          "type": "set_flag",
+          "target": "heard_banxian_ramble",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "E",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "E_choice_10",
+      "label": "穿越后尝试与清兵队长德楞对话",
+      "short_label": "与德楞对话",
+      "condition": "at_node:E",
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 25,
+      "hint": "一个魁梧的清兵队长在巷口巡逻——危险",
+      "result_blocks": [
+        {
+          "id": "E_choice_10.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你朝那个魁梧的军官走去。他的手下都在别处——他一个人站在巷口，手里握着一把出鞘的腰刀。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_10.result.paragraph.02.01",
+          "type": "narration",
+          "text": "他看到你时没有立刻拔刀。他的眼神不是愤怒——是疲惫。但这不意味着他是安全的。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_10.result.paragraph.03.01.dialogue",
+          "type": "dialogue",
+          "text": "你是什么人。",
+          "speaker_id": "npc_deleng",
+          "when": null
+        },
+        {
+          "id": "E_choice_10.result.paragraph.03.02.narration",
+          "type": "narration",
+          "text": "这不是一个问题——是一个判决前的最后陈述。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_10.result.paragraph.04.01",
+          "type": "narration",
+          "text": "你试图解释。但无论你说什么——你的口音、你的衣服、你整个人——在这个清晨的广州街头都太不对劲了。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_10.result.paragraph.05.01",
+          "type": "narration",
+          "text": "他举起了刀。你没有死——但他记住了你的脸。在下一次循环中，清兵的影子会更加频繁地出现在鬼市之中。他们感受到了你的存在。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
+      "effects": [
+        {
+          "type": "set_flag",
+          "target": "qing_exposed",
+          "value": true
+        },
+        {
+          "type": "damage",
+          "target": "sanity",
+          "value": 5
+        }
+      ],
+      "next": {
+        "node_id": "E",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "E_choice_11",
+      "label": "走密道捷径返回正门",
+      "short_label": "密道捷径",
+      "condition": "or:has_flag:know_secret_tunnel,has_item:item_tunnel_map",
+      "locked_visibility": "hide",
+      "repeat_policy": "once_per_visit",
+      "priority": 30,
+      "hint": "东侧地砖下有一条密道",
+      "result_blocks": [
+        {
+          "id": "E_choice_11.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你推开东侧那块松动的地砖。下面是青砖砌成的密道——宽约半米，仅容一人弯腰通过。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_11.result.paragraph.02.01",
+          "type": "narration",
+          "text": "你深吸一口气，钻了进去。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
+      "effects": [],
+      "next": {
+        "node_id": "J",
+        "mode": "shortcut"
+      }
+    },
+    {
+      "id": "E_choice_12",
+      "label": "前往沙面珠江边",
+      "short_label": "前往江边",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 99,
+      "hint": null,
+      "result_blocks": [
+        {
+          "id": "E_choice_12.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你从穿越中回来，身体还残留着1650年冬天清晨的寒意。手中多了来自那个时代的东西——也许是一块护身符，也许是一张符纸，也许只是一块破布。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_12.result.paragraph.02.01",
+          "type": "narration",
+          "text": "你最后看了一眼八棺阵。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "E_choice_12.result.paragraph.03.01",
+          "type": "narration",
+          "text": "乾位那口棺材的符纸上——多了一道新的笔画。封印被人加固了。",
+          "speaker_id": null,
+          "when": "has_flag:helped_ergou"
+        },
+        {
+          "id": "E_choice_12.result.paragraph.04.01",
+          "type": "narration",
+          "text": "你爬上简易梯子，穿过B1废弃卖场，走出荔湾广场。沙面在西南方向——珠江边。你朝那个方向走去。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
+      "effects": [],
+      "next": {
+        "node_id": "F",
+        "mode": "travel"
+      }
+    }
+  ],
+  "routing": {
+    "crossing": {
+      "crossing_trigger_time": "03:15",
+      "crossing_target_era": "qing_dynasty_1650",
+      "max_npc_interactions": 2,
+      "available_npcs": [
+        "npc_a_liu",
+        "npc_li_ergou",
+        "npc_liu_qisheng",
+        "npc_huijue",
+        "npc_deleng",
+        "npc_shen_banxian"
+      ],
+      "npc_restriction": "每次穿越只能深入互动1-2个NPC，选择后其余NPC变为'仅观察'模式",
+      "crossing_duration": "约1-2小时（游戏内时间）",
+      "return_trigger": "时间自然流逝后自动返回现代，或主动触发返回（如有对应道具）"
+    },
+    "shortcut": null,
+    "warp": null
+  },
+  "authoring": {
+    "linked_sub_nodes": [
+      {
+        "node_id": "S10",
+        "trigger": "E→F路径中经过珠江轮渡码头"
+      },
+      {
+        "node_id": "J",
+        "trigger": "持有know_secret_tunnel或item_tunnel_map时，地下穹顶东侧出现密道入口"
+      }
+    ],
+    "npcs_present": [],
+    "scene_items": [
+      {
+        "item_id": "item_black_jade",
+        "location": "B1珠宝柜台·锁着的展示柜",
+        "acquire_condition": "attr:courage>=3（砸开柜子）或持有item_old_key"
+      },
+      {
+        "item_id": "item_graffiti_photo",
+        "location": "B1消防通道消防栓",
+        "acquire_condition": null
+      },
+      {
+        "item_id": "item_hardhat",
+        "location": "废弃楼梯旁地面",
+        "acquire_condition": null
+      }
+    ],
+    "npc_item_mapping": [
+      {
+        "npc_id": "npc_a_liu",
+        "item_id": "item_amulet",
+        "flag": null
+      },
+      {
+        "npc_id": "npc_li_ergou",
+        "item_id": "item_tunnel_map",
+        "flag": "helped_ergou"
+      },
+      {
+        "npc_id": "npc_liu_qisheng",
+        "item_id": "item_talisman",
+        "flag": "taoist_chant"
+      },
+      {
+        "npc_id": "npc_huijue",
+        "item_id": "item_beads",
+        "flag": null
+      },
+      {
+        "npc_id": "npc_shen_banxian",
+        "item_id": "item_denim_rag",
+        "flag": "heard_banxian_ramble"
+      }
+    ],
+    "sensory": "灰尘味、檀香、铁锈味、地下的阴冷、穿越时的眩晕感、1650年冬天的焦木味",
+    "gender_variant": null
+  }
+}

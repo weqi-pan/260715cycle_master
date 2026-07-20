@@ -1,0 +1,156 @@
+{
+  "schema_version": 2,
+  "id": "S15",
+  "meta": {
+    "name": "中山七路天桥",
+    "node_type": "normal",
+    "position": 150.0,
+    "time_label": "第四天·白天",
+    "parent_node_id": "G",
+    "trigger_condition": "G→H路径中经过中山七路天桥时可选进入"
+  },
+  "scene": {
+    "background": null,
+    "palette": null,
+    "ambient": null,
+    "atmosphere": []
+  },
+  "entry_sequences": [
+    {
+      "id": "S15.entry.default",
+      "when": null,
+      "priority": 0,
+      "blocks": [
+        {
+          "id": "S15.entry.default.paragraph.01.01",
+          "type": "narration",
+          "text": "中山七路人行天桥横跨在车流之上。桥面铺着防滑的铁板，踩上去有空洞的回音。栏杆上挂满了同心锁——情侣们在这里许愿。锁上刻着名字和日期。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S15.entry.default.paragraph.02.01",
+          "type": "narration",
+          "text": "但你注意到一个锁不一样——它不是锁，是一枚被铁丝缠在栏杆上的一元硬币。硬币被什么东西砸得微微变形。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S15.entry.default.paragraph.03.01",
+          "type": "narration",
+          "text": "硬币旁边——栏杆的漆面上——有人用尖锐的东西刻了一行字：",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S15.entry.default.paragraph.04.01",
+          "type": "narration",
+          "text": "\"希望明天还是7月15日。\"",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S15.entry.default.paragraph.05.01",
+          "type": "narration",
+          "text": "字迹很新。非常新。可能是今天刻的。也可能是一年前的今天刻的。在这里——\"今天\"的含义已经模糊了。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S15.entry.default.paragraph.06.01",
+          "type": "narration",
+          "text": "_（他许愿希望明天还是7月15日。他的愿望成真了——只是不是他想要的那种方式。）_",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S15.entry.default.paragraph.07.01",
+          "type": "narration",
+          "text": "如果你把硬币放回去——你会感到一阵奇怪的既视感。像是有什么东西在循环中被\"纠正\"了。",
+          "speaker_id": null,
+          "when": null
+        }
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "id": "S15_choice_01",
+      "label": "取下被铁丝缠住的许愿硬币",
+      "short_label": "取硬币",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 1,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_bridge_coin",
+          "value": 1
+        }
+      ],
+      "next": {
+        "node_id": "S15",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "S15_choice_02",
+      "label": "把硬币放回原处——尊重许愿",
+      "short_label": "放回硬币",
+      "condition": "has_item:item_bridge_coin",
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 2,
+      "hint": "有些愿望不应该被打扰",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "remove_item",
+          "target": "item_bridge_coin",
+          "value": 1
+        },
+        {
+          "type": "set_flag",
+          "target": "respected_wish",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "S15",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "S15_choice_03",
+      "label": "离开天桥",
+      "short_label": "离开",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 99,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "H",
+        "mode": "travel"
+      }
+    }
+  ],
+  "routing": {
+    "crossing": null,
+    "shortcut": null,
+    "warp": null
+  },
+  "authoring": {
+    "linked_sub_nodes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "npc_item_mapping": null,
+    "sensory": null,
+    "gender_variant": null
+  }
+}

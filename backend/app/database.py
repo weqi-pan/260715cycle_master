@@ -13,7 +13,7 @@ SQLite 引擎使用 WAL 模式 + check_same_thread=False 以支持异步并发�
 """
 
 # backend/app/database.py
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker, declarative_base
 from .config import DATABASE_URL
 
@@ -25,6 +25,16 @@ engine = create_engine(
     echo=False,
     connect_args={"check_same_thread": False},
 )
+
+
+@event.listens_for(engine, "connect")
+def configure_sqlite_connection(dbapi_connection, _connection_record):
+    """每条 SQLite 连接都启用外键、WAL 与合理的锁等待。"""
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.execute("PRAGMA journal_mode=WAL")
+    cursor.execute("PRAGMA busy_timeout=5000")
+    cursor.close()
 
 # ── 会话工厂 ─────────────────────────────────────────────────
 # autocommit=False: 显式调用 commit() 才提交，防止意外写入

@@ -1,0 +1,478 @@
+{
+  "schema_version": 2,
+  "id": "H",
+  "meta": {
+    "name": "康王路归途",
+    "node_type": "main",
+    "position": 175.0,
+    "time_label": "第四天·深夜 22:00-00:00",
+    "parent_node_id": null,
+    "trigger_condition": null
+  },
+  "scene": {
+    "background": "/assets/bg/kangwang_road.jpg",
+    "palette": "深蓝+苍白+血月暗红",
+    "ambient": null,
+    "atmosphere": [
+      "归途的疲惫",
+      "循环的沉重",
+      "末日的征兆",
+      "觉醒的前夜"
+    ]
+  },
+  "entry_sequences": [
+    {
+      "id": "H.entry.default",
+      "when": null,
+      "priority": 0,
+      "blocks": [
+        {
+          "id": "H.entry.default.paragraph.01.01",
+          "type": "narration",
+          "text": "康王路在深夜中安静得不像一条主干道。路灯间隔很远——每隔两盏就有一盏不亮。榕树的气根在夜风中缓慢摇晃，在路面上投下密密麻麻的、像手指一样的影子。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "H.entry.default.paragraph.02.01",
+          "type": "narration",
+          "text": "你沿着康王路朝荔湾广场正门方向走。每一步都踩在\"结束\"的边缘——你知道走到正门，这一轮循环就结束了。四天的记忆将被重置。你获得的信息、道具、flag——那些跨循环的会保留。那些不跨循环的会消失。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "H.entry.default.paragraph.03.01",
+          "type": "narration",
+          "text": "路边有一家24小时便利店。白色的日光灯管在深夜中格外刺眼。门口的报架上——《南方都市报》的日期永远是7月15日。今天的头条是\"地铁三号线延长线今日开通\"。上次的头条是\"广州足球队晋级亚冠\"。每一次循环，头条都不同——但日期不变。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "H.entry.default.paragraph.04.01",
+          "type": "narration",
+          "text": "---",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "H.entry.default.paragraph.05.01",
+          "type": "narration",
+          "text": "电线杆下散落着几片未烧尽的冥纸。道教符文的残片在微风中轻轻翻动。有人在今晚烧过纸——为了镇压地下的什么东西。纸灰还是温的。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "H.entry.default.paragraph.06.01",
+          "type": "narration",
+          "text": "离正门还有三百米。你可以看到广场穹顶的轮廓了——在月光下，它的弧线像一口倒扣的钟。或者像一只闭着的眼睛。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "H.entry.default.paragraph.07.01",
+          "type": "narration",
+          "text": "---",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "H.entry.default.paragraph.08.01.narration",
+          "type": "narration",
+          "text": "张天民站在康王路中段的一盏路灯下，手里拿着他的笔记本。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "H.entry.default.paragraph.08.02.dialogue",
+          "type": "dialogue",
+          "text": "我在等你。",
+          "speaker_id": "npc_zhang_tianmin",
+          "when": null
+        },
+        {
+          "id": "H.entry.default.paragraph.08.03.narration",
+          "type": "narration",
+          "text": "他说。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "H.entry.default.paragraph.08.04.dialogue",
+          "type": "dialogue",
+          "text": "今天是第55天——我的。我想我知道怎么把笔记交给你了。",
+          "speaker_id": "npc_zhang_tianmin",
+          "when": null
+        },
+        {
+          "id": "H.entry.default.paragraph.09.01.narration",
+          "type": "narration",
+          "text": "他递过来一本A5大小的软皮笔记本——八十页。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "H.entry.default.paragraph.09.02.dialogue",
+          "type": "dialogue",
+          "text": "我在第一页就写了：'如果你看到这个，说明我失败了。但你还有机会。'",
+          "speaker_id": "npc_zhang_tianmin",
+          "when": null
+        }
+      ]
+    },
+    {
+      "id": "H.entry.cycle_2",
+      "when": "cycle==2",
+      "priority": 20,
+      "blocks": [
+        {
+          "id": "H.entry.cycle_2.paragraph.01.01",
+          "type": "narration",
+          "text": "你又走在康王路上。便利店还在——报架上的头条又变了。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "H.entry.cycle_2.paragraph.02.01.narration",
+          "type": "narration",
+          "text": "张天民在路灯下等你。这次他手里没有笔记本——他给你看了手机备忘录。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "H.entry.cycle_2.paragraph.02.02.dialogue",
+          "type": "dialogue",
+          "text": "我试过了。我把所有东西写在纸上，循环重置后纸上的字还在——但位置变了。它不从笔尖流到纸上——它从纸的背面浮现出来。",
+          "speaker_id": "npc_zhang_tianmin",
+          "when": null
+        },
+        {
+          "id": "H.entry.cycle_2.paragraph.03.01.narration",
+          "type": "narration",
+          "text": "他翻到笔记本最后一页——上面的字歪歪扭扭的，像是从纸张内部渗透出来的。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "H.entry.cycle_2.paragraph.03.02.dialogue",
+          "type": "dialogue",
+          "text": "每一次循环，已有的记录不会被清除——它们只是被‘推到’了下一页。",
+          "speaker_id": "npc_zhang_tianmin",
+          "when": null
+        }
+      ]
+    },
+    {
+      "id": "H.entry.cycle_3+",
+      "when": "cycle>=3",
+      "priority": 30,
+      "blocks": [
+        {
+          "id": "H.entry.cycle_3+.paragraph.01.01",
+          "type": "narration",
+          "text": "第{{cycle_count}}次走完康王路。你已经不需要数步数了。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "H.entry.cycle_3+.paragraph.02.01",
+          "type": "narration",
+          "text": "便利店、报纸、冥纸、张天民的笔记本——这一切构成了\"循环的最后一段\"。你知道正门在等你。你知道跨过正门后你会再次站在德星路9号门前，手机上的时间还是7月15日18:30。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "H.entry.cycle_3+.paragraph.03.01",
+          "type": "narration",
+          "text": "你掏出手机，打开备忘录。你开始打字——用程序员的思维方式，把四天四夜中获得的每一条线索整理成结构化数据：",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "H.entry.cycle_3+.paragraph.04.01",
+          "type": "narration",
+          "text": "> 八棺阵 = 时间裂隙的物理封印\n> 龙脉 = 时间裂隙的能量来源\n> J节点 = 空间捷径（半循环）\n> K节点 = 时间跃迁（完整重启）\n> 献祭道具 = 修复封印的能量",
+          "speaker_id": null,
+          "when": null
+        }
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "id": "H_choice_01",
+      "label": "接受张天民的完整笔记本",
+      "short_label": "接受笔记",
+      "condition": "attr:zhang_trust>=3",
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 1,
+      "hint": "张天民要把记录了55天循环的笔记本交给你",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_notebook_full",
+          "value": 1
+        },
+        {
+          "type": "set_flag",
+          "target": "zhang_notebook_full",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "H",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "H_choice_02",
+      "label": "从便利店报架取一份报纸",
+      "short_label": "取报纸",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 2,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_loop_newspaper",
+          "value": 1
+        }
+      ],
+      "next": {
+        "node_id": "H",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "H_choice_03",
+      "label": "捡起路边电线杆下的冥纸残片",
+      "short_label": "捡冥纸",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 3,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "add_item",
+          "target": "item_joss_paper",
+          "value": 1
+        }
+      ],
+      "next": {
+        "node_id": "H",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "H_choice_04",
+      "label": "在正门台阶砖缝留给下一轮自己的纸条",
+      "short_label": "留纸条",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 4,
+      "hint": "把关键信息留给下一轮循环的自己",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "leave_item",
+          "target": "A_note_from_H",
+          "value": "A_note_from_H"
+        },
+        {
+          "type": "set_flag",
+          "target": "A_note_from_H_exists",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "H",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "H_choice_05",
+      "label": "用计算机思维在备忘录中记录模式",
+      "short_label": "记录模式",
+      "condition": "has_flag:memory_synthesis",
+      "locked_visibility": "hide",
+      "repeat_policy": "once_per_visit",
+      "priority": 5,
+      "hint": "用结构化思维整理所有循环信息——下一轮备忘录中会出现残留记录",
+      "result_blocks": [],
+      "effects": [
+        {
+          "type": "set_flag",
+          "target": "deja_vu_triggered",
+          "value": true
+        }
+      ],
+      "next": {
+        "node_id": "H",
+        "mode": "stay"
+      }
+    },
+    {
+      "id": "H_choice_06",
+      "label": "去康王路消防站",
+      "short_label": "消防站",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 20,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "S16",
+        "mode": "travel"
+      }
+    },
+    {
+      "id": "H_choice_07",
+      "label": "去龙津路老药铺",
+      "short_label": "老药铺",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 21,
+      "hint": null,
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "S17",
+        "mode": "travel"
+      }
+    },
+    {
+      "id": "H_choice_08",
+      "label": "去荔湾广场天台",
+      "short_label": "天台",
+      "condition": "has_flag:saw_2014_girl",
+      "locked_visibility": "hide",
+      "repeat_policy": "once_per_visit",
+      "priority": 22,
+      "hint": "天台楼梯间的门今晚开着",
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "S18",
+        "mode": "travel"
+      }
+    },
+    {
+      "id": "H_choice_11",
+      "label": "绕去人民路天桥，寻找循环的边界",
+      "short_label": "去人民路天桥",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 23,
+      "hint": "从西侧高处观察荔湾广场与正常世界的分界",
+      "result_blocks": [
+        {
+          "id": "H_choice_11.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你没有立刻回到正门，而是沿康王路向西，走上人民路天桥。越靠近桥中央，手机信号越不稳定，远处正常运转的城市像隔着一层看不见的玻璃。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
+      "effects": [],
+      "next": {
+        "node_id": "S19",
+        "mode": "travel"
+      }
+    },
+    {
+      "id": "H_choice_12",
+      "label": "寻找锦纶会馆，在古井旁喘口气",
+      "short_label": "去锦纶会馆",
+      "condition": "attr:sanity<40",
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 24,
+      "hint": "理智低于 40 时，你会本能地寻找一个不受裂隙影响的安静角落",
+      "result_blocks": [
+        {
+          "id": "H_choice_12.result.paragraph.01.01",
+          "type": "narration",
+          "text": "持续的低语让你几乎无法思考。你拐进下九路西端一条狭窄巷子，喧闹与阴影同时退远，一座旧会馆的院门在前方半掩着。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
+      "effects": [],
+      "next": {
+        "node_id": "S20",
+        "mode": "travel"
+      }
+    },
+    {
+      "id": "H_choice_09",
+      "label": "走到正门——接受循环重置",
+      "short_label": "重置循环",
+      "condition": null,
+      "locked_visibility": "show",
+      "repeat_policy": "once_per_visit",
+      "priority": 99,
+      "hint": "跨过正门的瞬间，一切将回到起点",
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "A",
+        "mode": "travel"
+      }
+    },
+    {
+      "id": "H_choice_10",
+      "label": "踏入突然出现的裂隙——跃迁",
+      "short_label": "跃迁裂隙",
+      "condition": "or:has_flag:taoist_chant,(and:attr:courage>=8,cycle>=3),(and:has_item:item_beads,has_flag:river_crossed)",
+      "locked_visibility": "hide",
+      "repeat_policy": "once_per_visit",
+      "priority": 0,
+      "hint": "康王路中段的路灯全部熄灭了——地面上裂开了一道暗红色的光缝",
+      "result_blocks": [],
+      "effects": [],
+      "next": {
+        "node_id": "K",
+        "mode": "warp"
+      }
+    }
+  ],
+  "routing": {
+    "crossing": null,
+    "shortcut": null,
+    "warp": null
+  },
+  "authoring": {
+    "linked_sub_nodes": [
+      {
+        "node_id": "S16",
+        "trigger": "途经康王路消防站"
+      },
+      {
+        "node_id": "S17",
+        "trigger": "途经龙津路老药铺"
+      },
+      {
+        "node_id": "S18",
+        "trigger": "持有saw_2014_girl时，天台楼梯间出现入口"
+      }
+    ],
+    "npcs_present": [
+      "npc_zhang_tianmin"
+    ],
+    "scene_items": [],
+    "npc_item_mapping": null,
+    "sensory": "便利店日光灯的刺眼白光、路灯的嗡嗡声、榕树气根在风中的沙沙声、冥纸灰烬的气味、正门铜狮在月光下的轮廓",
+    "gender_variant": null
+  }
+}

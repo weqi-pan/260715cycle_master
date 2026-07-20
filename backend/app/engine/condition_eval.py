@@ -23,10 +23,9 @@
         half_cycle>=N       — 半循环次数 ≥ N
         at_node:NODE_ID     — 当前在指定节点
 
-嵌套规则：
-    and:/or: 内部可以用逗号分隔子条件，每个子条件可以是任意表达式。
-    当遇到 and:/or: 作为子条件的开头时，嵌套深度 +1，
-    该子条件内部的逗号不会被外层当作分隔符。
+    嵌套规则：
+    and:/or: 内部用逗号分隔子条件；嵌套逻辑组必须写在括号中，
+    例如 or:A,(and:B,C),(and:D,E)，避免前缀表达式产生歧义。
 """
 
 # backend/app/engine/condition_eval.py
@@ -96,7 +95,7 @@ class ConditionEvaluator:
         抛出:
             ValueError: 无法识别的条件表达式
         """
-        condition = condition.strip()
+        condition = self._strip_outer_group(condition.strip())
 
         # ── and: 逻辑与 ──────────────────────────────────────
         # 格式: and:子条件1,子条件2,子条件3
@@ -159,19 +158,23 @@ class ConditionEvaluator:
             if op == "==": return attr_val == cmp_val
             if op == "!=": return attr_val != cmp_val
 
-        # ── cycle>=N 循环次数检查 ────────────────────────────
-        # 格式: cycle>=3
-        # 检查已完成的完整循环次数是否 ≥ N
-        m = re.match(r"^cycle>=(\d+)$", condition)
+        # ── cycle/half_cycle 数值比较 ────────────────────────
+        # 支持 v1 的 cycle>=3，也支持 v2 的完整比较运算符。
+        m = re.match(r"^(cycle|half_cycle)(>=|<=|>|<|==|!=)(\d+)$", condition)
         if m:
-            return state.cycle_count >= int(m.group(1))
-
-        # ── half_cycle>=N 半循环次数检查 ─────────────────────
-        # 格式: half_cycle>=2
-        # 检查已到达 E 节点的次数是否 ≥ N
-        m = re.match(r"^half_cycle>=(\d+)$", condition)
-        if m:
-            return state.half_cycle_count >= int(m.group(1))
+            counter_name, op, raw_value = m.groups()
+            actual = (
+                state.cycle_count
+                if counter_name == "cycle"
+                else state.half_cycle_count
+            )
+            expected = int(raw_value)
+            if op == ">=": return actual >= expected
+            if op == "<=": return actual <= expected
+            if op == ">": return actual > expected
+            if op == "<": return actual < expected
+            if op == "==": return actual == expected
+            if op == "!=": return actual != expected
 
         # ── at_node:NODE_ID 当前位置检查 ──────────────────────
         # 格式: at_node:E
@@ -321,7 +324,7 @@ class ConditionEvaluator:
         if condition is None or condition.strip() == "":
             return ""
 
-        cond = condition.strip()
+        cond = cls._strip_outer_group(condition.strip())
 
         # ── and: 逻辑与 → "需要A，并且B，并且C" ──────────────
         if cond.startswith("and:"):
@@ -409,30 +412,29 @@ class ConditionEvaluator:
             分割后的子表达式列表（去除空白和空串）
         """
         parts = []
-        depth = 0  # 嵌套深度（遇到 and:/or: 前缀时 +1）
+        depth = 0
         current: list[str] = []
-        i = 0
-        while i < len(text):
-            ch = text[i]
-            remaining = text[i:]
-            if remaining.startswith("and:") or remaining.startswith("or:"):
+        for ch in text:
+            if ch == "(":
                 depth += 1
-                prefix = "and:" if remaining.startswith("and:") else "or:"
-                current.extend(prefix)
-                i += len(prefix)
+                current.append(ch)
+                continue
+            if ch == ")":
+                depth -= 1
+                if depth < 0:
+                    raise ValueError(f"Unbalanced condition group: {text}")
+                current.append(ch)
                 continue
             if ch == ",":
                 if depth == 0:
-                    # 顶层逗号 → 分割点
                     parts.append("".join(current).strip())
                     current = []
                 else:
-                    # 嵌套逗号 → 保留
                     current.append(ch)
-                i += 1
                 continue
             current.append(ch)
-            i += 1
+        if depth != 0:
+            raise ValueError(f"Unbalanced condition group: {text}")
         if current:
             parts.append("".join(current).strip())
         return [p for p in parts if p]
@@ -444,56 +446,41 @@ class ConditionEvaluator:
         在 and:/or: 表达式中，用逗号分隔子条件。但子条件内部的逗号
         （在嵌套的 and:/or: 中）不应被当作分隔符。
 
-        算法：维护一个嵌套深度计数器。
-            - 遇到 "and:" 或 "or:" 前缀 → 深度 +1
+        算法：维护括号深度计数器。
+            - 遇到左括号 → 深度 +1；右括号 → 深度 -1
             - 遇到逗号 → 深度 0 时分隔，深度 > 0 时保留
-            - 其他字符 → 追加到当前 token
+            - 括号不配对时立即拒绝表达式
 
         示例:
-            text = "has_item:A,and:has_flag:B,has_item:C"
-            分割结果 = ["has_item:A", "and:has_flag:B,has_item:C"]
-                                  ↑ 这是顶层逗号               ↑ 这个逗号在嵌套内部
+            text = "has_item:A,(and:has_flag:B,has_item:C)"
+            分割结果 = ["has_item:A", "(and:has_flag:B,has_item:C)"]
 
         参数:
             text: 待分割的表达式字符串
         返回:
             分割后的子表达式列表（去除空白和空串）
         """
-        parts = []
-        depth = 0
-        current: list[str] = []
-        i = 0
-        while i < len(text):
-            ch = text[i]
-            remaining = text[i:]
+        return self._split_top_level_static(text)
 
-            # 遇到 and:/or: 前缀 → 进入嵌套
-            if remaining.startswith("and:"):
-                depth += 1
-                current.extend("and:")
-                i += 4
-                continue
-
-            if remaining.startswith("or:"):
-                depth += 1
-                current.extend("or:")
-                i += 3
-                continue
-
-            if ch == ",":
-                if depth == 0:
-                    # 顶层逗号：分割点
-                    parts.append("".join(current).strip())
-                    current = []
-                else:
-                    # 嵌套内部逗号：保留
-                    current.append(ch)
-                i += 1
-                continue
-
-            current.append(ch)
-            i += 1
-
-        if current:
-            parts.append("".join(current).strip())
-        return [p for p in parts if p]
+    @staticmethod
+    def _strip_outer_group(text: str) -> str:
+        """仅当一对括号包住完整表达式时移除外层括号。"""
+        while text.startswith("(") and text.endswith(")"):
+            depth = 0
+            encloses_all = True
+            for index, ch in enumerate(text):
+                if ch == "(":
+                    depth += 1
+                elif ch == ")":
+                    depth -= 1
+                    if depth == 0 and index != len(text) - 1:
+                        encloses_all = False
+                        break
+                    if depth < 0:
+                        raise ValueError(f"Unbalanced condition group: {text}")
+            if depth != 0:
+                raise ValueError(f"Unbalanced condition group: {text}")
+            if not encloses_all:
+                break
+            text = text[1:-1].strip()
+        return text
