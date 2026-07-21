@@ -4,11 +4,12 @@ R0 阶段先以 strict xfail 固定缺陷。修复对应问题时，必须移除
 """
 
 import pytest
+from pydantic import ValidationError
 
 from app.engine.engine import GameEngine
 from app.engine.graph import ChoiceData, GraphBundle
 from app.models.story import StoryNode
-from app.schemas.game import GameState
+from app.schemas.game import ChoiceResult, GameState
 
 
 def make_bundle(node_id: str, node_type: str = "main") -> GraphBundle:
@@ -58,6 +59,7 @@ def test_a_self_loop_does_not_complete_cycle():
 
     assert frame.state.cycle_count == 0
     assert frame.cycle_event is None
+    assert frame.speaker_names["npc_yan_yan"] == "燕妍"
 
 
 def test_reaching_e_updates_half_cycle():
@@ -71,7 +73,7 @@ def test_reaching_e_updates_half_cycle():
     assert frame.state.half_cycle_count == 1
 
 
-def test_locked_visible_choice_is_returned_with_reason():
+def test_unavailable_choice_is_hidden_even_when_authored_as_visible():
     engine = GameEngine()
     graph = {"A": make_bundle("A")}
     graph["A"].choices = [
@@ -87,9 +89,7 @@ def test_locked_visible_choice_is_returned_with_reason():
 
     choices = engine.resolve_available_choices(graph, "A", state)
 
-    assert len(choices) == 1
-    assert choices[0].available is False
-    assert choices[0].reason
+    assert choices == []
 
 
 def test_warp_entry_cannot_be_forged():
@@ -187,3 +187,23 @@ def test_legacy_node_content_resolves_false_template_branch():
     state = GameState(current_node_id="A", cycle_count=1)
 
     assert engine._resolve_content(graph["A"], state) == "第一轮"
+
+
+def test_legacy_cycle_range_uses_highest_numeric_threshold():
+    engine = GameEngine()
+    bundle = make_bundle("A")
+    bundle.cycle_variants = {
+        "cycle_3+": "第三轮以上",
+        "cycle_9+": "第九轮以上",
+        "cycle_10+": "第十轮以上",
+        "cycle_11+": "第十一轮以上",
+    }
+
+    assert engine._resolve_content(
+        bundle, GameState(current_node_id="A", cycle_count=12)
+    ) == "第十一轮以上"
+
+
+def test_choice_result_requires_non_empty_target_node():
+    with pytest.raises(ValidationError):
+        ChoiceResult(id="broken", text="坏选项", next_node_id="")

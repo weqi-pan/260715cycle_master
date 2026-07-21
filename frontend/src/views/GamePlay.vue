@@ -67,23 +67,21 @@
           <div v-if="showChoices" class="choice-area">
             <button v-for="(c, index) in store.choices" :key="c.id"
               class="choice-btn"
-              :class="{ warp: c.source === 'special_warp', chosen: chosenIds.has(c.id), locked: !c.available, 'scene-trans': c.next_node_id !== store.currentNode?.id }"
-              :disabled="store.loading || chosenIds.has(c.id) || !c.available"
+              :class="{ warp: c.source === 'special_warp', 'scene-trans': c.next_node_id !== store.currentNode?.id }"
+              :disabled="store.loading || chosenIds.has(c.id)"
               @click.stop="handleChoice(c)"
             >
               <span class="choice-index">{{ String(index + 1).padStart(2, '0') }}</span>
               <span class="choice-copy">
                 <span class="choice-text">{{ c.text }}</span>
-                <span v-if="!c.available && c.reason" class="choice-reason">{{ c.reason }}</span>
               </span>
-              <span v-if="chosenIds.has(c.id)" class="chosen-mark">✓</span>
               <span v-if="c.source === 'special_warp'" class="warp-tag">跃迁</span>
               <span v-if="c.next_node_id !== store.currentNode?.id" class="trans-arrow">→</span>
             </button>
           </div>
 
           <!-- Panels -->
-          <div v-if="showBP" class="panel" @click.stop><div v-if="!store.currentState||store.currentState.inventory.length===0" class="p-empty">暂无道具</div><div v-for="(it,i) in (store.currentState?.inventory??[])" :key="it.id" class="p-row"><span class="p-name">{{ it.name }}<template v-if="it.count && it.count > 1"> ×{{ it.count }}</template></span><button v-if="canDiscard(it)" @click="discardItem(i)" class="p-del">丢弃</button></div><button class="p-close" @click="showBP=false">关闭</button></div>
+          <div v-if="showBP" class="panel" @click.stop><div v-if="!store.currentState||store.currentState.inventory.length===0" class="p-empty">暂无道具</div><div v-for="it in (store.currentState?.inventory??[])" :key="it.id" class="p-row"><span class="p-name">{{ it.name }}<template v-if="it.count && it.count > 1"> ×{{ it.count }}</template></span><button v-if="canDiscard(it)" :disabled="store.loading" @click="discardItem(it.id)" class="p-del">丢弃</button></div><button class="p-close" @click="showBP=false">关闭</button></div>
           <div v-if="showLoad" class="panel" @click.stop><div v-if="saveList.length===0" class="p-empty">暂无存档</div><div v-for="s in saveList" :key="s.id" class="p-row"><span class="p-name">{{ s.save_name||s.id }}</span><span class="p-meta">{{ s.current_node_id }}·第{{ s.cycle_count }}轮</span><button @click="doLoad(s.id)">加载</button><button @click="doDelete(s.id)" class="p-del">删除</button></div><button class="p-close" @click="showLoad=false">关闭</button></div>
         </div>
       </template>
@@ -103,7 +101,7 @@
 
 <script setup lang="ts">
 import { onUnmounted, ref, computed, watch, nextTick } from 'vue'
-import type { ChoiceResult, ContentBlock, Frame, GameState } from '@/types'
+import type { ChoiceResult, ContentBlock, Frame, GameState, ItemBrief } from '@/types'
 import { useGameStore } from '@/stores/gameStore'
 import {
   appendVisibleBlock,
@@ -260,9 +258,9 @@ async function handleChoice(c: ChoiceResult) {
     chosenIds.value = new Set([...chosenIds.value].filter(id => id !== c.id))
     return
   }
+  chosenIds.value = new Set([...chosenIds.value].filter(id => id !== c.id))
   const nextNodeId = store.currentNode?.id
   pendingSceneChange = Boolean(nextNodeId && nextNodeId !== previousNodeId)
-  if (pendingSceneChange) chosenIds.value = new Set()
   consumeFrameEffects(store.currentFrame)
   if (store.currentFrame.result_blocks?.length || store.transitionText) beginResult(store.currentFrame)
   else if (pendingSceneChange) {
@@ -292,26 +290,15 @@ function md2html(t:string):string {
   t = t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>').replace(/---/g,'<span class="scene-break">· · ·</span>').replace(/\n\n/g,'</p><p>')
   return `<p>${t}</p>`
 }
-const SPEAKER_NAMES:Record<string,string>={
-  npc_yan_yan:'燕妍',npc_old_monk:'扫地老和尚',npc_a_liu:'阿六',
-  npc_li_ergou:'李二狗',npc_liu_qisheng:'刘启盛',npc_huijue:'慧觉',
-  npc_shen_banxian:'沈半仙',npc_deleng:'德楞',
-  npc_zhang_tianmin:'张天民',npc_wu_yingzhi:'吴应执',
-  npc_zhou_mingyuan:'周明远',npc_li_mingchen:'李铭宸',
-  npc_river_fisher:'江边钓鱼老人',npc_photo_master:'照相馆老师傅',
-  npc_firefighter:'值班消防员',npc_old_doctor:'老中医',
-  npc_stranded_commuter:'滞留乘客',npc_breakfast_elder:'粥铺老人',
-}
 function isPlayerSpeaker(speaker:string){return ['player','protagonist','主角','我'].includes(speaker.toLowerCase())}
-function speakerName(speaker:string){return isPlayerSpeaker(speaker)?'我':SPEAKER_NAMES[speaker]??speaker.replace(/^npc_/,'').replace(/_/g,' ')}
+function speakerName(speaker:string){return isPlayerSpeaker(speaker)?'我':store.currentFrame?.speaker_names[speaker]??speaker.replace(/^npc_/,'').replace(/_/g,' ')}
 function speakerInitial(speaker:string){return speakerName(speaker).slice(0,1)||'·'}
 function scrollDown() { nextTick(()=>{ if(mainRef.value) mainRef.value.scrollTop = mainRef.value.scrollHeight }) }
 
 // ── Extras ──
 const showBP = ref(false); const showMap = ref(false); const showLoad = ref(false); const saveList = ref<any[]>([])
-const DISC = new Set(['item_qing_coin','item_denim_rag','item_warning_note','item_old_newspaper'])
-function canDiscard(it:any){return DISC.has(it.id)}
-function discardItem(i:number){store.currentState?.inventory.splice(i,1)}
+function canDiscard(it:ItemBrief){return it.discardable === true}
+async function discardItem(itemId:string){try{await store.discard(itemId)}catch{alert(store.error||'无法丢弃道具')}}
 async function refreshSaves(){try{const r=await axios.get('/api/saves');saveList.value=r.data.saves??[]}catch{}}
 async function doSave(){if(!store.currentState)return;const n=prompt('存档名称：');if(!n)return;try{await axios.post('/api/saves?name='+encodeURIComponent(n),store.currentState);alert('存档完成')}catch{alert('存档失败')}}
 async function doLoad(sid:string){try{const r=await axios.get<GameState>('/api/saves/load/'+sid);await store.resume(r.data);chosenIds.value=new Set();if(store.currentFrame)beginEntry(store.currentFrame);showLoad.value=false}catch{alert(store.error||'加载失败')}}

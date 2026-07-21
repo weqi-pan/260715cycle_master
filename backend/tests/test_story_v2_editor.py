@@ -1,0 +1,74 @@
+"""v2 JSON 编辑器仓库测试。"""
+
+import json
+
+import pytest
+
+from app.editor.story_repository import StoryV2Editor
+
+
+def write_node(root, node_id: str, target_id: str):
+    payload = {
+        "schema_version": 2,
+        "id": node_id,
+        "meta": {"name": node_id, "node_type": "main", "position": 0},
+        "scene": {},
+        "entry_sequences": [{
+            "id": f"{node_id}.entry.default", "when": None, "priority": 0,
+            "blocks": [{
+                "id": f"{node_id}.entry.01", "type": "narration", "text": node_id,
+                "speaker_id": None, "when": None,
+            }],
+        }],
+        "choices": [{
+            "id": f"{node_id}.to.{target_id}", "label": "前往", "condition": None,
+            "locked_visibility": "hide", "repeat_policy": "once_per_visit",
+            "priority": 1, "result_blocks": [], "effects": [],
+            "next": {"node_id": target_id, "mode": "stay" if node_id == target_id else "travel"},
+        }],
+        "routing": {}, "authoring": {},
+    }
+    (root / f"{node_id}.json").write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+
+
+@pytest.fixture
+def editor(tmp_path):
+    write_node(tmp_path, "A", "B")
+    write_node(tmp_path, "B", "A")
+    return StoryV2Editor(tmp_path)
+
+
+def test_editor_lists_v2_nodes_and_choices(editor):
+    assert [node["id"] for node in editor.list_nodes()] == ["A", "B"]
+    assert {choice["id"] for choice in editor.list_choices()} == {"A.to.B", "B.to.A"}
+
+
+def test_editor_updates_node_metadata_without_flattening_content_blocks(editor):
+    result = editor.save_node({"id": "A", "name": "新名称", "position": 12})
+
+    raw = json.loads((editor.root / "A.json").read_text(encoding="utf-8"))
+    assert result["status"] == "updated"
+    assert raw["meta"]["name"] == "新名称"
+    assert raw["entry_sequences"][0]["blocks"][0]["id"] == "A.entry.01"
+
+
+def test_editor_choice_write_updates_v2_file(editor):
+    editor.save_choice({
+        "id": "A.to.B", "from_node_id": "A", "text": "去 B",
+        "next_node_id": "B", "condition": None, "effects": [], "priority": 3,
+        "repeat_policy": "once_ever",
+    })
+
+    raw = json.loads((editor.root / "A.json").read_text(encoding="utf-8"))
+    assert raw["choices"][0]["label"] == "去 B"
+    assert raw["choices"][0]["repeat_policy"] == "once_ever"
+    assert raw["choices"][0]["locked_visibility"] == "hide"
+
+
+def test_editor_rejects_deleting_referenced_node(editor):
+    with pytest.raises(ValueError, match="referenced"):
+        editor.delete_node("B")
+
+    assert (editor.root / "B.json").exists()

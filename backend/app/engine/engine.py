@@ -27,6 +27,7 @@ import re
 
 from .graph import GraphBundle, ChoiceData
 from .condition_eval import ConditionEvaluator
+from ..domain.items import item_definition
 from .special_router import SpecialRouter
 from ..schemas.game import GameState, Frame, NodeData, ChoiceResult, PersistentFound
 
@@ -85,7 +86,6 @@ class GameEngine:
         node_id: str,
         choice_id: str,
         state: GameState,
-        save_id: str | None = None,
     ) -> Frame:
         """
         处理玩家的一次选择，返回下一帧完整画面。
@@ -107,7 +107,6 @@ class GameEngine:
             node_id:  玩家当前所在节点 ID
             choice_id: 玩家选择的选项 ID（普通选项或 "__" 前缀的特殊路由）
             state:    当前游戏状态（前端持有并传入）
-            save_id:  (预留) 存档 ID，用于持久化节点状态的读写
         返回:
             Frame 对象（下一帧的完整画面数据）
         抛出:
@@ -133,6 +132,11 @@ class GameEngine:
         # ② 条件校验 — 确保选项的 condition 在当前的 GameState 下满足
         if choice.condition and not self.evaluator.evaluate(choice.condition, state):
             raise ValueError(f"Condition not met: {choice.condition}")
+        if not self._repeat_available(choice, state):
+            raise ValueError(f"Choice already selected under repeat policy: {choice.id}")
+        if choice.next_node_id not in graph:
+            raise ValueError(f"Target node '{choice.next_node_id}' not found")
+        next_bundle = graph[choice.next_node_id]
 
         # ③ 记录已访问节点 — 用于循环检测和 visited_nodes 追踪
         if node_id not in state.visited_nodes:
@@ -149,11 +153,11 @@ class GameEngine:
             if effect.get("type") in ("notify", "shake", "flash"):
                 scene_effects.append(effect)
         self._apply_effects(all_effects, state, node_id)
+        self._record_choice(choice, state)
 
         # ⑤ 节点跳转 — 将玩家移动到选项指向的目标节点
-        if choice.next_node_id not in graph:
-            raise ValueError(f"Target node '{choice.next_node_id}' not found")
-        next_bundle = graph[choice.next_node_id]
+        if next_bundle.id != node_id:
+            state.visit_id += 1
         state.current_node_id = next_bundle.id
 
         # ⑥ 循环检测 — 排除 A→A/S1→A 等局部返回
@@ -257,17 +261,8 @@ class GameEngine:
         for c in bundle.choices:
             available = self.evaluator.check(c.condition, state)
             if not available:
-                if c.is_hidden_when_locked:
-                    continue
-                results.append(ChoiceResult(
-                    id=c.id,
-                    text=c.text,
-                    short_text=c.short_text,
-                    next_node_id=c.next_node_id,
-                    available=False,
-                    reason=self.evaluator.describe_condition(c.condition),
-                    source="static",
-                ))
+                continue
+            if not self._repeat_available(c, state):
                 continue
             # 互斥选项组：如果同组已有选项被选中，则隐藏
             if c.choice_group and state.flags.get(f"_group_{c.choice_group}_chosen"):
@@ -292,6 +287,31 @@ class GameEngine:
             next((c.priority for c in bundle.choices if c.id == r.id), 99)
         ))
         return results
+
+    @staticmethod
+    def _repeat_available(choice: ChoiceData, state: GameState) -> bool:
+        """判断选项在当前访问/循环作用域中是否仍可执行。"""
+        policy = getattr(choice, "repeat_policy", "once_per_visit")
+        record = state.choice_history.get(choice.id)
+        if policy == "always" or record is None:
+            return True
+        if policy == "once_per_visit":
+            return record.get("last_visit_id") != state.visit_id
+        if policy == "once_per_cycle":
+            return record.get("last_cycle") != state.cycle_count
+        if policy == "once_ever":
+            return False
+        raise ValueError(f"Unknown repeat policy: {policy}")
+
+    @staticmethod
+    def _record_choice(choice: ChoiceData, state: GameState) -> None:
+        """在效果成功执行后记录选择。"""
+        previous = state.choice_history.get(choice.id, {})
+        state.choice_history[choice.id] = {
+            "count": previous.get("count", 0) + 1,
+            "last_cycle": state.cycle_count,
+            "last_visit_id": state.visit_id,
+        }
 
     # ============================================================
     # 内部辅助方法
@@ -345,7 +365,7 @@ class GameEngine:
 
             if etype == "add_item":
                 # 相同 ID 合并数量，避免重复条目破坏背包语义。
-                item_name = ConditionEvaluator.ITEM_NAMES.get(target, target)
+                item = item_definition(target)
                 existing = next(
                     (item for item in state.inventory if item.get("id") == target),
                     None,
@@ -354,9 +374,7 @@ class GameEngine:
                 if existing:
                     existing["count"] = existing.get("count", 1) + amount
                 else:
-                    state.inventory.append(
-                        {"id": target, "name": item_name, "count": amount}
-                    )
+                    state.inventory.append({**item, "count": amount})
 
             elif etype == "remove_item":
                 # 从背包移除指定 ID 的道具
@@ -450,12 +468,13 @@ class GameEngine:
                 break
         else:
             # 其次匹配范围变体（如 cycle_5+ 匹配 cycle_count ≥ 5）
-            for key in sorted(variants.keys()):
-                if key.endswith("+") and state.cycle_count >= int(
-                    key.replace("cycle_", "").replace("+", "")
-                ):
-                    if variants[key]:
-                        content = variants[key]
+            candidates: list[tuple[int, str]] = []
+            for key, value in variants.items():
+                match = re.fullmatch(r"cycle_(\d+)\+", key)
+                if match and value and int(match.group(1)) <= state.cycle_count:
+                    candidates.append((int(match.group(1)), value))
+            if candidates:
+                content = max(candidates, key=lambda item: item[0])[1]
 
         return self._resolve_text(content, state)
 

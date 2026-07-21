@@ -41,7 +41,7 @@ import GraphCanvas from '@/components/editor/GraphCanvas.vue'
 import InspectorPanel from '@/components/editor/InspectorPanel.vue'
 
 interface NodeItem { id: string; name: string; position: number; node_type: string; time_label?: string; content: string; speaker?: string; background?: string }
-interface ChoiceItem { id: string; from_node_id: string; text: string; next_node_id: string; condition?: string; effects: any[]; priority: number; hint?: string; is_hidden_when_locked: boolean; transition_text?: string }
+interface ChoiceItem { id: string; from_node_id: string; text: string; next_node_id: string; condition?: string; effects: any[]; priority: number; hint?: string; repeat_policy: 'always'|'once_per_visit'|'once_per_cycle'|'once_ever' }
 
 const nodes = ref<NodeItem[]>([])
 const allChoices = ref<ChoiceItem[]>([])

@@ -20,7 +20,9 @@
 from fastapi import APIRouter, HTTPException
 from ..engine.engine import GameEngine
 from ..engine.story_v2_loader import StoryV2Loader
-from ..schemas.game import Frame, ChooseRequest, GameState, NodeData
+from ..domain.items import item_definition
+from ..engine.turn_store import TurnStore
+from ..schemas.game import Frame, ChooseRequest, GameState, NodeData, TurnRequest
 
 router = APIRouter(prefix="/api/game", tags=["game"])
 
@@ -28,6 +30,7 @@ router = APIRouter(prefix="/api/game", tags=["game"])
 # v2 是唯一剧情数据源；SQLite 仅保存玩家存档。
 engine = GameEngine()
 story_v2 = StoryV2Loader()
+turns = TurnStore()
 
 
 def _get_graph():
@@ -97,7 +100,9 @@ def start_game():
     """
     graph = _get_graph()
     state = GameState(current_node_id="A")
-    return _state_frame(graph, state)
+    frame = _state_frame(graph, state)
+    frame.turn_id = turns.issue(frame.state)
+    return frame
 
 
 @router.post("/resume", response_model=Frame)
@@ -105,7 +110,9 @@ def resume_game(state: GameState):
     """根据完整存档状态重建当前节点画面，不推进剧情、不重置到 A。"""
     graph = _get_graph()
     try:
-        return _state_frame(graph, state)
+        frame = _state_frame(graph, state)
+        frame.turn_id = turns.issue(frame.state)
+        return frame
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
 
@@ -136,7 +143,9 @@ def choose_action(node_id: str, req: ChooseRequest):
         - 加载存档后进入游戏时（前端将存档还原为 GameState 后调用此接口）
     """
     graph = _get_graph()
-    state = req.state  # 使用客户端传入的状态（Stateful API）
+    state = turns.consume(req.turn_id)
+    if state is None:
+        raise HTTPException(status_code=409, detail="Turn is stale or unknown")
     try:
         frame = engine.process_choice(graph, node_id, req.choice_id, state)
         frame.node.entry_blocks = story_v2.entry_blocks(
@@ -145,6 +154,40 @@ def choose_action(node_id: str, req: ChooseRequest):
         frame.result_blocks = story_v2.result_blocks(
             node_id, req.choice_id, frame.state, engine.evaluator
         )
+        frame.turn_id = turns.issue(frame.state, req.turn_id)
         return frame
     except ValueError as e:
+        turns.restore(req.turn_id, state)
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/inventory/discard/{item_id}", response_model=Frame)
+def discard_inventory_item(item_id: str, req: TurnRequest):
+    """由服务端校验并丢弃一件道具，返回同节点的新 Frame。"""
+    state = turns.consume(req.turn_id)
+    if state is None:
+        raise HTTPException(status_code=409, detail="Turn is stale or unknown")
+    try:
+        try:
+            definition = item_definition(item_id)
+        except ValueError as exc:
+            raise HTTPException(status_code=404, detail=str(exc))
+        if not definition["discardable"]:
+            raise HTTPException(status_code=400, detail=f"Item cannot be discarded: {item_id}")
+        item = next((entry for entry in state.inventory if entry.get("id") == item_id), None)
+        if item is None:
+            raise HTTPException(status_code=404, detail=f"Item not in inventory: {item_id}")
+        count = int(item.get("count", 1))
+        if count > 1:
+            item["count"] = count - 1
+        else:
+            state.inventory = [entry for entry in state.inventory if entry.get("id") != item_id]
+        frame = _state_frame(_get_graph(), state)
+        frame.turn_id = turns.issue(frame.state, req.turn_id)
+        return frame
+    except HTTPException:
+        turns.restore(req.turn_id, state)
+        raise
+    except ValueError as exc:
+        turns.restore(req.turn_id, state)
+        raise HTTPException(status_code=400, detail=str(exc))

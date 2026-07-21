@@ -8,12 +8,16 @@ export interface GameState {
   endings_reached: string[]
   player_attributes: Record<string, number>
   persistent_nodes: Record<string, { items: ItemBrief[]; dangers: any[] }>
+  visit_id: number
+  choice_history: Record<string, { count: number; last_cycle: number; last_visit_id: number }>
 }
 
 export interface ItemBrief {
   id: string
   name: string
   count?: number
+  discardable?: boolean
+  cross_surface?: boolean
 }
 
 export interface NodeData {
@@ -43,7 +47,7 @@ export interface ChoiceResult {
   id: string
   text: string
   short_text?: string
-  next_node_id?: string
+  next_node_id: string
   available: boolean
   reason?: string
   source: 'static' | 'special_shortcut' | 'special_warp'
@@ -70,4 +74,6 @@ export interface Frame {
   transition_text?: string
   scene_effects?: Array<{ type: string; target?: string; value?: any }>
   result_blocks?: ContentBlock[]
+  speaker_names: Record<string, string>
+  turn_id: string
 }

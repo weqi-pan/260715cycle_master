@@ -5,6 +5,7 @@ import {
   appendVisibleBlock,
   updateVisibleBlockText,
 } from '../src/player/playbackTimeline.ts'
+import { visibleChoices } from '../src/player/choiceVisibility.ts'
 import type { ContentBlock } from '../src/types/index.ts'
 
 
@@ -56,4 +57,13 @@ test('typing update changes only the active block and keeps history', () => {
   assert.equal(updated[2].displayed_text, '')
   assert.notEqual(updated, initial)
   assert.equal(initial[1].displayed_text, '')
+})
+
+test('choice list excludes unavailable choices defensively', () => {
+  const choices = [
+    { id: 'open', text: '可选', next_node_id: 'A', available: true, source: 'static' as const },
+    { id: 'locked', text: '不可选', next_node_id: 'A', available: false, source: 'static' as const },
+  ]
+
+  assert.deepEqual(visibleChoices(choices).map(choice => choice.id), ['open'])
 })

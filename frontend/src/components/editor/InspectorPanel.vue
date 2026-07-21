@@ -17,9 +17,8 @@
       </label>
       <label>位置 <input v-model.number="form.position" type="number" @change="emitNode" /></label>
       <label>时间标签 <input v-model="form.time_label" @change="emitNode" /></label>
-      <label>说话人 <input v-model="form.speaker" @change="emitNode" placeholder="null = 旁白" /></label>
       <label>背景图 <input v-model="form.background" @change="emitNode" /></label>
-      <label>正文 <textarea v-model="form.content" rows="6" @change="emitNode" /></label>
+      <label>正文预览 <textarea v-model="form.content" rows="6" readonly title="原子内容块请使用剧情 JSON 编辑器修改" /></label>
     </div>
 
     <!-- Choices -->
@@ -39,8 +38,14 @@
         <label>条件 <input v-model="c.condition" @change="emitChoice(c)" placeholder="null = 始终可选" /></label>
         <label>优先级 <input v-model.number="c.priority" type="number" @change="emitChoice(c)" /></label>
         <label>提示 <input v-model="c.hint" @change="emitChoice(c)" /></label>
-        <label class="cb-label"><input type="checkbox" v-model="c.is_hidden_when_locked" @change="emitChoice(c)" /> 不可用时隐藏</label>
-        <label>过渡文本 <textarea v-model="c.transition_text" rows="3" @change="emitChoice(c)" /></label>
+        <label>重复策略
+          <select v-model="c.repeat_policy" @change="emitChoice(c)">
+            <option value="always">始终可重复</option>
+            <option value="once_per_visit">每次访问一次</option>
+            <option value="once_per_cycle">每轮一次</option>
+            <option value="once_ever">永久一次</option>
+          </select>
+        </label>
       </div>
     </div>
   </div>
@@ -65,7 +70,7 @@ function addChoice() {
   const c = {
     id: props.node.id + '_choice_' + Date.now(),
     from_node_id: props.node.id, text: '新选项', next_node_id: props.node.id,
-    condition: null, effects: [], priority: 99, hint: null, is_hidden_when_locked: false,
+    condition: null, effects: [], priority: 99, hint: null, repeat_policy: 'once_per_visit',
   }
   localChoices.value.push(c)
   emitChoice(c)

@@ -65,6 +65,8 @@ class Save(Base):
     visited_nodes_json = Column(Text, default="[]")  # 本轮已访问节点
     player_attributes_json = Column(Text, default="{}")  # 玩家属性
     endings_reached_json = Column(Text, default="[]")  # 已达成的结局
+    visit_id = Column(Integer, default=0)  # 当前节点访问实例 ID
+    choice_history_json = Column(Text, default="{}")  # 选项重复策略记录
 
 
 class NodePersistentState(Base):

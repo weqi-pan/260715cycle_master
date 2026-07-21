@@ -13,10 +13,15 @@ export async function resumeGame(state: GameState): Promise<Frame> {
   return res.data
 }
 
-export async function chooseAction(nodeId: string, choiceId: string, state: GameState): Promise<Frame> {
+export async function chooseAction(nodeId: string, choiceId: string, turnId: string): Promise<Frame> {
   const res = await api.post<Frame>(`/game/choose/${nodeId}`, {
     choice_id: choiceId,
-    state: state,
+    turn_id: turnId,
   })
+  return res.data
+}
+
+export async function discardInventoryItem(itemId: string, turnId: string): Promise<Frame> {
+  const res = await api.post<Frame>(`/game/inventory/discard/${itemId}`, { turn_id: turnId })
   return res.data
 }

@@ -3,7 +3,8 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Frame, GameState, NodeData, ChoiceResult } from '@/types'
 import axios from 'axios'
-import { startGame, resumeGame, chooseAction } from '@/api/game'
+import { startGame, resumeGame, chooseAction, discardInventoryItem } from '@/api/game'
+import { visibleChoices } from '@/player/choiceVisibility'
 
 export const useGameStore = defineStore('game', () => {
   const currentFrame = ref<Frame | null>(null)
@@ -13,7 +14,7 @@ export const useGameStore = defineStore('game', () => {
 
   const currentNode = computed<NodeData | null>(() => currentFrame.value?.node ?? null)
   const currentState = computed<GameState | null>(() => currentFrame.value?.state ?? null)
-  const choices = computed<ChoiceResult[]>(() => currentFrame.value?.available_choices ?? [])
+  const choices = computed<ChoiceResult[]>(() => visibleChoices(currentFrame.value?.available_choices ?? []))
   const cycleEvent = computed(() => currentFrame.value?.cycle_event ?? null)
   const transitionText = computed(() => currentFrame.value?.transition_text ?? null)
 
@@ -66,7 +67,7 @@ export const useGameStore = defineStore('game', () => {
     loading.value = true
     error.value = null
     try {
-      const frame = await chooseAction(nodeId, choiceId, currentState)
+      const frame = await chooseAction(nodeId, choiceId, currentFrame.value.turn_id)
       acceptFrame(frame)
     } catch (e: unknown) {
       error.value = errorMessage(e, '无法处理选择')
@@ -75,5 +76,19 @@ export const useGameStore = defineStore('game', () => {
     }
   }
 
-  return { currentFrame, loading, error, history, currentNode, currentState, choices, cycleEvent, transitionText, init, resume, choose }
+  async function discard(itemId: string) {
+    if (!currentFrame.value) return
+    loading.value = true
+    error.value = null
+    try {
+      acceptFrame(await discardInventoryItem(itemId, currentFrame.value.turn_id))
+    } catch (e: unknown) {
+      error.value = errorMessage(e, '无法丢弃道具')
+      throw e
+    } finally {
+      loading.value = false
+    }
+  }
+
+  return { currentFrame, loading, error, history, currentNode, currentState, choices, cycleEvent, transitionText, init, resume, choose, discard }
 })

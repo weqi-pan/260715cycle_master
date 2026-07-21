@@ -50,8 +50,7 @@ const attrs = computed(() => Object.fromEntries(
 ))
 const inventory = computed(() => props.inventory ?? [])
 
-const CROSS = new Set(['item_amulet','item_qing_coin','item_beads','item_porcelain_shard','item_denim_rag','item_jade_pendant'])
-function isCrossSurface(item: ItemBrief) { return CROSS.has(item.id) }
+function isCrossSurface(item: ItemBrief) { return item.cross_surface === true }
 function labelFor(k: string|number) { const key=String(k); const m: Record<string,string>={sanity:'理智',courage:'勇气',insight:'灵感'}; return m[key]??key.toUpperCase() }
 function displayValue(k:string|number,v:number){return String(k)==='sanity'&&props.attributes.sanity_max!=null?`${v}/${props.attributes.sanity_max}`:v}
 function isWarn(k: string|number, v: number) { const key=String(k); return (key==='sanity'&&v<=30)||(key==='courage'&&v<=3) }

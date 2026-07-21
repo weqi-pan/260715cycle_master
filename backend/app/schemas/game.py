@@ -14,9 +14,11 @@ Frame 是一帧完整的游戏画面数据，包含当前节点、更新后的�
 """
 
 # backend/app/schemas/game.py
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional, Any
 from .story_v2 import ContentBlock
+from ..domain.npcs import NPC_NAMES
+from ..domain.items import item_definition
 
 
 # ============================================================
@@ -76,6 +78,21 @@ class GameState(BaseModel):
         default_factory=lambda: {"sanity": 100, "courage": 5, "insight": 3}
     )
     persistent_nodes: dict[str, dict] = Field(default_factory=dict)
+    visit_id: int = 0
+    choice_history: dict[str, dict[str, int]] = Field(default_factory=dict)
+
+    @field_validator("inventory")
+    @classmethod
+    def hydrate_inventory_metadata(cls, inventory: list[dict]) -> list[dict]:
+        hydrated = []
+        for entry in inventory:
+            try:
+                metadata = item_definition(str(entry.get("id", "")))
+            except ValueError:
+                hydrated.append(entry)
+                continue
+            hydrated.append({**entry, **metadata})
+        return hydrated
 
 
 # ============================================================
@@ -115,7 +132,7 @@ class ChoiceResult(BaseModel):
     id: str                          # 选项 ID
     text: str                        # 完整显示文本
     short_text: Optional[str] = None  # 缩略文本（按钮）
-    next_node_id: str = ""           # 目标节点 ID（前端判断是否场景切换）
+    next_node_id: str = Field(min_length=1)  # 目标节点 ID（前端判断是否场景切换）
     available: bool = True            # 是否可选（条件满足）
     reason: Optional[str] = None     # 不可选时的人读原因
     source: str = "static"           # 选项来源: "static" | "special_shortcut" | "special_warp"
@@ -161,6 +178,8 @@ class Frame(BaseModel):
     transition_text: Optional[str] = None
     scene_effects: list[dict] = Field(default_factory=list)
     result_blocks: list[ContentBlock] = Field(default_factory=list)
+    speaker_names: dict[str, str] = Field(default_factory=lambda: dict(NPC_NAMES))
+    turn_id: str = ""
 
 
 # ============================================================
@@ -175,7 +194,12 @@ class ChooseRequest(BaseModel):
     后端引擎根据 choice_id 找到对应选项，应用效果后返回下一帧。
     """
     choice_id: str         # 玩家选择的分支选项 ID
-    state: GameState       # 当前游戏状态（前端持有并回传）
+    turn_id: str = Field(min_length=1)  # 服务端签发的一次性 Turn ID
+
+
+class TurnRequest(BaseModel):
+    """仅依赖服务端权威状态的动作请求。"""
+    turn_id: str = Field(min_length=1)
 
 
 class SaveGameRequest(BaseModel):

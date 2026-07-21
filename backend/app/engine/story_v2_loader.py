@@ -34,6 +34,10 @@ class StoryV2Loader:
             raise RuntimeError(f"No story v2 nodes found: {self.root}")
         return nodes
 
+    def reload(self) -> None:
+        """编辑器原子写入后重新加载运行时内容。"""
+        self.nodes = self._load_all()
+
     def load_graph(self) -> dict[str, GraphBundle]:
         """从 v2 文件构建完整运行图，不读取 SQLite 故事表。"""
         return {

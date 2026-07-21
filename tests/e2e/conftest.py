@@ -1,17 +1,11 @@
-"""
-Pytest 配置 — 使用系统 Chrome 浏览器进行测试
-"""
+"""使用 Playwright 隔离 Chromium 的 E2E 配置。"""
 
 import pytest
 
 
 @pytest.fixture(scope="session")
 def browser_type_launch_args():
-    """使用系统 Chrome 浏览器（跳过 Playwright 浏览器下载）"""
-    return {
-        "channel": "chrome",
-        "headless": False,
-    }
+    return {"headless": True}
 
 
 @pytest.fixture(scope="session")

@@ -12,7 +12,7 @@
 
 ### 核心特色
 
-- **莫比乌斯环叙事** — 200 单位的环面，8 个关键节点 + 2 个特殊节点（捷径 J / 跃迁 K）+ 20 个子节点，构成完整的循环故事图谱
+- **莫比乌斯环叙事** — 8 个主节点（A~H）+ 2 个特殊节点（捷径 J / 跃迁 K）+ 20 个子节点（S1~S20），构成完整的循环故事图谱
 - **跨循环持久化** — 每一轮留下的道具、线索、甚至危险，都会在下一轮循环中保留。上次帮你找到钥匙的线索，下次可能变成致命的陷阱
 - **双时空穿越** — 在特定节点可穿越至 1650 年（庚寅之劫时期的广州），与历史亲历者互动，在过去的行为会"写入"历史，影响下一轮循环
 - **多结局无限重玩** — 没有"真正的结局"，每一次循环都是对故事的新发现
@@ -38,6 +38,7 @@
 | ORM | **SQLAlchemy 2.0** | ORM + 原生 SQL |
 | 数据校验 | **Pydantic v2** | 类型安全校验 |
 | 数据库 | **SQLite** | 零配置单文件部署 |
+| 测试 | **pytest** (后端) + **Playwright** (E2E) + **Vitest** (前端) | 三层测试体系 |
 | 桌面打包（未来） | **Tauri 2.x** | 轻量桌面应用 |
 
 ---
@@ -46,51 +47,63 @@
 
 ```
 cycle_master/
-├── backend/                     # Python FastAPI 后端
+├── backend/                          # Python FastAPI 后端
 │   ├── app/
-│   │   ├── main.py              #   FastAPI 入口
-│   │   ├── config.py            #   配置
-│   │   ├── database.py          #   数据库会话
-│   │   ├── paths.py             #   路径解析
-│   │   ├── engine/              #   图引擎核心
-│   │   ├── models/              #   ORM 模型
-│   │   ├── routers/             #   REST API 路由
-│   │   └── schemas/             #   Pydantic Schema
-│   ├── scripts/                 #   后端工具脚本
-│   │   └── validate_story_v2.py #   v2 剧情严格校验
-│   └── tests/                   #   后端单元测试
-├── frontend/                    # Vue 3 前端
+│   │   ├── main.py                   #   FastAPI 入口
+│   │   ├── config.py                 #   配置
+│   │   ├── database.py               #   数据库会话
+│   │   ├── paths.py                  #   路径解析
+│   │   ├── domain/                   #   游戏领域定义（道具/NPC 元数据）
+│   │   ├── editor/                   #   编辑器数据仓库（v2 JSON 原子写入）
+│   │   ├── engine/                   #   图引擎核心
+│   │   │   ├── graph.py              #     图加载与缓存
+│   │   │   ├── engine.py             #     游戏引擎（选择处理流水线）
+│   │   │   ├── condition_eval.py     #     条件表达式求值器
+│   │   │   ├── story_v2_loader.py    #     v2 剧情文件加载器
+│   │   │   └── turn_store.py         #     进程内 Turn 防重放仓库
+│   │   ├── models/                   #   ORM 模型
+│   │   ├── routers/                  #   REST API 路由
+│   │   └── schemas/                  #   Pydantic Schema
+│   ├── scripts/                      #   后端工具脚本
+│   │   └── validate_story_v2.py      #     v2 剧情严格校验
+│   └── tests/                        #   后端单元测试
+├── frontend/                         # Vue 3 前端
 │   └── src/
-│       ├── api/                 #   API 调用层
-│       ├── components/          #   组件
-│       │   ├── editor/          #     编辑器组件
-│       │   ├── player/          #     播放器组件
-│       │   └── shared/          #     共享组件
-│       ├── composables/         #   组合式函数
-│       ├── router/              #   路由
-│       ├── stores/              #   Pinia 状态管理
-│       └── views/               #   页面视图
-├── data/                        # 数据（统一管理）
-│   ├── story_data_v2/           #   游戏内容 JSON（运行时唯一剧情源）
-│   ├── assets/                  #   静态资源（背景/立绘/音频）
+│       ├── api/                      #   API 调用层
+│       ├── components/               #   组件
+│       │   ├── editor/               #     编辑器组件
+│       │   ├── player/               #     播放器组件
+│       │   └── shared/               #     共享组件
+│       ├── player/                   #   播放器逻辑（choiceVisibility 等）
+│       ├── composables/              #   组合式函数
+│       ├── router/                   #   路由
+│       ├── stores/                   #   Pinia 状态管理
+│       └── views/                    #   页面视图
+├── data/                             # 数据（统一管理）
+│   ├── story_data_v2/                #   v2 游戏内容 JSON（运行时唯一剧情源）
+│   │   ├── manifest.json             #     节点/资源清单
+│   │   ├── nodes/                    #     8 主节点 + 30 子节点 JSON
+│   │   └── story-node-v2.schema.json #     JSON Schema 结构定义
+│   ├── assets/                       #   静态资源（背景/立绘/音频）
 │   │   ├── backgrounds/
 │   │   ├── sprites/
 │   │   └── audio/
-│   ├── exports/                 #   数据导出
-│   └── cycle_master.db          #   SQLite 数据库
-├── docs/                        # 文档
-│   ├── design/                  #   设计文档（技术方案、故事方案等）
-│   ├── story/                   #   故事大纲（A-K + S1-S20 节点详细故事）
-│   └── specs/                   #   技术规格
-├── plan/                        # 开发计划
+│   ├── exports/                      #   数据导出
+│   └── cycle_master.db              #   SQLite 数据库
+├── docs/                             # 文档
+│   ├── design/                       #   设计文档（技术方案、故事方案等）
+│   ├── story/                        #   故事大纲（全部节点详细故事）
+│   └── specs/                        #   技术规格
+├── plan/                             # 开发计划
 │   ├── 00_总览与路线图.md
-│   ├── 01~09_阶段计划.md
-│   ├── implementations/         #   实施方案归档
-│   ├── checklists/              #   测试清单归档
-│   └── reports/                 #   项目报告归档
-├── tests/                       # E2E 端到端测试
-├── scripts/                     # 启动/部署脚本
-├── CHANGELOG.md                 # 版本变更日志
+│   ├── 01~13_阶段计划与问题清单.md
+│   ├── implementations/              #   实施方案归档
+│   ├── checklists/                   #   测试清单归档
+│   └── reports/                      #   项目报告归档
+├── tests/                            # E2E 端到端测试
+│   └── e2e/
+├── scripts/                          # 启动/部署/审计脚本
+├── CHANGELOG.md                      # 版本变更日志
 ├── README.md
 └── .gitignore
 ```
@@ -99,29 +112,58 @@ cycle_master/
 
 ## 开发阶段
 
-### Phase 1: 骨架搭建
-- [ ] 后端项目初始化（FastAPI + SQLite + SQLAlchemy）
-- [ ] 前端项目初始化（Vue 3 + Vite + Element Plus + Pinia）
-- [ ] 数据库建表 + Pydantic Schema
-- [ ] 图引擎核心三模块（graph / engine / condition_eval）
-- [ ] 最简 API 跑通环形 demo
+### Phase 1: 骨架搭建 ✅
+- [x] 后端项目初始化（FastAPI + SQLite + SQLAlchemy）
+- [x] 前端项目初始化（Vue 3 + Vite + Element Plus + Pinia）
+- [x] 数据库建表 + Pydantic Schema
+- [x] 图引擎核心三模块（graph / engine / condition_eval）
+- [x] 最简 API 跑通环形 demo
 
-### Phase 2: 核心机制
-- [ ] 条件表达式解析器
-- [ ] 效果系统（道具/标记/属性变更）
-- [ ] 跨循环持久化
-- [ ] 循环检测 + 结局生成
-- [ ] 存档系统
+### Phase 2: 核心机制 ✅
+- [x] 条件表达式解析器（12 种条件语法）
+- [x] 效果系统（道具/标记/属性变更）
+- [x] 跨循环持久化
+- [x] 循环检测 + 结局生成
+- [x] 存档系统 CRUD
 
-### Phase 3: 可视化编辑器
-- [ ] Cytoscape.js 图编辑器
-- [ ] 节点/边的增删改查
-- [ ] 条件/效果编辑器
+### Phase 3: 可视化编辑器 ✅
+- [x] Cytoscape.js 图编辑器
+- [x] 节点/边的增删改查
+- [x] 条件/效果编辑器
+- [x] InspectorPanel 属性面板
 
-### Phase 4: 打磨与扩展
-- [ ] 背景图/立绘资源
-- [ ] UI 动画和转场
-- [ ] 音效支持
+### Phase 4: 动效与资源 ✅
+- [x] 场景特效系统（notify/shake/flash）
+- [x] 背景图/立绘资源挂载
+- [x] 角色头像与打字机效果
+- [x] 莫比乌斯环 SVG 小地图
+
+### Phase 5: 音效与跨平台 ✅
+- [x] 音效挂载点
+- [x] 角色 speaker 迁移
+- [x] 色彩氛围 tint
+- [x] E2E 测试基础
+
+### Phase 6: UX 缺陷修复 ✅
+- [x] 道具名称/描述正确显示
+- [x] 选项分组和可见性控制
+- [x] 内联展开叙事流（inline expand）
+- [x] 背包系统完善
+- [x] 小地图切换优化
+
+### Phase 7: 对话系统重设计 ✅
+- [x] dialogue_lines 数组替代纯文本 narrative
+- [x] 聊天气泡式对话渲染
+- [x] 场景转场动画（水墨、时痕裂隙、标题卡）
+- [x] 转场持久化与竞态修复
+
+### Phase 8: 打磨与扩展 🚧
+- [x] v2 剧情数据单源化（story_data_v2 替代旧 JSON）
+- [x] Turn 防重放仓库
+- [x] 领域层重构（道具/NPC 元数据）
+- [x] 编辑器 v2 原子写入
+- [x] 选项可见性系统
+- [x] 代码审查 + 回归测试
 - [ ] Tauri 桌面打包
 
 ---
@@ -148,11 +190,25 @@ cycle_master/
 | J | 地宫暗道 | `special_shortcut` | 条件满足时：E → J → A，缩短循环路径 |
 | K | 龙脉裂隙 | `special_warp` | 条件满足时：任意节点可进入 K，从 K 可跳转到任意主节点 |
 
+### 子节点（20 个，S1~S20）
+
+每个主节点周围分布 2~3 个子节点，提供支线探索、道具获取和角色交互。详见 `docs/story/节点具体故事/`。
+
 ---
 
 ## 关键设计理念
 
-**剧本 = 有向循环图，玩游戏 = 状态在图上遍历**（借鉴 LangGraph 状态图思想）
+### 游戏引擎 9 步流水线
+
+```
+parse_choice → validate_state → eval_conditions → filter_visible
+  → compute_effects → apply_effects → check_specials
+    → build_narrative → build_choices → return_frame
+```
+
+### 剧本 = 有向循环图，玩游戏 = 状态在图上遍历
+
+（借鉴 LangGraph 状态图思想）
 
 ```
 莫比乌斯环展开（俯视图）：
@@ -167,6 +223,14 @@ cycle_master/
        （回到 A = 一次循环完成）
 ```
 
+### v2 剧情数据架构（单源化）
+
+- 所有游戏内容存储在 `data/story_data_v2/` 单一目录下
+- JSON Schema 严格校验（`story-node-v2.schema.json`）
+- `manifest.json` 集中管理节点/资源清单
+- gameplay/content/conditions 三段式节点结构
+- 编辑器直接写入 v2 JSON，无需导入同步
+
 ---
 
 ## 许可证
@@ -179,3 +243,7 @@ cycle_master/
 
 - 游戏设计 & 剧本：weqi
 - 技术架构：weqi
+
+---
+
+> **最后更新**：2026-07-21

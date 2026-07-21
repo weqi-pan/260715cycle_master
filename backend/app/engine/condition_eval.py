@@ -31,6 +31,7 @@
 # backend/app/engine/condition_eval.py
 import re
 from app.schemas.game import GameState
+from app.domain.items import ITEM_NAMES as CANONICAL_ITEM_NAMES
 
 
 class ConditionEvaluator:
@@ -278,6 +279,7 @@ class ConditionEvaluator:
         "item_rooftop_tile": "天台红瓦片",
         "item_denim_rag": "一块破布",
     }
+    ITEM_NAMES = dict(CANONICAL_ITEM_NAMES)
 
     # ── 属性名称映射表 ───────────────────────────────────────
     ATTR_NAMES: dict[str, str] = {

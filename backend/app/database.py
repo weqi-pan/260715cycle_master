@@ -13,7 +13,7 @@ SQLite 引擎使用 WAL 模式 + check_same_thread=False 以支持异步并发�
 """
 
 # backend/app/database.py
-from sqlalchemy import create_engine, event
+from sqlalchemy import create_engine, event, inspect
 from sqlalchemy.orm import sessionmaker, declarative_base
 from .config import DATABASE_URL
 
@@ -72,3 +72,14 @@ def init_db():
     如果表已存在则跳过，不会覆盖已有数据（使用 create_all 的默认行为）。
     """
     Base.metadata.create_all(bind=engine)
+    existing = {column["name"] for column in inspect(engine).get_columns("saves")}
+    migrations = {
+        "visit_id": "ALTER TABLE saves ADD COLUMN visit_id INTEGER DEFAULT 0",
+        "choice_history_json": (
+            "ALTER TABLE saves ADD COLUMN choice_history_json TEXT DEFAULT '{}'"
+        ),
+    }
+    with engine.begin() as connection:
+        for column, statement in migrations.items():
+            if column not in existing:
+                connection.exec_driver_sql(statement)

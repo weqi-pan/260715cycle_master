@@ -128,6 +128,8 @@ def create_save(name: str, state: GameState, db: Session = Depends(get_db)):
         visited_nodes_json=json.dumps(state.visited_nodes, ensure_ascii=False),
         player_attributes_json=json.dumps(state.player_attributes, ensure_ascii=False),
         endings_reached_json=json.dumps(state.endings_reached, ensure_ascii=False),
+        visit_id=state.visit_id,
+        choice_history_json=json.dumps(state.choice_history, ensure_ascii=False),
     )
     db.add(save)
     db.flush()
@@ -170,6 +172,8 @@ def update_save(save_id: str, state: GameState, db: Session = Depends(get_db)):
     save.visited_nodes_json = json.dumps(state.visited_nodes, ensure_ascii=False)
     save.player_attributes_json = json.dumps(state.player_attributes, ensure_ascii=False)
     save.endings_reached_json = json.dumps(state.endings_reached, ensure_ascii=False)
+    save.visit_id = state.visit_id
+    save.choice_history_json = json.dumps(state.choice_history, ensure_ascii=False)
     save.updated_at = _now()
 
     _replace_persistent_nodes(db, save_id, state)
@@ -250,4 +254,6 @@ def load_save(save_id: str, db: Session = Depends(get_db)):
         endings_reached=json.loads(save.endings_reached_json),
         player_attributes=json.loads(save.player_attributes_json),
         persistent_nodes=persistent_nodes,
+        visit_id=save.visit_id or 0,
+        choice_history=json.loads(save.choice_history_json or "{}"),
     )
