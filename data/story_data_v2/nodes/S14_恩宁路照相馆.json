@@ -90,7 +90,29 @@
       "repeat_policy": "once_per_visit",
       "priority": 1,
       "hint": "每次冲洗出来的画面都不同——她在移动",
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S14_choice_01.result.paragraph.01.01",
+          "type": "narration",
+          "text": "老师傅小心翼翼地把底片装进一个老式纸袋里递给你。他的手很稳——冲洗了一辈子照片的手。他看着你的眼神里有一种很深的了然，像是他等这一刻已经等了很久。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S14_choice_01.result.paragraph.02.01",
+          "type": "dialogue",
+          "text": "后生仔——这张底片，我已经冲洗了三遍了。每一次都不一样。不是曝光的问题——底片本身没有变化。是底片上的人——在变。她还在走。",
+          "speaker_id": "npc_photo_master",
+          "when": null
+        },
+        {
+          "id": "S14_choice_01.result.paragraph.03.01",
+          "type": "narration",
+          "text": "_（底片上的人或许就是那个女孩——她在2014年坠楼的那一刻被裂隙捕获。她的「图像」困在了时间的夹层里——每一次冲洗，拍到的是她在循环中不同时刻的位置。她不是静止的——她在这个永远重复的7月15日里，一直在移动。）_",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "add_item",
@@ -112,7 +134,15 @@
       "repeat_policy": "once_per_visit",
       "priority": 99,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S14_choice_02.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你向老师傅道了谢，推开照相馆的玻璃门。恩宁路的阳光刺得你眯起眼睛。底片在纸袋里凉凉的——像是刚从冷藏柜里拿出来的，不像是这个季节该有的温度。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [],
       "next": {
         "node_id": "G",

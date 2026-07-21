@@ -276,7 +276,57 @@
       "repeat_policy": "once_per_visit",
       "priority": 1,
       "hint": "那个戴黑框眼镜的男人好像知道些什么",
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "D_choice_01.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你拉开糖水铺的塑料椅子坐下。桌面黏黏的——不知多少人在这里喝过糖水。红豆沙已经凉了——表面结了一层薄薄的膜。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "D_choice_01.result.paragraph.02.01",
+          "type": "dialogue",
+          "text": "55天。我每天20:15来这里坐同一个位置。红豆沙，少糖。老板已经不问我要什么了。",
+          "speaker_id": "npc_zhang_tianmin",
+          "when": null
+        },
+        {
+          "id": "D_choice_01.result.paragraph.03.01",
+          "type": "narration",
+          "text": "他翻开笔记本——A5大小，软皮封面，前二十页写满了密密麻麻的字。他把其中一页撕下来推到你面前。纸的毛边还挂着一丝纤维。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "D_choice_01.result.paragraph.04.01",
+          "type": "narration",
+          "text": "纸上画着一条潦草的时间线——从1993年9月14日（施工塌方）到2014年7月15日（跳楼事件）再到2018年7月15日（你入住）。每个时间节点旁边标注了对应的异常事件类型——\"温度骤降\"\"声源不明\"\"视觉残留\"。这不是灵异笔记——是一份工程事故分析报告的逻辑结构。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "D_choice_01.result.paragraph.05.01",
+          "type": "dialogue",
+          "text": "你第一天来的时候眼神不是这样的。现在不一样了。你看到那些影子了——20:15的。",
+          "speaker_id": "npc_zhang_tianmin",
+          "when": null
+        },
+        {
+          "id": "D_choice_01.result.paragraph.06.01",
+          "type": "narration",
+          "text": "他用瓷勺搅动红豆沙。勺碰碗的声音在嘈杂的步行街背景音中格外清晰——叮。叮。叮。他没有看你——在看碗底。那里没有答案，但他每天都会看。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "D_choice_01.result.paragraph.07.01",
+          "type": "dialogue",
+          "text": "这里的循环不是随机的。四天。每次四天。精确得像一个程序——但程序会有bug。那些鬼市里的影子——就是bug。",
+          "speaker_id": "npc_zhang_tianmin",
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "set_flag",
@@ -303,7 +353,43 @@
       "repeat_policy": "once_per_visit",
       "priority": 2,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "D_choice_02.result.paragraph.01.01",
+          "type": "narration",
+          "text": "糖水铺墙上挂着一排泛黄的老照片——\"上下九百年变迁\"主题。从骑楼初建的黑白胶片到九十年代改造的彩色冲印，按时间顺序排列。相框的玻璃上积了一层薄薄的糖水蒸汽凝成的雾。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "D_choice_02.result.paragraph.02.01",
+          "type": "narration",
+          "text": "你一张张看过去。有一张标注\"1992年·荔湾广场原址拆除前\"——照片里的旧建筑是清末民初的骑楼，墙角堆着拆下来的旧门板和青砖。但你注意到照片背景中有一个不该出现的东西。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "D_choice_02.result.paragraph.03.01",
+          "type": "narration",
+          "text": "在拆除工地的边缘——铜狮已经在那里了。1992年的铜狮。但荔湾广场是1993年才开工的。这对铜狮比广场更早出现在这片工地上——它们不是被「摆放」在门口的。它们是从地底下被挖出来的。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "D_choice_02.result.paragraph.04.01",
+          "type": "narration",
+          "text": "你把照片从墙上取下来——相框背面的胶带已经老化了，轻轻一碰就脱落。翻过来，照片背面用钢笔写着一行小字——墨水褪成了淡棕色：\"狮子是从地底下挖出来的。拍照日期不确定——冲洗店说底片像是被X光照过。\"",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "D_choice_02.result.paragraph.05.01",
+          "type": "narration",
+          "text": "_（铜狮不是放在这里的。它们是从下面挖上来的——人们把挖出来的镇物当成了装饰品摆在门口。这对铜狮面朝广场里面——不是在迎接客人，是在盯着地下。）_",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "add_item",
@@ -325,7 +411,57 @@
       "repeat_policy": "once_per_visit",
       "priority": 3,
       "hint": "鬼市中出现清代残影经过的地方……地面上好像有什么东西",
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "D_choice_03.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你的手机震动了一下——20:15。所有路灯同时闪烁——整条上下九的灯光像心电图跳了一下，然后恢复正常。但骑楼柱子之间的空气开始变得不对劲——像夏天柏油路面上的热浪，但它是冷的。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "D_choice_03.result.paragraph.02.01",
+          "type": "narration",
+          "text": "然后你看到了。那些影子不再是影子——它们有了边界、轮廓、甚至颜色。褪了色的靛蓝布衣、灰白的辫子、赤脚踩在石板上的触感——不，不是声音，是声音的\"负片\"，一种比沉默更安静的振动，从脚底传上来而不是从耳朵进去。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "D_choice_03.result.paragraph.03.01",
+          "type": "narration",
+          "text": "它们从东端走向西端。大约四十个人——男女老少。没有人抬头看霓虹灯。没有人注意到骑楼已经变成了现代的样子。它们走在1650年的上下九——和2018年的上下九重叠在同一个空间坐标上。人潮从它们中间穿过——情侣挽着手、外卖电动车、举着手机直播的年轻人——没有人感觉到任何异常。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "D_choice_03.result.paragraph.04.01",
+          "type": "narration",
+          "text": "其中一个老妇人——裹小脚，拄着竹杖——在你面前停了一瞬。她的眼睛是闭着的。但你知道她在\"看\"你。她的嘴唇动了一下——没有声音，但那口型你读懂了——\"快走。\"然后她继续往前走了。像一滴水汇入河流。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "D_choice_03.result.paragraph.05.01",
+          "type": "narration",
+          "text": "队伍过去了。最后一个人消失在骑楼尽头。地面上——他们走过的地方——留下了一块碎瓷片。不是现代的垃圾——是清初的青花瓷碗底残片，上面有半个\"福\"字。青花釉色在水银路灯下泛着湿润的光泽——像是刚刚从烧窑中取出来。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "D_choice_03.result.paragraph.06.01",
+          "type": "narration",
+          "text": "你弯腰捡起来。瓷片是凉的——和铜钱一样的凉意，地下深水的凉。边缘很锋利，割破了拇指的皮肤。血珠渗出来，被瓷片上的青花吸收了一点——不，不是在吸收，是在回应。三百年前的瓷片认出了三百年后的血——同一个血脉，同一种温度。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "D_choice_03.result.paragraph.07.01",
+          "type": "narration",
+          "text": "_（那些残影不是在\"闹鬼\"——它们是时间的回放。每四天回放一次。它们永远走在1650年11月的那个清晨——从东端走到西端，从破城的那一天走向没有尽头的循环。）_",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "add_item",
@@ -352,7 +488,36 @@
       "repeat_policy": "once_per_visit",
       "priority": 4,
       "hint": "那层涂料下面好像有字",
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "D_choice_04.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你走到骑楼最深处——远离步行街主路的一条窄巷。两侧墙壁涂了至少五层涂料：最外层是九十年代的白色乳胶漆，下面依次是绿色、蓝色、灰色、灰黄色——像地质岩层一样清晰可辨。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "D_choice_04.result.paragraph.02.01",
+          "type": "narration",
+          "text": "你用钥匙尖沿着墙面刮——涂料一层层剥落，碎片掉在地上发出干燥的脆响。刮到最底层时，钥匙碰到了金属。不是钢筋——是一块嵌在青砖墙里的铁皮门牌，被几十年的涂料严严实实地封在墙里面。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "D_choice_04.result.paragraph.03.01",
+          "type": "narration",
+          "text": "\"十八甫·第十二甫·李宅\"。门牌上的字是手工錾刻的——清代民间铁匠的手艺，笔画深浅不一但力道十足。这块门牌至少三百年了。荔湾广场的地下不是唯一被埋掉的——整个旧城都被一层一层地压在现代建筑下面：清代的砖、民国的涂料、九十年代的乳胶漆、2018年的霓虹灯箱。时间在这里不是流逝——是沉积。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "D_choice_04.result.paragraph.04.01",
+          "type": "narration",
+          "text": "你把门牌收好。铁皮的一角已经锈穿了——锈迹的形状不是随机的，有一种暗棕的色调。和你在B节点床底便签上看到的被液体洇开的痕迹是同一种颜色。不是雨水——是某种更咸的东西。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "add_item",
@@ -374,7 +539,50 @@
       "repeat_policy": "once_per_visit",
       "priority": 5,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "D_choice_05.result.paragraph.01.01",
+          "type": "narration",
+          "text": "这次张天民没在喝红豆沙。他在画图——笔记本翻到新的一页，用尺子画了一个八边形。尺子是透明塑料的，上面印着\"XX室内设计有限公司\"——他公司的名字。一个被困在循环里的室内设计师用他的专业工具分析一座三百年前的阵法。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "D_choice_05.result.paragraph.02.01",
+          "type": "dialogue",
+          "text": "我统计了55天的数据。异常事件不是均匀分布的——集中在八个地点。你猜怎么着——这八个点的连线刚好是个八卦。",
+          "speaker_id": "npc_zhang_tianmin",
+          "when": null
+        },
+        {
+          "id": "D_choice_05.result.paragraph.03.01",
+          "type": "narration",
+          "text": "他标注了八个点：荔湾广场正门、你的出租屋、华林寺、上下九、地下层、沙面、陈家祠、康王路。每个点旁边写着这个地点常见的异常类型——\"时间回放\"\"温度骤降\"\"视觉残留\"\"声音渗透\"。字很工整——前几页。后面越来越潦草。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "D_choice_05.result.paragraph.04.01",
+          "type": "dialogue",
+          "text": "不是闹鬼。闹鬼没有这么系统的——这是一个阵法。有人设计了这个——三百多年前的一个人。他可能觉得自己在做正确的事。",
+          "speaker_id": "npc_zhang_tianmin",
+          "when": null
+        },
+        {
+          "id": "D_choice_05.result.paragraph.05.01",
+          "type": "narration",
+          "text": "他合上笔记本。这次他看你了——不是看你的反应，是看你的眼睛。他的眼眶下有很重的黑眼圈，但眼神不疲惫——是燃着的。那是一个花了55天画了一张地图的人的眼神。地图不一定能带他出去，但画出来本身就意味着他不认输。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "D_choice_05.result.paragraph.06.01",
+          "type": "dialogue",
+          "text": "我不指望能出去。但我希望你出去。如果你能找到刘启盛——帮我也说一声谢谢。虽然我不知道谢什么。谢他把我困在这里？还是谢他让我活过了55天？可能是同一件事。",
+          "speaker_id": "npc_zhang_tianmin",
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "set_flag",
@@ -396,7 +604,15 @@
       "repeat_policy": "once_per_visit",
       "priority": 20,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "D_choice_06.result.paragraph.01.01",
+          "type": "narration",
+          "text": "南塔的自动门在夜晚依然开着——服装店的模特在橱窗里摆着僵硬的姿势。你走过它们时忍不住回头看了一眼——确认它们还是塑料的。二楼的灯光比一楼暗，走廊尽头有一面落地镜，镜面反射出的画面似乎比周围的光线慢了一点点。你朝它走去。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [],
       "next": {
         "node_id": "S7",
@@ -412,7 +628,15 @@
       "repeat_policy": "once_per_visit",
       "priority": 21,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "D_choice_07.result.paragraph.01.01",
+          "type": "narration",
+          "text": "24小时便利店的白色日光灯在夜晚的德星路上格外刺眼。透过玻璃门——收银台后站着一个年轻人，正对着监控屏幕发呆。他抬头看到你时动作顿了一下，像是认出了什么——但你们明明没有见过。他的手不自觉地碰到了键盘上的回放键。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [],
       "next": {
         "node_id": "S8",
@@ -428,7 +652,15 @@
       "repeat_policy": "once_per_visit",
       "priority": 22,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "D_choice_08.result.paragraph.01.01",
+          "type": "narration",
+          "text": "北塔的电梯间在商场的偏僻角落——远离步行街的喧闹。电梯门上贴着一张褪色的通知——\"本梯仅供5-9层使用，B1层已封闭。管理处 2014.7.15\"。消防通道的门虚掩着，门缝里透出阴冷的风——和B1入口涌上来的那种风是一样的，带着铁锈和潮湿泥土的混合气味。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [],
       "next": {
         "node_id": "S9",
@@ -444,7 +676,29 @@
       "repeat_policy": "once_per_visit",
       "priority": 99,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "D_choice_09.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你最后看了一眼上下九的霓虹灯。那些清代残影已经消失了——但骑楼的柱子似乎比傍晚时更暗了。不是灯光的问题——是阴影的深度在增加。影子不是光的缺失——在这里，影子是时间留在墙面上的沉积物。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "D_choice_09.result.paragraph.02.01",
+          "type": "narration",
+          "text": "手机时间——22:00。从上下九走到荔湾广场正门大约十分钟。深夜的街道在褪去人群后露出另一种面貌——安静而警惕，像一头假装睡着的东西在听你的脚步声。你想起了张天民的话，想起了那个闭着眼睛用口型说\"快走\"的老妇人，想起了瓷片上的半个\"福\"字。地下层在等你——八口棺材在等你。凌晨3:15。还有五个小时。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "D_choice_09.result.paragraph.03.01",
+          "type": "narration",
+          "text": "你朝荔湾广场的方向走去。夜风从B1入口的方向涌上来——比刚才更冷了。不是秋天的那种冷——是深水、古井、三百年前的冬天。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [],
       "next": {
         "node_id": "E",

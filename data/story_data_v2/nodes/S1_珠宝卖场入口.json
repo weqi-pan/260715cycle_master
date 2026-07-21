@@ -76,7 +76,29 @@
       "repeat_policy": "once_per_visit",
       "priority": 1,
       "hint": "走廊尽头有被警戒线围起来的区域",
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S1_choice_01.result.paragraph.01.01",
+          "type": "narration",
+          "text": "消防通道的门在你推开时发出一声极长的金属摩擦声——铰链很久没上油了。走廊里的应急灯每隔两盏才亮一盏，把墙壁上的消防栓涂鸦照得忽明忽暗。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S1_choice_01.result.paragraph.02.01",
+          "type": "narration",
+          "text": "警戒线在你脚下拖着——黄色的塑料带上印着\"禁止进入\"，但字迹已经褪得快看不清了。地面上散落着烧过的纸钱灰烬，被地下涌上来的冷风吹得微微颤动。灰烬还很新——边缘没有完全炭化，说明火灭掉不超过三天。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S1_choice_01.result.paragraph.03.01",
+          "type": "narration",
+          "text": "_（不是祭祖。纸钱是烧给死人的——但有人在这里烧纸钱，是在镇压什么东西。这下面——B1的下面——还有更深层的空间。那股冷风带着铁锈和潮湿泥土的味道，不像是空调的循环风。它从地底涌上来，像是某种东西在呼吸。）_",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "set_flag",
@@ -98,7 +120,15 @@
       "repeat_policy": "once_per_visit",
       "priority": 99,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S1_choice_02.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你松开消防通道的门把手，退回到电梯口。扶手电梯仍在运转——橡胶扶手一圈一圈地转着，发出有节奏的摩擦声。身后的冷风慢慢散去，商场的空调暖意重新涌上来。但你知道那扇门后面有什么——下次再来，你不会再从门口退开了。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [],
       "next": {
         "node_id": "A",

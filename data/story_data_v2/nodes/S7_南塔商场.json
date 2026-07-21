@@ -55,7 +55,36 @@
       "repeat_policy": "once_per_visit",
       "priority": 1,
       "hint": "镜子里的人流比外面慢了——你看到了不该看到的东西",
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S7_choice_01.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你朝那面落地镜走近一步。镜子里的你也走近了一步——但脚落地的时间晚了两秒。不是你延迟了——是镜子里的时间比你慢了两拍。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S7_choice_01.result.paragraph.02.01",
+          "type": "narration",
+          "text": "镜面不是脏。你伸出手指触碰镜面——指尖传来的温度不是玻璃的冰凉，而是微温的。像是镜子那一侧有体温。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S7_choice_01.result.paragraph.03.01",
+          "type": "narration",
+          "text": "镜子深处，白裙女孩的身影逐渐清晰。她在镜中的人流里逆流而行——走在2014年7月15日的同一时刻，反复穿过同一条过道。她的裙摆拖在镜面上，像一尾溺水的鱼。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S7_choice_01.result.paragraph.04.01",
+          "type": "narration",
+          "text": "她停下了。转过头——隔着镜面看着你。嘴唇翕动，无声地说了四个字。你看懂了她的口型——\"今天很开心。\"和那张奶茶收据背面的字一模一样。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "set_flag",
@@ -82,7 +111,15 @@
       "repeat_policy": "once_per_visit",
       "priority": 99,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S7_choice_02.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你转身快步走出南塔商场。身后那面镜子里——你的倒影没有跟着离开。它站在原地，目送着你消失在自动门外的夜色中。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [],
       "next": {
         "node_id": "D",

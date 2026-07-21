@@ -186,7 +186,57 @@
       "repeat_policy": "once_per_visit",
       "priority": 1,
       "hint": "他从1650年就在这里钓鱼了",
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "F_choice_01.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你在他旁边的长椅上坐下。长椅的铁扶手凉得刺骨——虽然现在是七月。他没有转头——继续盯着江对面。但你注意到他的鱼线在微微颤动——不是鱼在咬钩，是他的手在抖。一个抖了三百多年的老人。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F_choice_01.result.paragraph.02.01",
+          "type": "dialogue",
+          "text": "1650年11月。清兵进了城。我在江边看到一个人抱着一大包东西往水里走——是一个和尚。他把袈裟沉进了珠江——然后自己也走了进去。他没有浮上来。",
+          "speaker_id": "npc_river_fisher",
+          "when": null
+        },
+        {
+          "id": "F_choice_01.result.paragraph.03.01",
+          "type": "narration",
+          "text": "老人把手伸进外套口袋，掏出一块磨得光滑的木牌。上面的字已经几乎看不见了——但你知道那三个字。陈水生。陈氏族谱上的名字被刀刮掉了，但这块木牌——在江边被摩挲了三百多年的木牌——没有被任何人刮掉。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F_choice_01.result.paragraph.04.01",
+          "type": "narration",
+          "text": "\"我把那些逃难的人藏在榕树洞里。藏了十七个人——男人女人小孩。我在榕树洞里挖了一条通道，通往城外。十四个人走通了。三个人没走通——不是通道塌了，是他们被清兵发现了。\"他的鱼线沉了一下。不是有鱼——是江水下面有什么东西在发光：一团微弱的、暖黄色的光，在漆黑的江底缓慢移动。慧觉的袈裟——三百六十八年了还在发光。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F_choice_01.result.paragraph.05.01",
+          "type": "dialogue",
+          "text": "陈家的族谱上写我'附逆'。他们有错吗？可能是没有的。我确实违抗了命令。我不后悔。",
+          "speaker_id": "npc_river_fisher",
+          "when": null
+        },
+        {
+          "id": "F_choice_01.result.paragraph.06.01",
+          "type": "narration",
+          "text": "_（他不是活人。他是陈水生的倒影——留在时间裂隙里的那部分。真正的陈水生在1650年就已经——困在了某个比死亡更安静的地方。但他的倒影还在江边钓鱼，用一根没有鱼钩的线。）_",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F_choice_01.result.paragraph.07.01",
+          "type": "narration",
+          "text": "老人转过头。用那双浑浊但深处亮着一丝光的眼睛看着你。\"你能看到江底的光。所以你也被困住了。没关系——你不是第一个。\"",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "set_flag",
@@ -208,7 +258,29 @@
       "repeat_policy": "once_per_visit",
       "priority": 2,
       "hint": "石缝里有块碎瓷片——和鬼市那块好像是一对的",
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "F_choice_02.result.paragraph.01.01",
+          "type": "narration",
+          "text": "江边石栏的缝隙里长着厚厚的青苔——这种石栏是清末重修珠江堤岸时立的，青苔下面有一块和石缝几乎融为一体的碎瓷片。你用钥匙尖小心地撬——瓷片从石缝中松脱时发出清脆的一声，像瓷器在回应。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F_choice_02.result.paragraph.02.01",
+          "type": "narration",
+          "text": "翻过来——青花，半个\"寿\"字，和鬼市那块半个\"福\"字是同一种釉色、同一种笔法。可能来自同一只碗——有人在1650年的冬天端着一碗热粥从厨房跑出来，碗摔碎了，碎片被裂隙吸进去，一块落到了三百年后的上下九骑楼地上，一块沉进了珠江边的石缝里。碎片隔着三公里和三百年——但裂痕的弧度完美吻合。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F_choice_02.result.paragraph.03.01",
+          "type": "narration",
+          "text": "你把两块碎瓷片在掌心拼在一起。\"福\"与\"寿\"之间是一道不整齐的裂痕——永远拼不回完整的一只碗。但裂痕两边的青花釉色在月光下微微发着光——同一种频率。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "add_item",
@@ -230,7 +302,29 @@
       "repeat_policy": "once_per_visit",
       "priority": 3,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "F_choice_03.result.paragraph.01.01",
+          "type": "narration",
+          "text": "沙面岛上沿着江边排列着一栋栋欧式老建筑。其中一栋砖红色三层小楼的门牌歪了——法文\"Lavoir de Shameen\"，沙面洗衣房，1862年开业，1949年关闭。你伸手扶正门牌时发现背面贴着一张更老的纸片——被浆糊粘住的，已经发黄发脆。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F_choice_03.result.paragraph.02.01",
+          "type": "narration",
+          "text": "纸片上是一行手写的法文——\"Le temps ne passe pas ici.\"——\"这里的时间不走。\"字迹是女性的，用蘸水笔写的，墨水褪成了铁锈色。1862年的法国女工在洗衣房值夜班时发现——不管她等多久，墙上的钟永远在同一个位置。她不知道八棺阵，不知道龙脉，但她感觉到了：沙面岛的时间走得比广州任何地方都慢。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F_choice_03.result.paragraph.03.01",
+          "type": "narration",
+          "text": "你把门牌背面的纸片小心地撕下来收好。沙面的每一栋老建筑都像一个夹心饼干——清代地基、民国砖墙、法租界涂料、现代霓虹。时间在这里不是一条线，是一层一层的沉积。裂隙让这些层次偶尔泄漏——让不同年代的人在同一块地面上留下足迹。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "add_item",
@@ -252,7 +346,43 @@
       "repeat_policy": "once_per_visit",
       "priority": 4,
       "hint": "走到白鹅潭尽头——体验渡江。水面倒影中会出现1650年的广州城墙。",
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "F_choice_04.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你沿着江边朝白鹅潭走去。越靠近沙面岛的西端，空气越凉——不是夜晚的凉，是那种地下室的凉。江水的气味变得更腥——不是死鱼的腥，是血的腥。三百六十八年前的冬天，慧觉就是从这里走进水里的。他沉下去的地方水最深——袈裟的光也最亮。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F_choice_04.result.paragraph.02.01",
+          "type": "narration",
+          "text": "白鹅潭的江面在这里突然展开——漆黑的水面倒映着对岸的灯火。但你看到了——倒影不对。对岸的灯火在水面上形成了两重倒影：一重是现在的——高楼大厦、LED广告牌、车灯流线。另一重是灰蒙蒙的——低矮的城墙、城楼上的灯笼、城墙下密密麻麻的清兵帐篷。那重古老的倒影在靠近。不是你在靠近它——是它在从水底浮上来。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F_choice_04.result.paragraph.03.01",
+          "type": "narration",
+          "text": "水面上伸出一只手。不是真的手——是倒影中的手，但水面在它伸出的地方向外荡开了一圈涟漪。那只手在向你伸过来——不是求助，是邀请。是慧觉的手。他在等你下水。等你帮他把袈裟捞起来——或者等你和他一起沉下去。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F_choice_04.result.paragraph.04.01",
+          "type": "narration",
+          "text": "你后退一步。脚踩到石堤边缘的青苔——差点滑进去。水面上的手缩了回去。古老的倒影开始褪回水底——像退潮一样缓慢而不可抗拒。城墙、灯笼、帐篷——一层一层沉下去，消失在漆黑的江底。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F_choice_04.result.paragraph.05.01",
+          "type": "narration",
+          "text": "你站在原地——不是因为勇敢，是因为腿不听使唤了。心跳快到发痛。额头上全是冷汗。你刚刚看到了1650年11月的广州城墙倒影——在水下，三百六十八年了，还在那里。像一个被封印在水底的巨大气泡。白鹅潭不是江面——是一道横躺的时间裂隙。跨过去，就是跨过时间。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "set_flag",
@@ -279,7 +409,29 @@
       "repeat_policy": "once_per_visit",
       "priority": 5,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "F_choice_05.result.paragraph.01.01",
+          "type": "narration",
+          "text": "露德圣母堂是沙面岛上一座天主教小教堂——建于1890年，哥特式尖顶在榕树的掩映下只露出一截十字架。教堂门口的台阶被百年的雨水冲刷得光滑如镜。你在台阶上坐下——背后是紧闭的木门，门缝里透出蜡烛和旧木头的气味。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F_choice_05.result.paragraph.02.01",
+          "type": "narration",
+          "text": "和你在华林寺闻到的檀香不同——但同样安宁。两种不同的信仰在同一块土地上守护着同一群困在时间里的人。教堂铁栅栏门上挂着一串玫瑰经念珠——不是菩提子，但同样是108颗。它们在微风中轻轻碰撞，发出极细微的嗒嗒声——像某种古老的计时器，滴答，滴答，每一颗珠子是一次循环。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F_choice_05.result.paragraph.03.01",
+          "type": "narration",
+          "text": "你闭上眼睛。珠江的水声在远处。榕树的气根在头顶摇晃。你的呼吸慢慢恢复了正常的节奏。在这个循环的第三天深夜——你找到了一个时间裂隙暂时无法穿透的角落。可能是因为这里有信仰。可能是因为这里的石头够老、够厚、够安静。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "heal",
@@ -301,7 +453,43 @@
       "repeat_policy": "once_per_visit",
       "priority": 0,
       "hint": "江面漂来一盏荷叶河灯——上面好像有东西",
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "F_choice_06.result.paragraph.01.01",
+          "type": "narration",
+          "text": "一盏荷叶灯从上游漂来。不是塑料的——是真的干荷叶折成的灯座，中间插着一小截白蜡烛。烛火在江风中摇晃但没有熄灭——被什么力量保护着，稳稳地立在越来越宽的江面上。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F_choice_06.result.paragraph.02.01",
+          "type": "narration",
+          "text": "荷叶灯在你脚下的石堤边停住了——像被一只手轻轻按住。灯座下压着一张对折的纸条。你弯腰把它捞起来——纸条是干的。江水没有浸湿它。三百六十八年的江水——没有浸湿这张纸。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F_choice_06.result.paragraph.03.01",
+          "type": "narration",
+          "text": "纸条上只有两行字，毛笔小楷清瘦有力——不是现代人的笔迹：\n> \"蒙君还履。吾女得全。无以为报，以此灯引君归途。——李门叩首\"",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F_choice_06.result.paragraph.04.01",
+          "type": "narration",
+          "text": "李二狗。你在1650年帮他捡回了女儿的小布鞋——那只绣着小老虎的红色布鞋。他不知道你的名字，不知道怎么报答你，但他折了一盏荷叶灯放在水面上。三百六十八年了——这盏灯在时间裂隙中漂了三百六十八年，终于漂到了你面前。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F_choice_06.result.paragraph.05.01",
+          "type": "narration",
+          "text": "蜡烛在你读完最后一个字的时候熄灭了。荷叶灯散开了——不是沉了，是分解成了极细的暖黄色光点，融进了江面上的倒影里。那张纸条留在你手里——纸是1650年的纸，但墨迹是新的。像是刚刚写好的。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "add_item",
@@ -328,7 +516,15 @@
       "repeat_policy": "once_per_visit",
       "priority": 20,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "F_choice_07.result.paragraph.01.01",
+          "type": "narration",
+          "text": "珠江轮渡码头在沙面岛的东侧——从这里有渡轮可以坐到对岸的芳村。售票窗口已经关了——末班轮渡是晚上九点。但码头上还有几个人在等——不是等渡轮，是站着一动不动地看着江面。他们的轮廓在路灯下有些模糊——边缘在微微发颤，像老式电视机的雪花点。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [],
       "next": {
         "node_id": "S10",
@@ -344,7 +540,15 @@
       "repeat_policy": "once_per_visit",
       "priority": 21,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "F_choice_08.result.paragraph.01.01",
+          "type": "narration",
+          "text": "沙面大街上的老建筑群在夜晚看起来像一排沉默的巨人。其中一栋三层的旧领事馆——窗户全部封着木板。但二楼左边第三扇窗的木板缝隙里漏出了一丝光。不是电灯的光——是烛光，暖黄色的，在江风中轻微摇曳。楼上有人——或者有什么东西点了蜡烛。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [],
       "next": {
         "node_id": "S11",
@@ -360,7 +564,15 @@
       "repeat_policy": "once_per_visit",
       "priority": 22,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "F_choice_09.result.paragraph.01.01",
+          "type": "narration",
+          "text": "白鹅潭旁边有一条窄巷——巷子尽头是一家废弃的酒吧，招牌还挂在门楣上：\"水手\"。门锁是坏的。里面漆黑一片——但你能听到某种声音从深处传来。不是音乐——是一个人用沙哑的嗓音反复唱着同一句粤曲，同一句，一遍又一遍，像一张划花的黑胶唱片。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [],
       "next": {
         "node_id": "S12",
@@ -376,7 +588,22 @@
       "repeat_policy": "once_per_visit",
       "priority": 99,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "F_choice_10.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你最后看了一眼珠江。江底的光还在——慧觉的袈裟在水下缓慢移动，像一盏不会熄灭的水下灯。钓鱼的老人收起鱼竿——虽然他从来不用鱼钩。他的轮廓在路灯下微微发颤——和码头上那些等待的人一样，边缘模糊，像一张被水浸过的旧照片。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "F_choice_10.result.paragraph.02.01",
+          "type": "narration",
+          "text": "从沙面到陈家祠大约两公里。你沿着六二三路往东走——经过白天繁华、深夜寂静的上下九，经过已经关门的华林寺。深夜的荔湾有一种不属于这个时代的面貌——路灯下的老骑楼看起来比白天老了一百岁，像一个褪了妆的老人露出了真正的皱纹。陈家祠在中山七路上——族谱、日记、县志，所有答案都在那些旧纸堆里。陈伯陶的日记在等你。陈水生的名字在等你。三百年的故事等你来读最后一页。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [],
       "next": {
         "node_id": "G",

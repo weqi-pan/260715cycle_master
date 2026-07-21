@@ -90,7 +90,22 @@
       "repeat_policy": "once_per_visit",
       "priority": 1,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S17_choice_01.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你接过黄纸包好的药包。纸包温热——老中医的手掌温度透过七层黄纸传到你手心里。朱砂在药包深处散发出淡淡的矿物腥味——不像药材的味道，更像是庙里香炉的灰，或者德星路那个神龛上陈年符纸的气息。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S17_choice_01.result.paragraph.02.01",
+          "type": "narration",
+          "text": "老中医看着你收下药包，微微点了点头。他没有再说别的。但他转身关药柜的时候——你的余光扫到朱砂抽屉的角落里压着一叠用红纸折的符咒，和你在德星路神龛看到的一模一样。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "add_item",
@@ -112,7 +127,15 @@
       "repeat_policy": "once_per_visit",
       "priority": 99,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S17_choice_02.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你推开药铺的木门。龙津路的夜风裹着中药铺里特有的药香——当归、陈皮、茯苓——飘散在街巷里。走了几步回头——老中医已经关了灯。药铺的木质招牌在路灯下只留下一个深色的剪影。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [],
       "next": {
         "node_id": "H",

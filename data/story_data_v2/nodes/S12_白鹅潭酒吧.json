@@ -69,7 +69,36 @@
       "repeat_policy": "once_per_visit",
       "priority": 1,
       "hint": "喝下珠江的记忆——你会看到1650年。之后几秒，san值会下降——但H节点不会触发血月。",
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S12_choice_01.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你端起那只还挂着水珠的玻璃杯。水无色无味——入口的瞬间却是凉的，不是冰块的凉，是江底深处那种不见天日的凉。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S12_choice_01.result.paragraph.02.01",
+          "type": "narration",
+          "text": "然后画面来了——不是从眼前闪过，是从骨头里面涌出来的。1650年的珠江，水面倒映着城墙上冲天的大火。清兵的铁甲在火光里闪着冷光。有人在江边跪下，有人在江水里沉没。江水目睹了一切——江水记住了每一帧。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S12_choice_01.result.paragraph.03.01",
+          "type": "narration",
+          "text": "画面跳转——1871年，沙面的领事馆灯火通明。一个外国人在江边踱步，往水里扔了一枚硬币。1903年，一个法国女人站在同一段江岸，用铅笔在纸上写着什么。1942年——2014年——江水承载了太多人的倒影。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S12_choice_01.result.paragraph.04.01",
+          "type": "narration",
+          "text": "你猛地睁开眼睛——你还在酒吧里，杯子已经空了。吧台上的灰尘没有动过。但你知道你刚才看到的不是幻觉。那是珠江的记忆。它把这杯水留在这里——等一个能喝下它的人。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "set_flag",
@@ -96,7 +125,15 @@
       "repeat_policy": "once_per_visit",
       "priority": 99,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S12_choice_02.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你放下那杯水——水面轻轻晃了一下，倒映出天花板上裂开的木板。你转身推开酒吧的门，白鹅潭的夜风裹着江水的气味涌进来，像是珠江在你身后叹了口气。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [],
       "next": {
         "node_id": "F",

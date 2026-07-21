@@ -83,7 +83,22 @@
       "repeat_policy": "once_per_visit",
       "priority": 1,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S15_choice_01.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你小心地解开缠在栏杆上的铁丝。硬币落在手心里——比普通的硬币凉得多。它被砸得微微变形，边缘有一道细长的凹痕，不像是被锤子砸的——更像是被什么硬物从内部顶出来的。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S15_choice_01.result.paragraph.02.01",
+          "type": "narration",
+          "text": "_（这道凹痕——是人的牙齿咬出来的。有人含着这枚硬币从极高的地方坠落——硬币在撞击的瞬间被牙齿咬变了形。不知道是谁把它捡起来，缠在了这座桥上——作为许愿，还是作为墓碑？）_",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "add_item",
@@ -105,7 +120,22 @@
       "repeat_policy": "once_per_visit",
       "priority": 2,
       "hint": "有些愿望不应该被打扰",
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S15_choice_02.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你把铁丝重新缠紧。硬币回到了它原本的位置——在那些同心锁中间，一枚不起眼的、被咬变形的硬币。栏杆上的刻字在夕阳下泛着暗光：「希望明天还是7月15日」。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S15_choice_02.result.paragraph.02.01",
+          "type": "narration",
+          "text": "这个愿望——按照字面意义——实现了。刻下这行字的人被困在了这个愿望里。你把硬币放了回去。有些愿望不需要被实现——它们需要被尊重。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "remove_item",
@@ -132,7 +162,15 @@
       "repeat_policy": "once_per_visit",
       "priority": 99,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S15_choice_03.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你最后看了一眼那枚被铁丝缠住的硬币，转身走下天桥。中山西路的车流在脚下轰轰作响——噪音中隐约夹杂着硬币碰撞栏杆的清脆回音，像是一枚硬币在风中不停地旋转。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [],
       "next": {
         "node_id": "H",

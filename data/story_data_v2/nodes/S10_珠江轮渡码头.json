@@ -69,7 +69,29 @@
       "repeat_policy": "once_per_visit",
       "priority": 1,
       "hint": "这张票从来没有被用过",
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S10_choice_01.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你用指甲小心地把船票从窗口缝隙里挑出来。纸质比想象中更脆——粉红色的票面在指尖下微微颤动，像是刚从打印机里吐出来的，而不是被遗忘在这里二十年。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S10_choice_01.result.paragraph.02.01",
+          "type": "narration",
+          "text": "票面印刷的时间是2005年7月15日。又是7月15日。座位号13A——这个座位号你似乎在什么地方见过，但想不起来。票根完好，没有被撕过的痕迹。买票的人从未登上那班船。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S10_choice_01.result.paragraph.03.01",
+          "type": "narration",
+          "text": "_（这张船票不是被遗忘的——是被留下的。有人买了一张不会登上的船——像是在等什么人，或者——在标记什么。）_",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "add_item",
@@ -91,7 +113,15 @@
       "repeat_policy": "once_per_visit",
       "priority": 99,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S10_choice_02.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你最后望了一眼江面——对岸灯光组成的城墙轮廓已经消散，只余下普通的水波反光。你转身离开码头，渡口的红绳在夜风里轻轻摇晃，像无数只没有送出去的手。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [],
       "next": {
         "node_id": "F",

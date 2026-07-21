@@ -90,7 +90,43 @@
       "repeat_policy": "once_per_visit",
       "priority": 1,
       "hint": "他亲眼见证了1993年地下室被打开的那个晚上",
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S4_choice_01.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你在老人对面坐下。他看了你一眼——目光在你脸上停了好几秒，然后移开。他没有问你是谁，也没有问你想干什么。他好像太久没有人愿意听他说话了，以至于他已经不在乎听的人是谁。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S4_choice_01.result.paragraph.02.01.dialogue",
+          "type": "dialogue",
+          "text": "我大佬叫林国强——你冇听过呢个名。九三年九月十四，佢落去挖地基。晚黑八点。佢临走前同我讲：细佬，今晚唔使等我食饭。我哋发现咗啲嘢。",
+          "speaker_id": "npc_breakfast_elder",
+          "when": null
+        },
+        {
+          "id": "S4_choice_01.result.paragraph.03.01",
+          "type": "narration",
+          "text": "老人把碗里的粥搅了搅——还是没有喝。粥已经凉了，表面凝了一层皮。他从口袋里掏出一张折叠得整整齐齐的纸——一张施工收据。荔湾广场地基工程的收据。日期：1993年9月13日。背面用铅笔写着一行字：",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S4_choice_01.result.paragraph.04.01",
+          "type": "narration",
+          "text": "\"第九日 凌晨两点四十五 地下有水声 不是地下水 系有人在喊救命\"。笔迹在这里忽然变得潦草——像是写到一半，听到了什么声音，手抖了一下。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S4_choice_01.result.paragraph.05.01",
+          "type": "narration",
+          "text": "_（林国强在9月13日深夜、在塌方之前——在工地底下听到了什么。那不是塌方。他们挖到了不该挖开的东西。他被\"林国强\"这个名字困住了——他弟弟在这里等了二十五年，他在地铁站的长椅上等了二十五年。）_",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "set_flag",
@@ -112,7 +148,29 @@
       "repeat_policy": "once_per_visit",
       "priority": 2,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S4_choice_02.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你拿起桌上那张日历纸——1993年9月14日。纸张已经泛黄发脆，边缘有被反复折叠的痕迹。日期下面印着一行小字：\"宜：动土 祭祀 祈福\"。有人在旁边用铅笔圈了\"动土\"两个字。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S4_choice_02.result.paragraph.02.01",
+          "type": "narration",
+          "text": "你把日历纸反过来。背面还有一行字，笔迹比收据上的更潦草——像是用最后一点力气写下来的：\"唔好再挖。下面唔系土。系门。\"",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S4_choice_02.result.paragraph.03.01",
+          "type": "narration",
+          "text": "_（\"下面不是土。是门。\"——林国强在塌方前最后写下的东西。他挖到了什么？那扇门通向哪里？）_你小心地把日历纸收进口袋。这张纸比你从任何档案馆里能找到的任何资料都更接近真相。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [],
       "next": {
         "node_id": "S4",
@@ -128,7 +186,15 @@
       "repeat_policy": "once_per_visit",
       "priority": 99,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S4_choice_03.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你站起身，把椅子推回桌下。老板娘正在收拾隔壁桌的碗筷，粥锅里的蒸汽模糊了铺面的玻璃窗。老人还坐在角落里，一动不动地盯着对面的北塔。他面前的粥，从你进来到现在，一口都没有少。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [],
       "next": {
         "node_id": "C",

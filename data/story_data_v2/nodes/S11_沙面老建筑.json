@@ -90,7 +90,29 @@
       "repeat_policy": "once_per_visit",
       "priority": 1,
       "hint": "一支被时间加速石化了几百万年的烟斗",
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S11_choice_01.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你伸出手握住那支烟斗。它比你想象的重得多——石化的木头密度已经和岩石无异。触感冰凉，不是普通的冷——是那种吸收了几百年夜晚寒气、再也不会回暖的冷。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S11_choice_01.result.paragraph.02.01",
+          "type": "narration",
+          "text": "手指碰到烟斗的瞬间，你感到一阵短暂的晕眩——耳边掠过模糊的声音：马蹄声、粤语的叫喊、火焰的噼啪声。然后一切恢复寂静。烟斗静静地躺在你掌心，石质外壳上倒映着窗外珠江的灯火。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S11_choice_01.result.paragraph.03.01",
+          "type": "narration",
+          "text": "_（这支烟斗的主人是谁？一个站在窗边抽烟的外国人，在1860年代看着珠江对岸的城墙？他在时间裂隙的边缘做了什么——让这支烟斗被加速石化了百万年？）_",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "add_item",
@@ -112,7 +134,29 @@
       "repeat_policy": "once_per_visit",
       "priority": 2,
       "hint": "窗外出现了1650年的广州城墙——很短暂",
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S11_choice_02.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你没有去拿烟斗，而是靠在窗框上——等。窗外的城墙幻象起初只有轮廓，但如果你不眨眼地盯着——它开始变清晰。你能看到城墙上的垛口，能看到城楼飞檐的弧度。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S11_choice_02.result.paragraph.02.01",
+          "type": "narration",
+          "text": "火焰在城墙后方无声地燃烧。那是1650年平南王尚可喜攻陷广州的那场大火。没有人尖叫——这幅幻象只有影像，没有声音。但你能感觉到热度——从窗户外面辐射进来，烤着你的脸。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S11_choice_02.result.paragraph.03.01",
+          "type": "narration",
+          "text": "城墙下方——城门口——有个模糊的小点在移动。是一个人。那人从城墙的侧门走了出来，朝珠江这边看了一眼——然后幻象消散了。窗外恢复成现代的广州夜景。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [],
       "next": {
         "node_id": "S11",
@@ -128,7 +172,15 @@
       "repeat_policy": "once_per_visit",
       "priority": 99,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S11_choice_03.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你沿着吱嘎作响的木楼梯回到一楼。窗外的珠江恢复了现代的光景——高楼灯光，桥梁车流。但那支石化的烟斗和1650年的城墙，像两枚钉子一样扎进了你的记忆里。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [],
       "next": {
         "node_id": "F",

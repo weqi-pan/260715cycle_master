@@ -83,7 +83,29 @@
       "repeat_policy": "once_per_visit",
       "priority": 1,
       "hint": "带上她的名字——至少还有一个人记得她",
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S18_choice_01.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你小心地抬起砖头，取出压在最下面的那片红陶瓦。瓦片很轻——但拿在手里有一种异常的沉重。修正液的白色字迹在月光下泛着微光，那个写到一半就被雨水冲掉的名字只剩一个偏旁——「女」字旁。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S18_choice_01.result.paragraph.02.01",
+          "type": "narration",
+          "text": "_（她写了至少三个字——只有第一个字的最初几笔留了下来。她在被所有人忘记之前——在被时间彻底抹去之前——把名字写在不会被循环重置的瓦片上。但雨水还是找到了办法。连时间裂隙也容不下她的名字。）_",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S18_choice_01.result.paragraph.03.01",
+          "type": "narration",
+          "text": "你把瓦片收进口袋。旁边的毛绒兔子挂件沾满了灰尘——你不知道该不该碰它。最后你没有动它。让它继续待在这里——也许下一轮循环里，她还会回到这个天台，重新用修正液写下自己的名字。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "add_item",
@@ -110,7 +132,15 @@
       "repeat_policy": "once_per_visit",
       "priority": 99,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S18_choice_02.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你把砖头重新压回瓦片上——轻轻地，像是怕惊动什么。楼梯间的门在身后发出一声闷响。往下走的每一步都像是在离开一座没有刻名字的墓碑。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [],
       "next": {
         "node_id": "H",

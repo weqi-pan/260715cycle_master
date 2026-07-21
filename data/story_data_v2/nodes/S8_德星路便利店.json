@@ -111,7 +111,36 @@
       "repeat_policy": "once_per_visit",
       "priority": 1,
       "hint": "他已经注意到不对劲了——也许他也能记住",
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S8_choice_01.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你深吸一口气，把能说的都告诉了他——时间循环、2014年的跳楼事件、每一个重复的夜晚。周明远听着，手里的圆珠笔不知什么时候掉在了柜台上。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S8_choice_01.result.paragraph.02.01",
+          "type": "narration",
+          "text": "他没有质疑。没有说\"你疯了吗\"。他只是安静地听完，然后低头看着监控屏幕上那些你消失又出现的帧。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S8_choice_01.result.paragraph.03.01.dialogue",
+          "type": "dialogue",
+          "text": "我一直觉得……有些日子不是第一次过了。只是每次醒来都告诉自己那只是梦。",
+          "speaker_id": "npc_zhou_mingyuan",
+          "when": null
+        },
+        {
+          "id": "S8_choice_01.result.paragraph.04.01.dialogue",
+          "type": "dialogue",
+          "text": "如果循环结束了——你还会记得我吗？",
+          "speaker_id": "npc_zhou_mingyuan",
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "set_flag",
@@ -133,7 +162,29 @@
       "repeat_policy": "once_per_visit",
       "priority": 2,
       "hint": "收据背面的字——是那个跳楼女孩写的",
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S8_choice_02.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你从柜台下面抽出那张收据。纸已经发黄发脆——广州的潮湿空气用了十年把它变得一碰就碎。但背面的圆珠笔字迹却异常清晰，墨迹像是昨天才干的。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S8_choice_02.result.paragraph.02.01",
+          "type": "narration",
+          "text": "收据正面：2014年7月15日，珍珠奶茶，12元。背面四个字——\"今天很开心\"，笔迹稚嫩，是一个十几岁女孩的字。她在那天买了这杯奶茶，然后走上北塔天台，再也没有下来。",
+          "speaker_id": null,
+          "when": null
+        },
+        {
+          "id": "S8_choice_02.result.paragraph.03.01",
+          "type": "narration",
+          "text": "你把收据折好放进口袋。纸片贴着你的皮肤——微微发热，像是那个女孩的手温还留在上面。又或者只是你自己的体温把它焐热了。你不知道。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [
         {
           "type": "add_item",
@@ -155,7 +206,15 @@
       "repeat_policy": "once_per_visit",
       "priority": 99,
       "hint": null,
-      "result_blocks": [],
+      "result_blocks": [
+        {
+          "id": "S8_choice_03.result.paragraph.01.01",
+          "type": "narration",
+          "text": "你推开便利店的玻璃门，回到德星路的夜色里。自动门在身后合拢——透过玻璃，你看到周明远还站在收银台后面，一动不动地看着你离开的方向。",
+          "speaker_id": null,
+          "when": null
+        }
+      ],
       "effects": [],
       "next": {
         "node_id": "D",
