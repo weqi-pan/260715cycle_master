@@ -8,6 +8,7 @@ import pytest
 
 from app.engine.story_v2_loader import StoryV2Loader
 from app.schemas.story_v2 import StoryEffectV2, StoryNodeV2
+from app.story.identifiers import validate_story_id
 from app.story.v2_migration import (
     migrate_v2_effect,
     migrate_v2_node,
@@ -406,3 +407,56 @@ def test_migrate_v2_node_preserves_trigger_description_as_authoring_text():
     assert migrated.authoring.trigger_description == (
         V2_NODES["S1"].meta.trigger_condition
     )
+
+
+@pytest.mark.parametrize(
+    "source_id",
+    [
+        pytest.param("CON", id="windows-device-name"),
+        pytest.param("1.bad", id="non-letter-prefix"),
+        pytest.param("A" * 65, id="over-64-characters"),
+    ],
+)
+def test_migrate_v2_node_makes_every_entry_id_safe_and_deterministic(
+    source_id,
+):
+    source = V2_NODES["A"].model_copy(deep=True)
+    source.entry_sequences[0].id = source_id
+
+    first = migrate_v2_node(source)
+    second = migrate_v2_node(source)
+    migrated_id = first.entry_sequences[0].id
+
+    assert validate_story_id(migrated_id) == migrated_id
+    assert second.entry_sequences[0].id == migrated_id
+    assert first.id == source.id
+    assert [choice.id for choice in first.choices] == [
+        choice.id
+        for choice in sorted(
+            source.choices,
+            key=lambda choice: (choice.priority, choice.id),
+        )
+    ]
+
+
+def test_migrate_v2_node_keeps_colliding_content_block_slugs_distinct():
+    source = V2_NODES["A"].model_copy(deep=True)
+    source.entry_sequences[0].blocks[0].id = "a.b"
+    source.entry_sequences[0].blocks[1].id = "a+b"
+
+    migrated = migrate_v2_node(source)
+    block_ids = [
+        block.id
+        for sequence in migrated.entry_sequences
+        for block in sequence.blocks
+    ]
+
+    assert block_ids[0] != block_ids[1]
+    assert all(
+        validate_story_id(block_id) == block_id
+        for block_id in block_ids
+    )
+    assert migrated.id == source.id
+    assert {choice.id for choice in migrated.choices} == {
+        choice.id for choice in source.choices
+    }

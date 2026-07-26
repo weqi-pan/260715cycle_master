@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import re
 from typing import cast
 
@@ -300,6 +301,7 @@ def migrate_v2_effect(
 
 def migrate_v2_node(node: StoryNodeV2) -> StoryNodeV3:
     """Convert the common v2 node surface; special routing is migrated later."""
+    local_ids = _NodeLocalIdMapper(node.id)
     return StoryNodeV3(
         schema_version=3,
         id=node.id,
@@ -314,10 +316,10 @@ def migrate_v2_node(node: StoryNodeV2) -> StoryNodeV3:
         scene=_migrate_scene(node),
         entry_sequences=[
             EntrySequenceV3(
-                id=_migrate_local_id(sequence.id),
+                id=local_ids.migrate(sequence.id, namespace="entry"),
                 when=parse_v2_condition(sequence.when),
                 blocks=[
-                    _migrate_content_block(block)
+                    _migrate_content_block(block, local_ids)
                     for block in sequence.blocks
                 ],
             )
@@ -336,7 +338,7 @@ def migrate_v2_node(node: StoryNodeV2) -> StoryNodeV3:
                 repeat_policy=choice.repeat_policy,
                 hint=choice.hint,
                 result=[
-                    _migrate_content_block(block)
+                    _migrate_content_block(block, local_ids)
                     for block in choice.result_blocks
                 ],
                 effects=[
@@ -362,9 +364,12 @@ def migrate_v2_node(node: StoryNodeV2) -> StoryNodeV3:
     )
 
 
-def _migrate_content_block(block: ContentBlock):
+def _migrate_content_block(
+    block: ContentBlock,
+    local_ids: "_NodeLocalIdMapper",
+):
     common = {
-        "id": _migrate_local_id(block.id),
+        "id": local_ids.migrate(block.id, namespace="block"),
         "text": block.text,
         "when": parse_v2_condition(block.when),
     }
@@ -433,8 +438,74 @@ def _migrate_authoring(node: StoryNodeV2) -> AuthoringV3:
 
 
 def _migrate_local_id(value: str) -> str:
-    candidate = _INVALID_LOCAL_ID_RE.sub("_", value)
-    return validate_story_id(candidate)
+    try:
+        return validate_story_id(value)
+    except ValueError:
+        pass
+
+    candidate = _INVALID_LOCAL_ID_RE.sub("_", value.strip())
+    if not candidate or not candidate[0].isascii() or not candidate[0].isalpha():
+        candidate = f"id_{candidate}"
+    candidate = candidate[:64]
+    try:
+        return validate_story_id(candidate)
+    except ValueError:
+        return validate_story_id(f"id_{candidate}"[:64])
+
+
+class _NodeLocalIdMapper:
+    """Assign valid, collision-safe entry and block IDs within one node."""
+
+    def __init__(self, node_id: str):
+        self.node_id = node_id
+        self._source_ids: dict[tuple[str, str], str] = {}
+        self._output_ids: dict[tuple[str, str], str] = {}
+
+    def migrate(self, value: str, *, namespace: str) -> str:
+        source_key = (namespace, value)
+        if source_key in self._source_ids:
+            return self._source_ids[source_key]
+
+        candidate = _migrate_local_id(value)
+        output_key = (namespace, candidate)
+        existing_source = self._output_ids.get(output_key)
+        if existing_source is not None and existing_source != value:
+            candidate = self._disambiguate(
+                value,
+                base=candidate,
+                namespace=namespace,
+            )
+            output_key = (namespace, candidate)
+
+        existing_source = self._output_ids.get(output_key)
+        if existing_source is not None and existing_source != value:
+            raise ValueError(
+                f"Unable to assign unique {namespace} id in node "
+                f"{self.node_id}: {existing_source!r} and {value!r}"
+            )
+
+        self._source_ids[source_key] = candidate
+        self._output_ids[output_key] = value
+        return candidate
+
+    def _disambiguate(
+        self,
+        value: str,
+        *,
+        base: str,
+        namespace: str,
+    ) -> str:
+        digest = hashlib.sha256(value.encode("utf-8")).hexdigest()
+        for digest_length in range(8, 61, 4):
+            prefix_length = 63 - digest_length
+            candidate = f"{base[:prefix_length]}_{digest[:digest_length]}"
+            output_key = (namespace, candidate)
+            if output_key not in self._output_ids:
+                return validate_story_id(candidate)
+        raise ValueError(
+            f"Unable to disambiguate {namespace} id in node "
+            f"{self.node_id}: {value!r}"
+        )
 
 
 def _existing_story_id_or_none(value: str | None) -> str | None:
