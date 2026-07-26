@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import hashlib
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Iterable
 
 from pydantic import BaseModel, ValidationError
@@ -105,34 +105,45 @@ class StoryCompiler:
                 )
             )
         else:
-            paths = sorted(
-                nodes_root.glob("*.json"),
-                key=lambda path: path.name,
-            )
-            if not paths:
+            try:
+                paths = sorted(
+                    nodes_root.glob("*.json"),
+                    key=lambda path: path.name,
+                )
+            except OSError:
                 diagnostics.append(
                     _error(
-                        "STORY_SOURCE_MISSING",
-                        "No node source files were found.",
+                        "STORY_SOURCE_READ_FAILED",
+                        "Story node directory could not be enumerated.",
                         "nodes",
                     )
                 )
-            for path in paths:
-                location = f"nodes/{path.name}"
-                node = self._load_model(
-                    path,
-                    StoryNodeV3,
-                    location,
-                    diagnostics,
-                )
-                if node is not None:
-                    node_sources.append(
-                        _NodeSource(
-                            filename=path.name,
-                            location=location,
-                            node=node,
+                paths = None
+            if paths is not None:
+                if not paths:
+                    diagnostics.append(
+                        _error(
+                            "STORY_SOURCE_MISSING",
+                            "No node source files were found.",
+                            "nodes",
                         )
                     )
+                for path in paths:
+                    location = f"nodes/{path.name}"
+                    node = self._load_model(
+                        path,
+                        StoryNodeV3,
+                        location,
+                        diagnostics,
+                    )
+                    if node is not None:
+                        node_sources.append(
+                            _NodeSource(
+                                filename=path.name,
+                                location=location,
+                                node=node,
+                            )
+                        )
 
         if (
             project is None
@@ -571,25 +582,40 @@ class StoryCompiler:
                 )
 
             actual_owner = next(iter(owners)) if len(owners) == 1 else None
-            if (
-                node.routing is None
-                and actual_owner is not None
-                and not any(
-                    choice.next.target == actual_owner
-                    and choice.next.target != node.id
-                    for choice in node.choices
-                )
-            ):
-                diagnostics.append(
-                    _error(
-                        "STORY_RETURN_TARGET_MISMATCH",
-                        (
-                            "Normal sub-node requires an explicit choice "
-                            f"returning to owner {actual_owner!r}."
-                        ),
-                        f"{source.location}#/choices",
+            if node.routing is None and actual_owner is not None:
+                leaving_choices = [
+                    (choice_index, choice)
+                    for choice_index, choice in enumerate(node.choices)
+                    if choice.next.target != node.id
+                ]
+                if not leaving_choices:
+                    diagnostics.append(
+                        _error(
+                            "STORY_RETURN_TARGET_MISMATCH",
+                            (
+                                "Normal sub-node requires an explicit "
+                                f"choice returning to owner {actual_owner!r}."
+                            ),
+                            f"{source.location}#/choices",
+                        )
                     )
-                )
+                for choice_index, choice in leaving_choices:
+                    if choice.next.target == actual_owner:
+                        continue
+                    diagnostics.append(
+                        _error(
+                            "STORY_RETURN_TARGET_MISMATCH",
+                            (
+                                f"Normal sub-node choice must return to "
+                                f"owner {actual_owner!r}, got "
+                                f"{choice.next.target!r}."
+                            ),
+                            (
+                                f"{source.location}#/choices/{choice_index}"
+                                "/next/target"
+                            ),
+                        )
+                    )
         return diagnostics
 
     def _validate_condition_domains(
@@ -651,6 +677,22 @@ class StoryCompiler:
                             (
                                 f"Jump mode {choice.next.mode!r} is not "
                                 "declared by the project."
+                            ),
+                            f"{choice_location}/mode",
+                        )
+                    )
+                if (
+                    choice.next.mode in {"shortcut", "warp"}
+                    and node.routing is not None
+                    and node.routing.type != choice.next.mode
+                ):
+                    diagnostics.append(
+                        _error(
+                            "STORY_ROUTING_MISMATCH",
+                            (
+                                f"{choice.next.mode!r} choice requires "
+                                f"{choice.next.mode!r} routing, got "
+                                f"{node.routing.type!r}."
                             ),
                             f"{choice_location}/mode",
                         )
@@ -804,8 +846,7 @@ class StoryCompiler:
             location = f"assets.json#/assets/{asset_id}/path"
             candidate = Path(definition.path)
             if (
-                not definition.path.strip()
-                or candidate.is_absolute()
+                _has_unsafe_asset_path_syntax(definition.path)
                 or not _is_within(root, root / candidate)
             ):
                 diagnostics.append(
@@ -1247,3 +1288,16 @@ def _is_within(root: Path, candidate: Path) -> bool:
     except (OSError, ValueError):
         return False
     return True
+
+
+def _has_unsafe_asset_path_syntax(value: str) -> bool:
+    posix_path = PurePosixPath(value)
+    windows_path = PureWindowsPath(value)
+    return (
+        not value.strip()
+        or posix_path.is_absolute()
+        or bool(windows_path.drive)
+        or bool(windows_path.root)
+        or ".." in posix_path.parts
+        or ".." in windows_path.parts
+    )

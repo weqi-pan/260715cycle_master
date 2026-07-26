@@ -362,6 +362,32 @@ def test_compiler_requires_sub_node_return_to_owner(story_root: Path):
     assert "STORY_RETURN_TARGET_MISMATCH" in _error_codes(result)
 
 
+def test_compiler_rejects_each_sub_node_edge_that_bypasses_owner(
+    story_root: Path,
+):
+    sub_node = _node(
+        "S1",
+        choices=[
+            _choice("S1_return", "A"),
+            _choice("S1_bypass", "B"),
+        ],
+        node_type="normal",
+        parent_node_id="A",
+    )
+    _write_node(story_root, sub_node)
+    _mutate_json(
+        story_root / "nodes" / "A.json",
+        lambda node: node["choices"].append(_choice("A_to_S1", "S1")),
+    )
+
+    result = StoryCompiler().compile(story_root)
+
+    assert (
+        "STORY_RETURN_TARGET_MISMATCH",
+        "nodes/S1.json#/choices/1/next/target",
+    ) in _code_locations(result)
+
+
 def test_compiler_rejects_condition_outside_attribute_domain(
     story_root: Path,
 ):
@@ -571,6 +597,46 @@ def test_compiler_rejects_resource_path_that_escapes_root(story_root: Path):
     ) in _code_locations(result)
 
 
+@pytest.mark.parametrize(
+    "asset_path",
+    [
+        pytest.param("/absolute/asset.bin", id="posix-absolute"),
+        pytest.param(r"C:\absolute\asset.bin", id="windows-drive-absolute"),
+        pytest.param(r"C:drive-relative\asset.bin", id="windows-drive-relative"),
+        pytest.param(
+            "\\\\server\\share\\asset.bin",
+            id="windows-unc",
+        ),
+        pytest.param(r"\root-relative\asset.bin", id="windows-root-relative"),
+        pytest.param(
+            "resources/../resources/atrium.bin",
+            id="posix-parent-segment-inside-root",
+        ),
+        pytest.param(
+            r"resources\..\resources\atrium.bin",
+            id="windows-parent-segment-inside-root",
+        ),
+    ],
+)
+def test_compiler_rejects_cross_platform_unsafe_asset_path_syntax(
+    story_root: Path,
+    asset_path: str,
+):
+    _mutate_json(
+        story_root / "assets.json",
+        lambda assets: assets["assets"]["atrium_bg"].update(
+            path=asset_path
+        ),
+    )
+
+    result = StoryCompiler().compile(story_root)
+
+    assert (
+        "STORY_ASSET_PATH_INVALID",
+        "assets.json#/assets/atrium_bg/path",
+    ) in _code_locations(result)
+
+
 def test_compiler_rejects_missing_resource_file(story_root: Path):
     (story_root / "resources" / "atrium.bin").unlink()
 
@@ -662,6 +728,59 @@ def test_compiler_turns_schema_error_into_structured_diagnostic(
         "STORY_SOURCE_INVALID",
         "nodes/A.json#/choices/0/next/mode",
     ) in _code_locations(result)
+
+
+def test_compiler_turns_node_directory_enumeration_failure_into_diagnostic(
+    story_root: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    original_glob = Path.glob
+
+    def fail_node_enumeration(path: Path, pattern: str):
+        if path == story_root / "nodes":
+            raise PermissionError("denied")
+        return original_glob(path, pattern)
+
+    monkeypatch.setattr(Path, "glob", fail_node_enumeration)
+
+    try:
+        result = StoryCompiler().compile(story_root)
+    except PermissionError:
+        pytest.fail("node directory enumeration escaped StoryCompiler.compile")
+
+    assert result.snapshot is None
+    assert _code_locations(result) == {
+        ("STORY_SOURCE_READ_FAILED", "nodes")
+    }
+
+
+def test_compiler_stops_after_node_read_failure(
+    story_root: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    _mutate_json(
+        story_root / "nodes" / "A.json",
+        lambda node: node["choices"][0]["next"].update(target="MISSING"),
+    )
+    original_read_text = Path.read_text
+
+    def fail_node_read(
+        path: Path,
+        *args,
+        **kwargs,
+    ):
+        if path == story_root / "nodes" / "B.json":
+            raise PermissionError("denied")
+        return original_read_text(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "read_text", fail_node_read)
+
+    result = StoryCompiler().compile(story_root)
+
+    assert result.snapshot is None
+    assert _code_locations(result) == {
+        ("STORY_SOURCE_READ_FAILED", "nodes/B.json")
+    }
 
 
 def test_compiler_validates_crossing_choice_and_npc_references(
@@ -776,6 +895,83 @@ def test_compiler_validates_shortcut_endpoints_and_condition_references(
         "STORY_ROUTING_TARGET_MISSING",
         "nodes/A.json#/routing/exit_node_id",
     ) in locations
+
+
+@pytest.mark.parametrize(
+    ("mode", "routing"),
+    [
+        pytest.param(
+            "warp",
+            {
+                "type": "shortcut",
+                "entry_condition": {
+                    "type": "flag_equals",
+                    "flag": "door_open",
+                    "value": True,
+                },
+                "entry_node_id": "A",
+                "exit_node_id": "B",
+                "counter_effects": [],
+            },
+            id="warp-choice-shortcut-routing",
+        ),
+        pytest.param(
+            "shortcut",
+            {
+                "type": "warp",
+                "entry_condition": {
+                    "type": "flag_equals",
+                    "flag": "door_open",
+                    "value": True,
+                },
+                "allowed_targets": ["B"],
+                "exit_effects": [
+                    {
+                        "type": "modify_attribute",
+                        "attribute": "trust",
+                        "operation": "add",
+                        "value": -1,
+                        "clamp": True,
+                    }
+                ],
+                "sacrifice_target": None,
+            },
+            id="shortcut-choice-warp-routing",
+        ),
+        pytest.param(
+            "warp",
+            {
+                "type": "crossing",
+                "trigger_time": "midnight",
+                "target_era": "past",
+                "max_deep_interactions": 1,
+                "deep_interactions": [
+                    {"choice_id": "A_special", "npc_id": "guide"}
+                ],
+            },
+            id="special-choice-crossing-routing",
+        ),
+    ],
+)
+def test_compiler_rejects_special_choice_routing_variant_mismatch(
+    story_root: Path,
+    mode: str,
+    routing: dict,
+):
+    _mutate_json(
+        story_root / "nodes" / "A.json",
+        lambda node: node.update(
+            choices=[_choice("A_special", "B", mode=mode)],
+            routing=routing,
+        ),
+    )
+
+    result = StoryCompiler().compile(story_root)
+
+    assert (
+        "STORY_ROUTING_MISMATCH",
+        "nodes/A.json#/choices/0/next/mode",
+    ) in _code_locations(result)
 
 
 def test_compiler_rejects_choice_mode_not_declared_by_project(
