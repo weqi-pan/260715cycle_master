@@ -72,3 +72,15 @@ def test_editor_rejects_deleting_referenced_node(editor):
         editor.delete_node("B")
 
     assert (editor.root / "B.json").exists()
+
+
+def test_v2_editor_cannot_write_outside_node_root(tmp_path):
+    root = tmp_path / "nodes"
+    root.mkdir()
+    write_node(root, "A", "A")
+    editor = StoryV2Editor(root)
+
+    with pytest.raises(ValueError, match="invalid story id"):
+        editor.save_node({"id": "../manifest", "name": "escape"})
+
+    assert not (tmp_path / "manifest.json").exists()

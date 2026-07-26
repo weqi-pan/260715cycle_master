@@ -7,6 +7,7 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import Any
 
+from ..story.identifiers import resolve_node_path, validate_story_id
 from ..schemas.story_v2 import StoryNodeV2
 
 
@@ -96,9 +97,7 @@ class StoryV2Editor:
         return sorted(choices, key=lambda item: (item["priority"], item["id"]))
 
     def save_node(self, data: dict[str, Any]) -> dict[str, str]:
-        node_id = str(data.get("id", "")).strip()
-        if not node_id:
-            raise ValueError("Missing node id")
+        node_id = validate_story_id(str(data.get("id", "")), kind="node")
         nodes = self._raw_nodes()
         if node_id in nodes:
             path, raw = nodes[node_id]
@@ -113,7 +112,7 @@ class StoryV2Editor:
                 raw.setdefault("scene", {})["background"] = data["background"] or None
             status = "updated"
         else:
-            path = self.root / f"{node_id}.json"
+            path = resolve_node_path(self.root, node_id)
             raw = {
                 "schema_version": 2,
                 "id": node_id,
@@ -144,9 +143,9 @@ class StoryV2Editor:
 
     def save_choice(self, data: dict[str, Any]) -> dict[str, str]:
         choice_id = str(data.get("id", "")).strip()
-        from_id = str(data.get("from_node_id", "")).strip()
-        if not choice_id or not from_id:
+        if not choice_id:
             raise ValueError("Missing choice id or from_node_id")
+        from_id = validate_story_id(str(data.get("from_node_id", "")), kind="node")
         nodes = self._raw_nodes()
         if from_id not in nodes:
             raise ValueError(f"Unknown source node: {from_id}")
@@ -156,7 +155,7 @@ class StoryV2Editor:
                 if choice["id"] == choice_id:
                     existing = (current_id, index, choice)
                     break
-        target_id = str(data.get("next_node_id", "")).strip()
+        target_id = validate_story_id(str(data.get("next_node_id", "")), kind="node")
         if target_id not in nodes:
             raise ValueError(f"Unknown target node: {target_id}")
         preserved_blocks = existing[2].get("result_blocks", []) if existing else []
@@ -203,6 +202,7 @@ class StoryV2Editor:
         raise ValueError(f"Choice not found: {choice_id}")
 
     def delete_node(self, node_id: str) -> dict[str, str]:
+        node_id = validate_story_id(node_id, kind="node")
         nodes = self._raw_nodes()
         if node_id not in nodes:
             raise ValueError(f"Node not found: {node_id}")
