@@ -15,7 +15,12 @@ sys.path.insert(0, str(BACKEND_DIR))
 from app.paths import STORY_BUILD_DIR, STORY_V3_DIR  # noqa: E402
 from app.schemas.story_v3 import StorySnapshotV3  # noqa: E402
 from app.story.compiler import StoryCompiler  # noqa: E402
-from app.story.publisher import StoryPublisher  # noqa: E402
+from app.story.diagnostics import StoryDiagnostic  # noqa: E402
+from app.story.publisher import (  # noqa: E402
+    StoryPublisher,
+    StoryRevisionConflict,
+    StoryRevisionIntegrityError,
+)
 
 
 def _summary(snapshot: StorySnapshotV3) -> dict[str, int | str]:
@@ -39,6 +44,30 @@ def _summary(snapshot: StorySnapshotV3) -> dict[str, int | str]:
     }
 
 
+def _print_diagnostic(diagnostic: StoryDiagnostic) -> None:
+    print(
+        json.dumps(
+            asdict(diagnostic),
+            ensure_ascii=False,
+            sort_keys=True,
+        ),
+        file=sys.stderr,
+    )
+
+
+def _cli_error(
+    code: str,
+    message: str,
+    location: str,
+) -> StoryDiagnostic:
+    return StoryDiagnostic(
+        code=code,
+        severity="error",
+        message=message,
+        location=location,
+    )
+
+
 def main(argv: list[str] | None = None) -> int:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
@@ -55,24 +84,24 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--strict", action="store_true")
     args = parser.parse_args(argv)
 
-    compilation = StoryCompiler().compile(args.source.resolve())
-    if compilation.snapshot is not None:
-        print(
-            json.dumps(
-                _summary(compilation.snapshot),
-                ensure_ascii=False,
-                sort_keys=True,
+    source_root = args.source.resolve()
+    build_root = args.build_root.resolve()
+    if build_root == source_root or source_root in build_root.parents:
+        _print_diagnostic(
+            _cli_error(
+                "STORY_BUILD_ROOT_OVERLAP",
+                (
+                    "Story build root must not be the source root "
+                    "or a descendant of it."
+                ),
+                "--build-root",
             )
         )
+        return 1
+
+    compilation = StoryCompiler().compile(source_root)
     for diagnostic in compilation.diagnostics:
-        print(
-            json.dumps(
-                asdict(diagnostic),
-                ensure_ascii=False,
-                sort_keys=True,
-            ),
-            file=sys.stderr,
-        )
+        _print_diagnostic(diagnostic)
 
     has_errors = any(
         diagnostic.severity == "error"
@@ -85,10 +114,59 @@ def main(argv: list[str] | None = None) -> int:
     if has_errors or has_strict_warnings:
         return 1
 
-    publisher = StoryPublisher(args.build_root.resolve())
-    publisher.publish(
-        compilation,
-        base_revision=publisher.current_revision(),
+    publisher = StoryPublisher(build_root)
+    try:
+        base_revision = publisher.current_revision()
+    except StoryRevisionIntegrityError:
+        _print_diagnostic(
+            _cli_error(
+                "STORY_ACTIVE_REVISION_INVALID",
+                "Active story revision could not be verified.",
+                "build/current.json",
+            )
+        )
+        return 1
+
+    try:
+        publisher.publish(
+            compilation,
+            base_revision=base_revision,
+        )
+    except StoryRevisionConflict:
+        _print_diagnostic(
+            _cli_error(
+                "STORY_PUBLISH_CONFLICT",
+                "Active story revision changed during publication.",
+                "build/current.json",
+            )
+        )
+        return 1
+    except StoryRevisionIntegrityError:
+        _print_diagnostic(
+            _cli_error(
+                "STORY_PUBLISH_INTEGRITY_FAILED",
+                "Published story revision failed integrity verification.",
+                "build/revisions",
+            )
+        )
+        return 1
+    except OSError:
+        _print_diagnostic(
+            _cli_error(
+                "STORY_PUBLISH_IO_FAILED",
+                "Story publication could not be completed.",
+                "build",
+            )
+        )
+        return 1
+
+    snapshot = compilation.require_success()
+    print(
+        json.dumps(
+            _summary(snapshot),
+            ensure_ascii=False,
+            sort_keys=True,
+        )
     )
     return 0
 

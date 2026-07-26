@@ -14,6 +14,10 @@ import pytest
 
 from app.story.compiler import StoryCompilation, StoryCompiler
 from app.story.diagnostics import StoryCompileError, StoryDiagnostic
+from app.story.publisher import (
+    StoryRevisionConflict,
+    StoryRevisionIntegrityError,
+)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 STORY_V3_ROOT = PROJECT_ROOT / "data" / "story_v3"
@@ -44,6 +48,14 @@ def _write_json(path: Path, payload: dict, *, indent: int | None = 2) -> None:
 
 def _read_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _tree_bytes(root: Path) -> dict[str, bytes]:
+    return {
+        path.relative_to(root).as_posix(): path.read_bytes()
+        for path in sorted(root.rglob("*"))
+        if path.is_file()
+    }
 
 
 def _choice(
@@ -1111,6 +1123,252 @@ def test_compile_cli_failure_prints_stable_diagnostics_without_activating(
     assert not (build_root / "current.json").exists()
 
 
+@pytest.mark.parametrize(
+    "build_relative",
+    [
+        pytest.param(Path("."), id="same-as-source"),
+        pytest.param(Path("nodes") / "build", id="nested-under-source"),
+    ],
+)
+def test_compile_cli_rejects_build_root_inside_source_without_mutation(
+    story_root: Path,
+    build_relative: Path,
+):
+    source_before = _tree_bytes(story_root)
+    build_root = story_root / build_relative
+
+    result = _run_compile_cli(
+        "--source",
+        str(story_root),
+        "--build-root",
+        str(build_root),
+    )
+
+    assert result.returncode == 1
+    assert result.stdout == ""
+    assert result.stderr == (
+        json.dumps(
+            {
+                "code": "STORY_BUILD_ROOT_OVERLAP",
+                "location": "--build-root",
+                "message": (
+                    "Story build root must not be the source root "
+                    "or a descendant of it."
+                ),
+                "severity": "error",
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+        + "\n"
+    )
+    assert "Traceback" not in result.stderr
+    assert _tree_bytes(story_root) == source_before
+    assert not (build_root / "current.json").exists()
+    assert not (build_root / "revisions").exists()
+
+
+def test_compile_cli_rejects_overlap_before_compiler_construction(
+    story_root: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+):
+    from backend.scripts import compile_story_v3
+
+    class UnexpectedCompiler:
+        def __init__(self):
+            pytest.fail("overlap reached compiler construction")
+
+    monkeypatch.setattr(
+        compile_story_v3,
+        "StoryCompiler",
+        UnexpectedCompiler,
+    )
+
+    returncode = compile_story_v3.main(
+        [
+            "--source",
+            str(story_root),
+            "--build-root",
+            str(story_root / "nodes" / "build"),
+        ]
+    )
+
+    captured = capsys.readouterr()
+    assert returncode == 1
+    assert captured.out == ""
+    assert json.loads(captured.err) == {
+        "code": "STORY_BUILD_ROOT_OVERLAP",
+        "location": "--build-root",
+        "message": (
+            "Story build root must not be the source root "
+            "or a descendant of it."
+        ),
+        "severity": "error",
+    }
+
+
+def test_compile_cli_allows_sibling_build_root(
+    story_root: Path,
+):
+    source_before = _tree_bytes(story_root)
+    build_root = story_root.parent / "build"
+
+    result = _run_compile_cli(
+        "--source",
+        str(story_root),
+        "--build-root",
+        str(build_root),
+        "--strict",
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert json.loads(result.stdout)["node_count"] == 2
+    assert (build_root / "current.json").exists()
+    assert _tree_bytes(story_root) == source_before
+
+
+def test_compile_cli_corrupt_active_pointer_is_stable_failure(
+    story_root: Path,
+    tmp_path: Path,
+):
+    build_root = tmp_path / "build"
+    initial = _run_compile_cli(
+        "--source",
+        str(story_root),
+        "--build-root",
+        str(build_root),
+    )
+    assert initial.returncode == 0, initial.stderr
+    pointer_path = build_root / "current.json"
+    corrupt_pointer = b'{"revision":"not-a-revision"}'
+    pointer_path.write_bytes(corrupt_pointer)
+
+    result = _run_compile_cli(
+        "--source",
+        str(story_root),
+        "--build-root",
+        str(build_root),
+    )
+
+    assert result.returncode == 1
+    assert result.stdout == ""
+    assert result.stderr == (
+        json.dumps(
+            {
+                "code": "STORY_ACTIVE_REVISION_INVALID",
+                "location": "build/current.json",
+                "message": "Active story revision could not be verified.",
+                "severity": "error",
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+        + "\n"
+    )
+    assert "Traceback" not in result.stderr
+    assert pointer_path.read_bytes() == corrupt_pointer
+
+
+@pytest.mark.parametrize(
+    ("failure", "expected_diagnostic"),
+    [
+        pytest.param(
+            StoryRevisionConflict(
+                expected="0" * 64,
+                actual="f" * 64,
+            ),
+            {
+                "code": "STORY_PUBLISH_CONFLICT",
+                "location": "build/current.json",
+                "message": "Active story revision changed during publication.",
+                "severity": "error",
+            },
+            id="conflict",
+        ),
+        pytest.param(
+            StoryRevisionIntegrityError("invalid revision"),
+            {
+                "code": "STORY_PUBLISH_INTEGRITY_FAILED",
+                "location": "build/revisions",
+                "message": "Published story revision failed integrity verification.",
+                "severity": "error",
+            },
+            id="integrity",
+        ),
+        pytest.param(
+            OSError("disk full"),
+            {
+                "code": "STORY_PUBLISH_IO_FAILED",
+                "location": "build",
+                "message": "Story publication could not be completed.",
+                "severity": "error",
+            },
+            id="io",
+        ),
+    ],
+)
+def test_compile_cli_publication_failure_is_stable_and_preserves_pointer(
+    story_root: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    failure: Exception,
+    expected_diagnostic: dict,
+):
+    from backend.scripts import compile_story_v3
+
+    build_root = tmp_path / "build"
+    assert (
+        compile_story_v3.main(
+            [
+                "--source",
+                str(story_root),
+                "--build-root",
+                str(build_root),
+            ]
+        )
+        == 0
+    )
+    capsys.readouterr()
+    pointer_path = build_root / "current.json"
+    pointer_before = pointer_path.read_bytes()
+
+    def fail_publish(self, compilation, *, base_revision):
+        raise failure
+
+    monkeypatch.setattr(
+        compile_story_v3.StoryPublisher,
+        "publish",
+        fail_publish,
+    )
+
+    try:
+        returncode = compile_story_v3.main(
+            [
+                "--source",
+                str(story_root),
+                "--build-root",
+                str(build_root),
+            ]
+        )
+    except (StoryRevisionConflict, StoryRevisionIntegrityError, OSError):
+        pytest.fail("known publication failure escaped compile CLI")
+
+    captured = capsys.readouterr()
+    assert returncode == 1
+    assert captured.out == ""
+    assert captured.err == (
+        json.dumps(
+            expected_diagnostic,
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+        + "\n"
+    )
+    assert pointer_path.read_bytes() == pointer_before
+
+
 def test_compile_cli_strict_rejects_warnings_without_activating(
     story_root: Path,
     tmp_path: Path,
@@ -1150,12 +1408,7 @@ def test_compile_cli_strict_rejects_warnings_without_activating(
 
     captured = capsys.readouterr()
     assert returncode == 1
-    assert json.loads(captured.out) == {
-        "choice_count": 1,
-        "content_block_count": 2,
-        "node_count": 2,
-        "revision": warned.snapshot.revision,
-    }
+    assert captured.out == ""
     assert captured.err == (
         json.dumps(
             {

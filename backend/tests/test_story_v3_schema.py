@@ -2,6 +2,7 @@
 
 from copy import deepcopy
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -22,6 +23,18 @@ from app.schemas.story_v3 import (
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 SCHEMA_PATH = PROJECT_ROOT / "data" / "story_v3" / "story-node-v3.schema.json"
+
+
+def _expected_schema_bytes() -> bytes:
+    return (
+        json.dumps(
+            StoryNodeV3.model_json_schema(mode="validation"),
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n"
+    ).encode("utf-8")
 
 
 def _run_export_cli(*args: str) -> subprocess.CompletedProcess[str]:
@@ -500,24 +513,38 @@ def test_snapshot_rejects_invalid_node_dictionary_key():
         StorySnapshotV3.model_validate(payload)
 
 
-def test_committed_json_schema_matches_pydantic_model():
-    expected = StoryNodeV3.model_json_schema(mode="validation")
-    actual = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
+def test_committed_json_schema_bytes_match_deterministic_export():
+    assert SCHEMA_PATH.read_bytes() == _expected_schema_bytes()
 
-    assert actual == expected
+
+def test_committed_json_schema_is_pinned_to_lf_by_git():
+    schema_relative_path = "data/story_v3/story-node-v3.schema.json"
+    result = subprocess.run(
+        [
+            "git",
+            "check-attr",
+            "text",
+            "eol",
+            "--",
+            schema_relative_path,
+        ],
+        cwd=PROJECT_ROOT,
+        env={**os.environ, "GIT_CONFIG_GLOBAL": os.devnull},
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.splitlines() == [
+        f"{schema_relative_path}: text: set",
+        f"{schema_relative_path}: eol: lf",
+    ]
 
 
 def test_schema_export_cli_is_deterministic_sorted_utf8(tmp_path: Path):
     destination = tmp_path / "story-node-v3.schema.json"
-    expected = (
-        json.dumps(
-            StoryNodeV3.model_json_schema(mode="validation"),
-            ensure_ascii=False,
-            indent=2,
-            sort_keys=True,
-        )
-        + "\n"
-    ).encode("utf-8")
+    expected = _expected_schema_bytes()
 
     first = _run_export_cli("--destination", str(destination))
     first_bytes = destination.read_bytes() if destination.exists() else b""
