@@ -5,12 +5,33 @@ from __future__ import annotations
 from dataclasses import FrozenInstanceError
 import hashlib
 import json
+import os
 from pathlib import Path
+import subprocess
+import sys
 
 import pytest
 
 from app.story.compiler import StoryCompilation, StoryCompiler
 from app.story.diagnostics import StoryCompileError, StoryDiagnostic
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+STORY_V3_ROOT = PROJECT_ROOT / "data" / "story_v3"
+
+
+def _run_compile_cli(*args: str) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "backend.scripts.compile_story_v3",
+            *args,
+        ],
+        cwd=PROJECT_ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
 
 
 def _write_json(path: Path, payload: dict, *, indent: int | None = 2) -> None:
@@ -990,3 +1011,162 @@ def test_compiler_rejects_choice_mode_not_declared_by_project(
         "STORY_JUMP_MODE_UNDECLARED",
         "nodes/A.json#/choices/0/next/mode",
     ) in _code_locations(result)
+
+
+def test_compile_cli_strict_publishes_canonical_story_and_reuses_revision(
+    tmp_path: Path,
+):
+    build_root = tmp_path / "build"
+
+    first = _run_compile_cli(
+        "--source",
+        str(STORY_V3_ROOT),
+        "--build-root",
+        str(build_root),
+        "--strict",
+    )
+
+    pointer = json.loads(
+        (build_root / "current.json").read_text(encoding="utf-8")
+    )
+    revision = pointer["revision"]
+    expected_summary = {
+        "choice_count": 143,
+        "content_block_count": 846,
+        "node_count": 30,
+        "revision": revision,
+    }
+    revision_root = build_root / "revisions" / revision
+    snapshot_path = revision_root / "story.snapshot.json"
+    manifest_path = revision_root / "manifest.json"
+    old_timestamp = 1_000_000_000
+    os.utime(snapshot_path, ns=(old_timestamp, old_timestamp))
+    os.utime(manifest_path, ns=(old_timestamp, old_timestamp))
+
+    second = _run_compile_cli(
+        "--source",
+        str(STORY_V3_ROOT),
+        "--build-root",
+        str(build_root),
+        "--strict",
+    )
+
+    expected_stdout = (
+        json.dumps(expected_summary, ensure_ascii=False, sort_keys=True) + "\n"
+    )
+    assert first.returncode == 0, first.stderr
+    assert first.stdout == expected_stdout
+    assert first.stderr == ""
+    assert second.returncode == 0, second.stderr
+    assert second.stdout == expected_stdout
+    assert second.stderr == ""
+    assert [path.name for path in (build_root / "revisions").iterdir()] == [
+        revision
+    ]
+    assert snapshot_path.stat().st_mtime_ns == old_timestamp
+    assert manifest_path.stat().st_mtime_ns == old_timestamp
+
+
+def test_compile_cli_failure_prints_stable_diagnostics_without_activating(
+    story_root: Path,
+    tmp_path: Path,
+):
+    _mutate_json(
+        story_root / "nodes" / "A.json",
+        lambda node: node["choices"][0]["next"].update(target="MISSING"),
+    )
+    build_root = tmp_path / "build"
+
+    result = _run_compile_cli(
+        "--source",
+        str(story_root),
+        "--build-root",
+        str(build_root),
+    )
+
+    assert result.returncode == 1
+    assert result.stdout == ""
+    assert result.stderr.splitlines() == [
+        json.dumps(
+            {
+                "code": "STORY_TARGET_MISSING",
+                "location": "nodes/A.json#/choices/0/next/target",
+                "message": "Choice target 'MISSING' does not name a node.",
+                "severity": "error",
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        ),
+        json.dumps(
+            {
+                "code": "STORY_NODE_UNREACHABLE",
+                "location": "nodes/B.json#/id",
+                "message": "Node 'B' is unreachable from project entry.",
+                "severity": "error",
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        ),
+    ]
+    assert not (build_root / "current.json").exists()
+
+
+def test_compile_cli_strict_rejects_warnings_without_activating(
+    story_root: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+):
+    from backend.scripts import compile_story_v3
+
+    compilation = StoryCompiler().compile(story_root)
+    warning = StoryDiagnostic(
+        code="STORY_TEST_WARNING",
+        severity="warning",
+        message="A stable warning.",
+        location="project.json",
+    )
+    warned = StoryCompilation(
+        snapshot=compilation.require_success(),
+        diagnostics=(warning,),
+    )
+
+    class WarningCompiler:
+        def compile(self, source: Path) -> StoryCompilation:
+            return warned
+
+    monkeypatch.setattr(compile_story_v3, "StoryCompiler", WarningCompiler)
+    build_root = tmp_path / "build"
+
+    returncode = compile_story_v3.main(
+        [
+            "--source",
+            str(story_root),
+            "--build-root",
+            str(build_root),
+            "--strict",
+        ]
+    )
+
+    captured = capsys.readouterr()
+    assert returncode == 1
+    assert json.loads(captured.out) == {
+        "choice_count": 1,
+        "content_block_count": 2,
+        "node_count": 2,
+        "revision": warned.snapshot.revision,
+    }
+    assert captured.err == (
+        json.dumps(
+            {
+                "code": "STORY_TEST_WARNING",
+                "location": "project.json",
+                "message": "A stable warning.",
+                "severity": "warning",
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+        + "\n"
+    )
+    assert not (build_root / "current.json").exists()

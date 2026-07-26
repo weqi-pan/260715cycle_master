@@ -821,6 +821,7 @@ def test_committed_canonical_tree_matches_fresh_migration(tmp_path: Path):
     _migrate_project(destination)
     fresh = _tree_bytes(destination)
     committed = _tree_bytes(CANONICAL_V3_ROOT)
+    committed.pop("story-node-v3.schema.json")
 
     assert len(fresh) == 32
     assert fresh == committed

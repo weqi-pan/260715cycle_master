@@ -1,6 +1,10 @@
 """Executable contract tests for the closed Story System v3 authoring schema."""
 
 from copy import deepcopy
+import json
+from pathlib import Path
+import subprocess
+import sys
 
 import pytest
 from pydantic import TypeAdapter, ValidationError
@@ -15,6 +19,24 @@ from app.schemas.story_v3 import (
     StorySnapshotV3,
     TerminalSpecV3,
 )
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+SCHEMA_PATH = PROJECT_ROOT / "data" / "story_v3" / "story-node-v3.schema.json"
+
+
+def _run_export_cli(*args: str) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "backend.scripts.export_story_v3_schema",
+            *args,
+        ],
+        cwd=PROJECT_ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
 
 
 def make_node_v3(
@@ -476,3 +498,31 @@ def test_snapshot_rejects_invalid_node_dictionary_key():
     }
     with pytest.raises(ValidationError, match="invalid story id"):
         StorySnapshotV3.model_validate(payload)
+
+
+def test_committed_json_schema_matches_pydantic_model():
+    expected = StoryNodeV3.model_json_schema(mode="validation")
+    actual = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
+
+    assert actual == expected
+
+
+def test_schema_export_cli_is_deterministic_sorted_utf8(tmp_path: Path):
+    destination = tmp_path / "story-node-v3.schema.json"
+    expected = (
+        json.dumps(
+            StoryNodeV3.model_json_schema(mode="validation"),
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n"
+    ).encode("utf-8")
+
+    first = _run_export_cli("--destination", str(destination))
+    first_bytes = destination.read_bytes() if destination.exists() else b""
+    second = _run_export_cli("--destination", str(destination))
+
+    assert first.returncode == 0, first.stderr
+    assert second.returncode == 0, second.stderr
+    assert destination.read_bytes() == first_bytes == expected

@@ -231,6 +231,35 @@ parse_choice → validate_state → eval_conditions → filter_visible
 - gameplay/content/conditions 三段式节点结构
 - 编辑器直接写入 v2 JSON，无需导入同步
 
+### Story System v3 Phase 1 质量门禁
+
+Phase 1 已建立 v3 创作格式、全项目编译和不可变发布基础，但当前游戏运行时仍以
+`data/story_data_v2/` 为权威剧情源。v3 不会在 Phase 1 中替换现有 v2 运行时。
+
+在项目根目录运行迁移、Schema 导出和严格编译：
+
+```powershell
+backend\venv\Scripts\python.exe -m backend.scripts.migrate_story_v3 --source data/story_data_v2 --destination data/story_v3
+backend\venv\Scripts\python.exe -m backend.scripts.export_story_v3_schema
+backend\venv\Scripts\python.exe -m backend.scripts.compile_story_v3 --strict
+```
+
+严格编译会在发现 error 或 warning 时返回非零状态；只有通过门禁的快照才会发布到
+`data/story_build/`。诊断以稳定的 JSON 行输出，便于 CI 和编辑器消费。
+
+提交前可运行完整验证：
+
+```powershell
+backend\venv\Scripts\python.exe -m backend.scripts.export_story_v3_schema
+git diff --exit-code -- data/story_v3/story-node-v3.schema.json
+backend\venv\Scripts\python.exe -m backend.scripts.compile_story_v3 --strict
+backend\venv\Scripts\python.exe -m pytest backend/tests -q
+Set-Location frontend
+npm run test:unit
+npm run build
+Set-Location ..
+```
+
 ---
 
 ## 许可证
