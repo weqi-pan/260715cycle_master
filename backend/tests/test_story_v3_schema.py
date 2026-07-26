@@ -6,11 +6,14 @@ import pytest
 from pydantic import TypeAdapter, ValidationError
 
 from app.schemas.story_v3 import (
+    AssetDefinitionV3,
     AssetCatalogV3,
+    AttributeDefinitionV3,
     ConditionV3,
     StoryNodeV3,
     StoryProjectV3,
     StorySnapshotV3,
+    TerminalSpecV3,
 )
 
 
@@ -305,6 +308,90 @@ def test_story_ids_use_the_shared_validator(path, value):
     cursor[path[-1]] = value
     with pytest.raises(ValidationError, match="invalid story id"):
         StoryNodeV3.model_validate(payload)
+
+
+@pytest.mark.parametrize(
+    ("model", "payload"),
+    [
+        pytest.param(
+            StoryProjectV3,
+            {
+                "schema_version": 3,
+                "entry_node_id": "A",
+                "attributes": {},
+                "flags": {},
+                "items": {},
+                "npcs": {},
+                "counters": [],
+                "jump_modes": [],
+                "runtime_hook": "unsafe",
+            },
+            id="project-root",
+        ),
+        pytest.param(
+            AttributeDefinitionV3,
+            {
+                "display_name": "Trust",
+                "default": 0,
+                "minimum": 0,
+                "maximum": 10,
+                "runtime_formula": "dynamic",
+            },
+            id="project-registry-value",
+        ),
+        pytest.param(
+            AssetCatalogV3,
+            {
+                "schema_version": 3,
+                "assets": {},
+                "cdn_base_url": "https://example.invalid",
+            },
+            id="asset-catalog-root",
+        ),
+        pytest.param(
+            AssetDefinitionV3,
+            {
+                "kind": "background",
+                "path": "backgrounds/atrium.webp",
+                "browser_url": "https://example.invalid/atrium.webp",
+            },
+            id="asset-definition",
+        ),
+        pytest.param(
+            TerminalSpecV3,
+            {
+                "type": "ending",
+                "ending_id": "atrium_ending",
+                "runtime_callback": "roll_credits",
+            },
+            id="terminal-metadata",
+        ),
+        pytest.param(
+            StorySnapshotV3,
+            {
+                "schema_version": 3,
+                "revision": "sha256-test",
+                "project": {
+                    "schema_version": 3,
+                    "entry_node_id": "A",
+                    "attributes": {},
+                    "flags": {},
+                    "items": {},
+                    "npcs": {},
+                    "counters": [],
+                    "jump_modes": [],
+                },
+                "assets": {"schema_version": 3, "assets": {}},
+                "nodes": {},
+                "mutable": True,
+            },
+            id="snapshot-root",
+        ),
+    ],
+)
+def test_public_v3_contract_boundaries_reject_unknown_fields(model, payload):
+    with pytest.raises(ValidationError, match="extra"):
+        model.model_validate(payload)
 
 
 def test_project_assets_terminal_and_snapshot_are_closed_typed_models():
