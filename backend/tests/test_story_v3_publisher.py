@@ -6,17 +6,19 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import subprocess
+import sys
 
 import pytest
 
-from app.story.compiler import StoryCompilation
 from app.schemas.story_v3 import StorySnapshotV3
+from app.story.compiler import StoryCompilation
+from app.story.diagnostics import StoryCompileError
 from app.story.publisher import (
     StoryPublisher,
     StoryRevisionConflict,
     StoryRevisionIntegrityError,
 )
-from app.story.diagnostics import StoryCompileError
 
 
 def _canonical_bytes(payload: dict) -> bytes:
@@ -26,6 +28,14 @@ def _canonical_bytes(payload: dict) -> bytes:
         sort_keys=True,
         separators=(",", ":"),
     ).encode("utf-8")
+
+
+def _add_unmanifested_file(revision_root: Path) -> None:
+    (revision_root / "unmanifested.bin").write_bytes(b"unexpected")
+
+
+def _add_unmanifested_directory(revision_root: Path) -> None:
+    (revision_root / "unmanifested").mkdir()
 
 
 def _compilation(label: str) -> StoryCompilation:
@@ -112,6 +122,51 @@ def first_compilation() -> StoryCompilation:
 @pytest.fixture
 def second_compilation() -> StoryCompilation:
     return _compilation("second")
+
+
+@pytest.mark.parametrize(
+    "prelude",
+    [
+        pytest.param(
+            "import app.schemas.story_v3\n",
+            id="schema-first",
+        ),
+        pytest.param(
+            "import app.story\n",
+            id="story-first",
+        ),
+    ],
+)
+def test_public_story_imports_are_order_independent(prelude: str):
+    backend_root = Path(__file__).parents[1]
+    probe = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            prelude
+            + (
+                "from app.story import (\n"
+                "    DiagnosticSeverity,\n"
+                "    PublishedRevision,\n"
+                "    StoryCompilation,\n"
+                "    StoryCompileError,\n"
+                "    StoryCompiler,\n"
+                "    StoryDiagnostic,\n"
+                "    StoryPublisher,\n"
+                "    StoryRevisionConflict,\n"
+                "    StoryRevisionIntegrityError,\n"
+                ")\n"
+                "assert StoryPublisher.__name__ == 'StoryPublisher'\n"
+                "assert StoryCompiler.__name__ == 'StoryCompiler'\n"
+            ),
+        ],
+        cwd=backend_root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert probe.returncode == 0, probe.stderr
 
 
 def test_publish_writes_content_addressed_revision_and_pointer(
@@ -251,6 +306,49 @@ def test_reusing_existing_revision_verifies_manifest_revision(
             first_compilation,
             base_revision=first.revision,
         )
+
+
+@pytest.mark.parametrize(
+    "add_entry",
+    [
+        pytest.param(_add_unmanifested_file, id="file"),
+        pytest.param(_add_unmanifested_directory, id="directory"),
+    ],
+)
+def test_reusing_existing_revision_rejects_unmanifested_entry(
+    tmp_path: Path,
+    first_compilation: StoryCompilation,
+    add_entry,
+):
+    publisher = StoryPublisher(tmp_path / "build")
+    first = publisher.publish(first_compilation, base_revision=None)
+    add_entry(first.root)
+
+    with pytest.raises(StoryRevisionIntegrityError):
+        publisher.publish(
+            first_compilation,
+            base_revision=first.revision,
+        )
+
+
+@pytest.mark.parametrize(
+    "add_entry",
+    [
+        pytest.param(_add_unmanifested_file, id="file"),
+        pytest.param(_add_unmanifested_directory, id="directory"),
+    ],
+)
+def test_load_active_rejects_unmanifested_entry(
+    tmp_path: Path,
+    first_compilation: StoryCompilation,
+    add_entry,
+):
+    publisher = StoryPublisher(tmp_path / "build")
+    first = publisher.publish(first_compilation, base_revision=None)
+    add_entry(first.root)
+
+    with pytest.raises(StoryRevisionIntegrityError):
+        publisher.load_active()
 
 
 def test_load_active_rejects_pointer_snapshot_revision_mismatch(

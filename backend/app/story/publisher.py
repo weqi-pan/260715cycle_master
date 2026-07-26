@@ -180,6 +180,19 @@ class StoryPublisher:
             raise StoryRevisionIntegrityError(
                 f"Story revision directory is missing: {revision}."
             )
+        try:
+            actual_entries = {
+                entry.name for entry in revision_root.iterdir()
+            }
+        except OSError as exc:
+            raise StoryRevisionIntegrityError(
+                f"Story revision {revision} inventory could not be read."
+            ) from exc
+        expected_entries = {_MANIFEST_NAME, _SNAPSHOT_NAME}
+        if actual_entries != expected_entries:
+            raise StoryRevisionIntegrityError(
+                f"Story revision {revision} has an invalid file inventory."
+            )
 
         manifest = _read_json_object(
             revision_root / _MANIFEST_NAME,
