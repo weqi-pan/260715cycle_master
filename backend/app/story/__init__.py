@@ -6,6 +6,12 @@ from app.story.diagnostics import (
     StoryCompileError,
     StoryDiagnostic,
 )
+from app.story.publisher import (
+    PublishedRevision,
+    StoryPublisher,
+    StoryRevisionConflict,
+    StoryRevisionIntegrityError,
+)
 
 __all__ = [
     "DiagnosticSeverity",
@@ -13,4 +19,8 @@ __all__ = [
     "StoryCompileError",
     "StoryCompiler",
     "StoryDiagnostic",
+    "PublishedRevision",
+    "StoryPublisher",
+    "StoryRevisionConflict",
+    "StoryRevisionIntegrityError",
 ]

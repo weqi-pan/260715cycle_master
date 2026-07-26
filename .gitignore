@@ -98,6 +98,7 @@ data/*.sqlite3
 # ----------------------------------
 data/exports/*.csv
 data/exports/*.json
+data/story_build/
 
 # ----------------------------------
 # 测试

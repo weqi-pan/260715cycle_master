@@ -37,6 +37,8 @@ PROJECT_ROOT = BACKEND_DIR.parent       # cycle_master/
 
 # ── 数据目录（统一管理所有非代码数据） ──────────────────────
 DATA_DIR = PROJECT_ROOT / "data"
+STORY_V3_DIR = DATA_DIR / "story_v3"
+STORY_BUILD_DIR = DATA_DIR / "story_build"
 STORY_DATA_V2_DIR = DATA_DIR / "story_data_v2"  # 游戏内容 JSON（v2）
 # 兼容既有导入名；路径已明确指向 v2，不再支持 v1 目录。
 STORY_DATA_DIR = STORY_DATA_V2_DIR
@@ -84,6 +86,8 @@ def print_paths():
     p("DATA_DIR", DATA_DIR)
     p("STORY_DATA_DIR", STORY_DATA_DIR)
     p("STORY_DATA_V2_DIR", STORY_DATA_V2_DIR)
+    p("STORY_V3_DIR", STORY_V3_DIR)
+    p("STORY_BUILD_DIR", STORY_BUILD_DIR)
     p("ASSETS_DIR", ASSETS_DIR)
     p("DATABASE_PATH", DATABASE_PATH)
     p("EXPORTS_DIR", EXPORTS_DIR)
