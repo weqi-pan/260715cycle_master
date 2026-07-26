@@ -122,3 +122,4 @@ src-tauri/WixTools/
 .cache/
 tmp/
 temp/
+.worktrees/
