@@ -7,10 +7,10 @@ data/cycle_master.db。现有纯引擎单测不需要数据库，可继续独立
 from collections.abc import Iterator
 
 import pytest
-from sqlalchemy import create_engine, event
+from sqlalchemy import create_engine, event, text
 from sqlalchemy.orm import Session, sessionmaker
 
-from app.database import Base
+from app.database import Base, init_db
 from app.models.save import NodePersistentState, Save  # noqa: F401
 from app.models.story import Choice, StoryNode  # noqa: F401
 
@@ -30,7 +30,7 @@ def isolated_db_session(tmp_path) -> Iterator[Session]:
         cursor.execute("PRAGMA foreign_keys=ON")
         cursor.close()
 
-    Base.metadata.create_all(bind=test_engine)
+    init_db(bind=test_engine)
     session_factory = sessionmaker(
         bind=test_engine,
         autocommit=False,
@@ -38,6 +38,7 @@ def isolated_db_session(tmp_path) -> Iterator[Session]:
     )
     session = session_factory()
     try:
+        assert session.execute(text("PRAGMA foreign_keys")).scalar_one() == 1
         yield session
     finally:
         session.close()

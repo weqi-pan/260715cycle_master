@@ -8,22 +8,7 @@ from app.schemas.game import GameState
 from app.engine.graph import GraphBundle
 
 
-def add_node(session, node_id: str) -> StoryNode:
-    node = StoryNode(
-        id=node_id,
-        name=f"Node {node_id}",
-        position=0.0,
-        node_type="main",
-        content=f"Content {node_id}",
-    )
-    session.add(node)
-    session.flush()
-    return node
-
-
 def test_save_round_trip_includes_persistent_nodes(isolated_db_session):
-    add_node(isolated_db_session, "A")
-    add_node(isolated_db_session, "E")
     state = GameState(
         current_node_id="E",
         cycle_count=2,
@@ -44,7 +29,6 @@ def test_save_round_trip_includes_persistent_nodes(isolated_db_session):
 
 
 def test_save_round_trip_includes_choice_history_and_visit_id(isolated_db_session):
-    add_node(isolated_db_session, "A")
     state = GameState(
         current_node_id="A",
         cycle_count=2,
@@ -62,7 +46,6 @@ def test_save_round_trip_includes_choice_history_and_visit_id(isolated_db_sessio
 
 
 def test_update_save_replaces_removed_persistent_nodes(isolated_db_session):
-    add_node(isolated_db_session, "A")
     initial = GameState(
         current_node_id="A",
         persistent_nodes={"A": {"items": [{"id": "old"}], "dangers": []}},
@@ -92,7 +75,6 @@ def test_resume_frame_uses_saved_node_without_advancing_state():
 
 
 def test_delete_save_removes_persistent_children_first(isolated_db_session):
-    add_node(isolated_db_session, "A")
     state = GameState(
         current_node_id="A",
         persistent_nodes={"A": {"items": [{"id": "note"}], "dangers": []}},

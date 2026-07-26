@@ -55,7 +55,9 @@ class Save(Base):
     updated_at = Column(String, nullable=False)  # 最后更新时间（ISO 8601）
 
     # ── 游戏进度 ─────────────────────────────────────────────
-    current_node_id = Column(String, ForeignKey("story_nodes.id"), nullable=False)  # 当前节点
+    # Story content is published independently; the application validates this
+    # identifier against the active compiled story revision.
+    current_node_id = Column(String, nullable=False)  # 当前节点
     cycle_count = Column(Integer, default=0)  # 完整循环次数
     half_cycle_count = Column(Integer, default=0)  # 半循环次数
 
@@ -90,7 +92,8 @@ class NodePersistentState(Base):
 
     # ── 外部引用 ─────────────────────────────────────────────
     save_id = Column(String, ForeignKey("saves.id"), nullable=False)  # 所属存档
-    node_id = Column(String, ForeignKey("story_nodes.id"), nullable=False)  # 关联节点
+    # Node IDs belong to the compiled story revision, not the save database.
+    node_id = Column(String, nullable=False)  # 关联节点
 
     # ── 状态数据（JSON 序列化） ───────────────────────────────
     items_json = Column(Text, default="[]")  # 遗留道具列表
