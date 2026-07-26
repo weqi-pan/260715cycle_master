@@ -2,14 +2,23 @@
 
 from __future__ import annotations
 
-from typing import Any
+import importlib
+import json
+from pathlib import Path
+from typing import Any, Iterable
 
 import pytest
 
+from app.domain.items import ITEM_NAMES
+from app.domain.npcs import NPC_NAMES
 from app.engine.story_v2_loader import StoryV2Loader
+from app.paths import STORY_DATA_V2_DIR
 from app.schemas.story_v2 import StoryEffectV2, StoryNodeV2
+from app.schemas.story_v3 import StoryChoiceV3, StorySnapshotV3
+from app.story.compiler import StoryCompiler
 from app.story.identifiers import validate_story_id
 from app.story.v2_migration import (
+    migrate_project,
     migrate_v2_effect,
     migrate_v2_node,
     parse_v2_condition,
@@ -17,6 +26,53 @@ from app.story.v2_migration import (
 
 
 V2_NODES = StoryV2Loader().nodes
+V2_ROOT = STORY_DATA_V2_DIR
+
+
+def _migrate_project(destination: Path) -> None:
+    migrate_project(V2_ROOT, destination)
+
+
+def _compile_migration(destination: Path) -> StorySnapshotV3:
+    _migrate_project(destination)
+    compilation = StoryCompiler().compile(destination)
+    assert compilation.diagnostics == ()
+    return compilation.require_success()
+
+
+def _choice(story: StorySnapshotV3, choice_id: str) -> StoryChoiceV3:
+    return next(
+        choice
+        for node in story.nodes.values()
+        for choice in node.choices
+        if choice.id == choice_id
+    )
+
+
+def _total_content_blocks(story: StorySnapshotV3) -> int:
+    return sum(
+        sum(len(sequence.blocks) for sequence in node.entry_sequences)
+        + sum(len(choice.result) for choice in node.choices)
+        for node in story.nodes.values()
+    )
+
+
+def _tree_bytes(root: Path) -> dict[str, bytes]:
+    return {
+        path.relative_to(root).as_posix(): path.read_bytes()
+        for path in sorted(root.rglob("*"))
+        if path.is_file()
+    }
+
+
+def _all_json_objects(value: Any) -> Iterable[dict[str, Any]]:
+    if isinstance(value, dict):
+        yield value
+        for nested in value.values():
+            yield from _all_json_objects(nested)
+    elif isinstance(value, list):
+        for nested in value:
+            yield from _all_json_objects(nested)
 
 
 def _current_conditions() -> list[Any]:
@@ -357,11 +413,7 @@ def test_every_current_v2_node_migrates_to_closed_v3(source: StoryNodeV2):
     assert len(migrated.entry_sequences) == len(source.entry_sequences)
     assert len(migrated.choices) == len(source.choices)
     assert [choice.id for choice in migrated.choices] == [
-        choice.id
-        for choice in sorted(
-            source.choices,
-            key=lambda choice: (choice.priority, choice.id),
-        )
+        choice.id for choice in source.choices
     ]
     assert all("priority" not in choice.model_dump() for choice in migrated.choices)
 
@@ -431,11 +483,7 @@ def test_migrate_v2_node_makes_every_entry_id_safe_and_deterministic(
     assert second.entry_sequences[0].id == migrated_id
     assert first.id == source.id
     assert [choice.id for choice in first.choices] == [
-        choice.id
-        for choice in sorted(
-            source.choices,
-            key=lambda choice: (choice.priority, choice.id),
-        )
+        choice.id for choice in source.choices
     ]
 
 
@@ -460,3 +508,243 @@ def test_migrate_v2_node_keeps_colliding_content_block_slugs_distinct():
     assert {choice.id for choice in migrated.choices} == {
         choice.id for choice in source.choices
     }
+
+
+def test_full_migration_preserves_real_corpus_counts(tmp_path: Path):
+    story = _compile_migration(tmp_path / "story_v3")
+
+    assert len(story.nodes) == 30
+    assert sum(len(node.choices) for node in story.nodes.values()) == 143
+    assert _total_content_blocks(story) == 846
+
+
+def test_migration_applies_known_story_repairs(tmp_path: Path):
+    story = _compile_migration(tmp_path / "story_v3")
+
+    assert story.nodes["S10"].meta.parent_node_id == "F"
+    assert story.nodes["S13"].meta.parent_node_id == "G"
+    assert story.nodes["S14"].meta.parent_node_id == "G"
+    assert story.nodes["S19"].meta.parent_node_id == "H"
+    assert _choice(story, "S19_choice_02").next.target == "H"
+    assert story.nodes["S20"].meta.parent_node_id == "H"
+    assert _choice(story, "S20_choice_02").next.target == "H"
+    assert _choice(story, "S2_choice_03").next.target == "A"
+    assert _choice(story, "S3_choice_03").next.target == "B"
+    assert _choice(story, "S4_choice_03").next.target == "B"
+    assert _choice(story, "S5_choice_01").next.target == "C"
+    assert _choice(story, "S5_choice_03").next.target == "C"
+    assert _choice(story, "S6_choice_03").next.target == "C"
+    assert _choice(story, "S15_choice_03").next.target == "G"
+
+    restoration = _choice(story, "S20_choice_01")
+    assert restoration.repeat_policy == "once_per_cycle"
+    assert [effect.model_dump() for effect in restoration.effects] == [
+        {
+            "type": "restore_entry_attribute",
+            "attribute": "sanity",
+        }
+    ]
+
+    trust_effect = _choice(story, "D_choice_05").effects[0]
+    assert trust_effect.type == "modify_attribute"
+    assert trust_effect.attribute == "zhang_trust"
+    assert trust_effect.operation == "set"
+    assert trust_effect.value == 3
+
+
+def test_migration_uses_one_based_current_cycle_for_first_run_content(
+    tmp_path: Path,
+):
+    story = _compile_migration(tmp_path / "story_v3")
+    first_run = next(
+        sequence
+        for sequence in story.nodes["D"].entry_sequences
+        if sequence.id == "D_entry_cycle_1"
+    )
+
+    assert first_run.when is not None
+    assert first_run.when.model_dump() == {
+        "type": "counter_compare",
+        "counter": "current_cycle",
+        "operator": "eq",
+        "value": 1,
+    }
+
+
+def test_migration_builds_typed_crossing_shortcut_and_warp_routing(
+    tmp_path: Path,
+):
+    story = _compile_migration(tmp_path / "story_v3")
+
+    crossing = story.nodes["E"].routing
+    assert crossing is not None
+    assert crossing.type == "crossing"
+    assert crossing.max_deep_interactions == 2
+    assert [entry.model_dump() for entry in crossing.deep_interactions] == [
+        {"choice_id": "E_choice_05", "npc_id": "npc_a_liu"},
+        {"choice_id": "E_choice_06", "npc_id": "npc_li_ergou"},
+        {"choice_id": "E_choice_07", "npc_id": "npc_liu_qisheng"},
+        {"choice_id": "E_choice_08", "npc_id": "npc_huijue"},
+        {"choice_id": "E_choice_09", "npc_id": "npc_shen_banxian"},
+        {"choice_id": "E_choice_10", "npc_id": "npc_deleng"},
+    ]
+
+    shortcut = story.nodes["J"].routing
+    assert shortcut is not None
+    assert shortcut.type == "shortcut"
+    assert shortcut.entry_condition.model_dump() == {
+        "type": "any",
+        "conditions": [
+            {
+                "type": "flag_equals",
+                "flag": "know_secret_tunnel",
+                "value": True,
+            },
+            {
+                "type": "item",
+                "item_id": "item_tunnel_map",
+                "present": True,
+            },
+        ],
+    }
+    assert shortcut.entry_node_id == "E"
+    assert shortcut.exit_node_id == "A"
+    assert [effect.model_dump() for effect in shortcut.counter_effects] == [
+        {
+            "type": "modify_counter",
+            "counter": "half_cycles",
+            "operation": "add",
+            "value": 1,
+        }
+    ]
+
+    warp = story.nodes["K"].routing
+    assert warp is not None
+    assert warp.type == "warp"
+    assert warp.allowed_targets == ["A", "B", "C", "D", "E", "F", "G", "H"]
+    assert [
+        choice.id
+        for choice in story.nodes["K"].choices
+        if choice.next.mode == "warp"
+    ] == [f"K_choice_{index:02d}" for index in range(2, 10)]
+    assert [effect.model_dump() for effect in warp.exit_effects] == [
+        {
+            "type": "modify_attribute",
+            "attribute": "sanity_max",
+            "operation": "add",
+            "value": -1,
+            "clamp": True,
+        }
+    ]
+
+
+def test_migration_preserves_choice_order_and_locked_visibility(
+    tmp_path: Path,
+):
+    story = _compile_migration(tmp_path / "story_v3")
+
+    for node_id, source in V2_NODES.items():
+        migrated = story.nodes[node_id]
+        assert [choice.id for choice in migrated.choices] == [
+            choice.id for choice in source.choices
+        ]
+        assert [
+            choice.availability.locked_visibility
+            for choice in migrated.choices
+        ] == [choice.locked_visibility for choice in source.choices]
+
+
+def test_migration_emits_closed_runtime_data_and_explicit_scenes(
+    tmp_path: Path,
+):
+    destination = tmp_path / "story_v3"
+    story = _compile_migration(destination)
+
+    assert all(
+        node.scene.background_id is not None
+        or node.scene.allow_no_background
+        for node in story.nodes.values()
+    )
+    for path in sorted(destination.rglob("*.json")):
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        objects = list(_all_json_objects(payload))
+        assert all("priority" not in value for value in objects)
+        assert all("linked_sub_nodes" not in value for value in objects)
+        assert all("trigger_condition" not in value for value in objects)
+        assert all(
+            not isinstance(value.get("condition"), str)
+            and not isinstance(value.get("when"), str)
+            and not isinstance(value.get("entry_condition"), str)
+            for value in objects
+        )
+
+    for node_id, source in V2_NODES.items():
+        assert story.nodes[node_id].authoring.trigger_description == (
+            source.meta.trigger_condition
+        )
+
+
+def test_migration_builds_complete_typed_project_registries(tmp_path: Path):
+    story = _compile_migration(tmp_path / "story_v3")
+    project = story.project
+
+    assert project.entry_node_id == "A"
+    assert set(project.attributes) == {
+        "sanity",
+        "sanity_max",
+        "courage",
+        "insight",
+        "zhang_trust",
+    }
+    assert all(
+        isinstance(value, int)
+        for definition in project.attributes.values()
+        for value in (
+            definition.default,
+            definition.minimum,
+            definition.maximum,
+        )
+    )
+    assert set(ITEM_NAMES) <= set(project.items)
+    assert "A_note_from_H" in project.items
+    assert set(NPC_NAMES) <= set(project.npcs)
+    assert "player" in project.npcs
+    assert project.counters == ["completed_cycles", "half_cycles"]
+    assert project.jump_modes == ["stay", "travel", "shortcut", "warp"]
+
+
+def test_running_migration_twice_is_byte_identical(tmp_path: Path):
+    destination = tmp_path / "story_v3"
+    _migrate_project(destination)
+    first = _tree_bytes(destination)
+
+    _migrate_project(destination)
+
+    assert _tree_bytes(destination) == first
+    assert len(first) == 32
+
+
+def test_migration_removes_only_stale_json_node_files(tmp_path: Path):
+    destination = tmp_path / "story_v3"
+    nodes = destination / "nodes"
+    nodes.mkdir(parents=True)
+    stale_node = nodes / "ORPHAN.json"
+    unrelated_file = nodes / "editor-notes.txt"
+    stale_node.write_text("{}", encoding="utf-8")
+    unrelated_file.write_text("keep", encoding="utf-8")
+
+    _migrate_project(destination)
+
+    assert not stale_node.exists()
+    assert unrelated_file.read_text(encoding="utf-8") == "keep"
+    assert StoryCompiler().compile(destination).diagnostics == ()
+
+
+def test_migration_cli_writes_a_compilable_temporary_project(tmp_path: Path):
+    command = importlib.import_module("backend.scripts.migrate_story_v3")
+    destination = tmp_path / "story_v3"
+
+    assert command.main(
+        ["--source", str(V2_ROOT), "--destination", str(destination)]
+    ) == 0
+    assert StoryCompiler().compile(destination).diagnostics == ()

@@ -1,0 +1,212 @@
+{
+  "authoring": {
+    "gender_variant": null,
+    "notes": [],
+    "npc_item_notes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "sensory": null,
+    "trigger_description": "B→C路径中经过德星路早点铺时可选进入"
+  },
+  "choices": [
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "flag": "heard_eyewitness",
+          "type": "set_flag",
+          "value": true
+        }
+      ],
+      "hint": "他亲眼见证了1993年地下室被打开的那个晚上",
+      "id": "S4_choice_01",
+      "next": {
+        "mode": "stay",
+        "target": "S4"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S4_choice_01_result_paragraph_01_01",
+          "text": "你在老人对面坐下。他看了你一眼——目光在你脸上停了好几秒，然后移开。他没有问你是谁，也没有问你想干什么。他好像太久没有人愿意听他说话了，以至于他已经不在乎听的人是谁。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S4_choice_01_result_paragraph_02_01_dialogue",
+          "speaker_id": "npc_breakfast_elder",
+          "text": "我大佬叫林国强——你冇听过呢个名。九三年九月十四，佢落去挖地基。晚黑八点。佢临走前同我讲：细佬，今晚唔使等我食饭。我哋发现咗啲嘢。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "S4_choice_01_result_paragraph_03_01",
+          "text": "老人把碗里的粥搅了搅——还是没有喝。粥已经凉了，表面凝了一层皮。他从口袋里掏出一张折叠得整整齐齐的纸——一张施工收据。荔湾广场地基工程的收据。日期：1993年9月13日。背面用铅笔写着一行字：",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S4_choice_01_result_paragraph_04_01",
+          "text": "\"第九日 凌晨两点四十五 地下有水声 不是地下水 系有人在喊救命\"。笔迹在这里忽然变得潦草——像是写到一半，听到了什么声音，手抖了一下。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S4_choice_01_result_paragraph_05_01",
+          "text": "_（林国强在9月13日深夜、在塌方之前——在工地底下听到了什么。那不是塌方。他们挖到了不该挖开的东西。他被\"林国强\"这个名字困住了——他弟弟在这里等了二十五年，他在地铁站的长椅上等了二十五年。）_",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "听老人讲",
+      "text": "坐下来听老人讲1993年的往事"
+    },
+    {
+      "availability": {
+        "condition": {
+          "flag": "heard_eyewitness",
+          "type": "flag_equals",
+          "value": true
+        },
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "S4_choice_02",
+      "next": {
+        "mode": "stay",
+        "target": "S4"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S4_choice_02_result_paragraph_01_01",
+          "text": "你拿起桌上那张日历纸——1993年9月14日。纸张已经泛黄发脆，边缘有被反复折叠的痕迹。日期下面印着一行小字：\"宜：动土 祭祀 祈福\"。有人在旁边用铅笔圈了\"动土\"两个字。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S4_choice_02_result_paragraph_02_01",
+          "text": "你把日历纸反过来。背面还有一行字，笔迹比收据上的更潦草——像是用最后一点力气写下来的：\"唔好再挖。下面唔系土。系门。\"",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S4_choice_02_result_paragraph_03_01",
+          "text": "_（\"下面不是土。是门。\"——林国强在塌方前最后写下的东西。他挖到了什么？那扇门通向哪里？）_你小心地把日历纸收进口袋。这张纸比你从任何档案馆里能找到的任何资料都更接近真相。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "收日历纸",
+      "text": "收起老人留下的日历纸"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "S4_choice_03",
+      "next": {
+        "mode": "travel",
+        "target": "B"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S4_choice_03_result_paragraph_01_01",
+          "text": "你站起身，把椅子推回桌下。老板娘正在收拾隔壁桌的碗筷，粥锅里的蒸汽模糊了铺面的玻璃窗。老人还坐在角落里，一动不动地盯着对面的北塔。他面前的粥，从你进来到现在，一口都没有少。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "离开",
+      "text": "离开粥铺"
+    }
+  ],
+  "entry_sequences": [
+    {
+      "blocks": [
+        {
+          "id": "S4_entry_default_paragraph_01_01",
+          "text": "德星路拐角的一家老字号粥铺。门口支着几口大锅，白粥在锅里咕嘟咕嘟地冒着泡。老板娘一边盛粥一边用粤语招呼熟客。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S4_entry_default_paragraph_02_01",
+          "text": "角落里坐着一个八十多岁的老头——脸上的皱纹像老树皮。他要了一碗白粥，但粥上来后就一直没动。他在看着对面的荔湾广场北塔发呆。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S4_entry_default_paragraph_03_01_dialogue",
+          "speaker_id": "npc_breakfast_elder",
+          "text": "后生仔——",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "S4_entry_default_paragraph_03_02_narration",
+          "text": "他忽然朝你招手。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S4_entry_default_paragraph_03_03_dialogue",
+          "speaker_id": "npc_breakfast_elder",
+          "text": "你知唔知对面呢栋楼？",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "S4_entry_default_paragraph_04_01",
+          "text": "他告诉你：1993年施工那阵，他就在旁边开铺。挖地基那晚——挖到第八天——地下传来一声巨响。不是塌方。是笑声。好多人在笑——笑声从地底传上来，整条德星路都听到了。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S4_entry_default_paragraph_05_01_dialogue",
+          "speaker_id": "npc_breakfast_elder",
+          "text": "第二日就封咗。话係塌方。但边有塌方会有笑声嘅？",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "S4_entry_default_paragraph_06_01",
+          "text": "老头喝完粥走了。桌上留了一张他撕下来的日历纸——1993年9月14日。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "id": "S4_entry_default",
+      "when": null
+    }
+  ],
+  "id": "S4",
+  "meta": {
+    "name": "德星路早点铺",
+    "node_type": "normal",
+    "parent_node_id": "B",
+    "position": 25.0,
+    "terminal": null,
+    "time_label": "第二天·上午"
+  },
+  "routing": null,
+  "scene": {
+    "allow_no_background": true,
+    "ambient_id": null,
+    "atmosphere": [],
+    "background_id": null,
+    "palette": null
+  },
+  "schema_version": 3
+}

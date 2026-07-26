@@ -3,9 +3,18 @@
 from __future__ import annotations
 
 import hashlib
+import json
+from pathlib import Path
 import re
-from typing import cast
+from typing import Any, Iterable, cast
 
+from app.domain.items import (
+    CROSS_SURFACE_ITEMS,
+    DISCARDABLE_ITEMS,
+    ITEM_NAMES,
+)
+from app.domain.npcs import NPC_NAMES
+from app.engine.story_v2_loader import StoryV2Loader
 from app.schemas.story_v2 import (
     ContentBlock,
     StoryEffectV2,
@@ -17,30 +26,43 @@ from app.schemas.story_v3 import (
     AtNodeCondition,
     AttributeCompareCondition,
     AuthoringV3,
+    AssetCatalogV3,
+    AttributeDefinitionV3,
     ChoiceAvailabilityV3,
     CompareOperator,
     ConditionV3,
+    CrossingInteractionV3,
+    CrossingRoutingV3,
     CounterCompareCondition,
     DialogueContentBlockV3,
     EntrySequenceV3,
     FlagEqualsCondition,
+    FlagDefinitionV3,
     GenderVariantNoteV3,
     InventoryEffect,
+    ItemDefinitionV3,
     ItemCondition,
     ModifyAttributeEffect,
+    ModifyCounterEffect,
     NarrationContentBlockV3,
     NextActionV3,
     NotCondition,
+    NpcDefinitionV3,
     NpcItemNoteV3,
     PersistNodeItemEffect,
+    RestoreEntryAttributeEffect,
+    RoutingV3,
     SceneItemNoteV3,
     SceneV3,
     SetFlagEffect,
+    ShortcutRoutingV3,
     StoryChoiceV3,
     StoryEffectV3,
     StoryNodeMetaV3,
     StoryNodeV3,
+    StoryProjectV3,
     SystemContentBlockV3,
+    WarpRoutingV3,
 )
 from app.story.identifiers import validate_story_id
 
@@ -63,6 +85,73 @@ _COUNTER_RE = re.compile(
 )
 _FLAG_EQUALS_RE = re.compile(r"^flag:([^=]+)=(.+)$")
 _INVALID_LOCAL_ID_RE = re.compile(r"[^A-Za-z0-9_-]")
+
+PARENT_FIXES = {
+    "S10": "F",
+    "S13": "G",
+    "S14": "G",
+    "S19": "H",
+    "S20": "H",
+}
+
+RETURN_TARGET_FIXES = {
+    "S19_choice_02": "H",
+    "S20_choice_02": "H",
+}
+
+OWNER_RETURN_FIXES = {
+    "S2_choice_03": "A",
+    "S3_choice_03": "B",
+    "S4_choice_03": "B",
+    "S5_choice_01": "C",
+    "S5_choice_03": "C",
+    "S6_choice_03": "C",
+    "S15_choice_03": "G",
+}
+
+DEEP_INTERACTIONS = [
+    ("E_choice_05", "npc_a_liu"),
+    ("E_choice_06", "npc_li_ergou"),
+    ("E_choice_07", "npc_liu_qisheng"),
+    ("E_choice_08", "npc_huijue"),
+    ("E_choice_09", "npc_shen_banxian"),
+    ("E_choice_10", "npc_deleng"),
+]
+
+WARP_TARGETS = ["A", "B", "C", "D", "E", "F", "G", "H"]
+
+ATTRIBUTE_DEFINITIONS = {
+    "sanity": AttributeDefinitionV3(
+        display_name="理智",
+        default=100,
+        minimum=0,
+        maximum=100,
+    ),
+    "sanity_max": AttributeDefinitionV3(
+        display_name="理智上限",
+        default=100,
+        minimum=0,
+        maximum=100,
+    ),
+    "courage": AttributeDefinitionV3(
+        display_name="勇气",
+        default=5,
+        minimum=0,
+        maximum=10,
+    ),
+    "insight": AttributeDefinitionV3(
+        display_name="洞察",
+        default=3,
+        minimum=0,
+        maximum=10,
+    ),
+    "zhang_trust": AttributeDefinitionV3(
+        display_name="张天民信任",
+        default=0,
+        minimum=0,
+        maximum=3,
+    ),
+}
 
 
 def parse_v2_condition(expression: str | None) -> ConditionV3 | None:
@@ -354,13 +443,297 @@ def migrate_v2_node(node: StoryNodeV2) -> StoryNodeV3:
                     mode=choice.next.mode,
                 ),
             )
-            for choice in sorted(
-                node.choices,
-                key=lambda choice: (choice.priority, choice.id),
-            )
+            for choice in node.choices
         ],
         routing=None,
         authoring=_migrate_authoring(node),
+    )
+
+
+def migrate_project(source_root: Path, destination_root: Path) -> None:
+    """Migrate the complete v2 corpus into deterministic v3 source files."""
+    source = Path(source_root)
+    destination = Path(destination_root)
+    nodes_root = source / "nodes"
+    loader = StoryV2Loader(nodes_root if nodes_root.is_dir() else source)
+    nodes = {
+        node_id: _apply_project_repairs(migrate_v2_node(v2_node), v2_node)
+        for node_id, v2_node in loader.nodes.items()
+    }
+
+    project = _build_project(nodes.values())
+    assets = AssetCatalogV3(schema_version=3, assets={})
+    destination.mkdir(parents=True, exist_ok=True)
+    output_nodes = destination / "nodes"
+    output_nodes.mkdir(parents=True, exist_ok=True)
+    expected_node_files = {f"{node_id}.json" for node_id in nodes}
+    for stale_path in sorted(output_nodes.glob("*.json")):
+        if (
+            stale_path.name not in expected_node_files
+            and stale_path.is_file()
+        ):
+            stale_path.unlink()
+
+    _write_json(destination / "project.json", project.model_dump(mode="json"))
+    _write_json(destination / "assets.json", assets.model_dump(mode="json"))
+    for node_id in sorted(nodes):
+        _write_json(
+            output_nodes / f"{node_id}.json",
+            nodes[node_id].model_dump(mode="json"),
+        )
+
+
+def _apply_project_repairs(
+    node: StoryNodeV3,
+    source: StoryNodeV2,
+) -> StoryNodeV3:
+    parent_node_id = PARENT_FIXES.get(node.id, node.meta.parent_node_id)
+    choices: list[StoryChoiceV3] = []
+    for choice in node.choices:
+        next_action = choice.next
+        target = RETURN_TARGET_FIXES.get(
+            choice.id,
+            OWNER_RETURN_FIXES.get(choice.id),
+        )
+        if target is not None:
+            next_action = next_action.model_copy(update={"target": target})
+        if choice.id in {"E_choice_11", "H_choice_10", "J_choice_03"}:
+            next_action = next_action.model_copy(update={"mode": "travel"})
+
+        availability = choice.availability.model_copy(
+            update={
+                "condition": _rewrite_zhang_trust_condition(
+                    choice.availability.condition
+                )
+            }
+        )
+        effects = choice.effects
+        repeat_policy = choice.repeat_policy
+        if choice.id == "D_choice_05":
+            effects = [
+                ModifyAttributeEffect(
+                    type="modify_attribute",
+                    attribute="zhang_trust",
+                    operation="set",
+                    value=3,
+                )
+            ]
+        elif choice.id == "S20_choice_01":
+            effects = [
+                RestoreEntryAttributeEffect(
+                    type="restore_entry_attribute",
+                    attribute="sanity",
+                )
+            ]
+            repeat_policy = "once_per_cycle"
+
+        choices.append(
+            choice.model_copy(
+                update={
+                    "availability": availability,
+                    "effects": effects,
+                    "next": next_action,
+                    "repeat_policy": repeat_policy,
+                }
+            )
+        )
+
+    return node.model_copy(
+        update={
+            "meta": node.meta.model_copy(
+                update={"parent_node_id": parent_node_id}
+            ),
+            "choices": choices,
+            "routing": _migrate_routing(source),
+        }
+    )
+
+
+def _rewrite_zhang_trust_condition(
+    condition: ConditionV3 | None,
+) -> ConditionV3 | None:
+    if condition is None:
+        return None
+    if condition.type == "flag_equals" and condition.flag == "zhang_trust":
+        return AttributeCompareCondition(
+            type="attribute_compare",
+            attribute="zhang_trust",
+            operator="gte",
+            value=1,
+        )
+    if condition.type in {"all", "any"}:
+        return condition.model_copy(
+            update={
+                "conditions": [
+                    _rewrite_zhang_trust_condition(nested)
+                    for nested in condition.conditions
+                ]
+            }
+        )
+    if condition.type == "not":
+        return condition.model_copy(
+            update={
+                "condition": _rewrite_zhang_trust_condition(
+                    condition.condition
+                )
+            }
+        )
+    return condition
+
+
+def _migrate_routing(source: StoryNodeV2) -> RoutingV3 | None:
+    if source.id == "E":
+        crossing = source.routing.crossing
+        if crossing is None:
+            raise ValueError("E requires v2 crossing routing metadata")
+        return CrossingRoutingV3(
+            type="crossing",
+            trigger_time=crossing["crossing_trigger_time"],
+            target_era=crossing["crossing_target_era"],
+            max_deep_interactions=2,
+            deep_interactions=[
+                CrossingInteractionV3(
+                    choice_id=choice_id,
+                    npc_id=npc_id,
+                )
+                for choice_id, npc_id in DEEP_INTERACTIONS
+            ],
+            duration_note=crossing.get("crossing_duration"),
+            return_note=crossing.get("return_trigger"),
+        )
+    if source.id == "J":
+        shortcut = source.routing.shortcut
+        if shortcut is None:
+            raise ValueError("J requires v2 shortcut routing metadata")
+        entry_condition = parse_v2_condition(shortcut["entry_condition"])
+        if entry_condition is None:
+            raise ValueError("J shortcut requires an entry condition")
+        return ShortcutRoutingV3(
+            type="shortcut",
+            entry_condition=entry_condition,
+            entry_node_id=shortcut["entry_node"],
+            exit_node_id=shortcut["exit_node"],
+            counter_effects=[
+                ModifyCounterEffect(
+                    type="modify_counter",
+                    counter="half_cycles",
+                    operation="add",
+                    value=1,
+                )
+            ],
+        )
+    if source.id == "K":
+        warp = source.routing.warp
+        if warp is None:
+            raise ValueError("K requires v2 warp routing metadata")
+        entry_condition = parse_v2_condition(warp["entry_condition"])
+        if entry_condition is None:
+            raise ValueError("K warp requires an entry condition")
+        return WarpRoutingV3(
+            type="warp",
+            entry_condition=entry_condition,
+            allowed_targets=WARP_TARGETS,
+            exit_effects=[
+                ModifyAttributeEffect(
+                    type="modify_attribute",
+                    attribute="sanity_max",
+                    operation="add",
+                    value=-1,
+                    clamp=True,
+                )
+            ],
+            sacrifice_target=None,
+        )
+    return None
+
+
+def _build_project(nodes: Iterable[StoryNodeV3]) -> StoryProjectV3:
+    flags: set[str] = set()
+    item_ids = set(ITEM_NAMES)
+    npc_ids = set(NPC_NAMES)
+
+    for node in nodes:
+        for value in _walk_json(node.model_dump(mode="json")):
+            value_type = value.get("type")
+            if value_type == "flag_equals":
+                flags.add(value["flag"])
+            elif value_type == "set_flag":
+                flags.add(value["flag"])
+            elif value_type in {"item", "inventory"}:
+                item_ids.add(value["item_id"])
+            elif value_type == "persist_node_item":
+                item_ids.add(value["item_id"])
+            elif value_type == "record_interaction":
+                npc_ids.add(value["subject_id"])
+            elif value_type == "dialogue":
+                npc_ids.add(value["speaker_id"])
+
+        npc_ids.update(node.authoring.npcs_present)
+        item_ids.update(note.item_id for note in node.authoring.scene_items)
+        for note in node.authoring.npc_item_notes:
+            npc_ids.add(note.npc_id)
+            item_ids.add(note.item_id)
+            if note.required_flag is not None:
+                flags.add(note.required_flag)
+        if node.routing is not None and node.routing.type == "crossing":
+            npc_ids.update(
+                interaction.npc_id
+                for interaction in node.routing.deep_interactions
+            )
+
+    return StoryProjectV3(
+        schema_version=3,
+        entry_node_id="A",
+        attributes=ATTRIBUTE_DEFINITIONS,
+        flags={
+            flag: FlagDefinitionV3(
+                display_name=flag.replace("_", " "),
+                default=False,
+            )
+            for flag in sorted(flags)
+        },
+        items={
+            item_id: ItemDefinitionV3(
+                display_name=ITEM_NAMES.get(item_id, item_id),
+                discardable=item_id in DISCARDABLE_ITEMS,
+                cross_surface=item_id in CROSS_SURFACE_ITEMS,
+            )
+            for item_id in sorted(item_ids)
+        },
+        npcs={
+            npc_id: NpcDefinitionV3(
+                display_name=NPC_NAMES.get(
+                    npc_id,
+                    "玩家" if npc_id == "player" else npc_id,
+                )
+            )
+            for npc_id in sorted(npc_ids)
+        },
+        counters=["completed_cycles", "half_cycles"],
+        jump_modes=["stay", "travel", "shortcut", "warp"],
+    )
+
+
+def _walk_json(value: Any) -> Iterable[dict[str, Any]]:
+    if isinstance(value, dict):
+        yield value
+        for nested in value.values():
+            yield from _walk_json(nested)
+    elif isinstance(value, list):
+        for nested in value:
+            yield from _walk_json(nested)
+
+
+def _write_json(path: Path, payload: dict[str, Any]) -> None:
+    path.write_text(
+        json.dumps(
+            payload,
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
+        encoding="utf-8",
     )
 
 

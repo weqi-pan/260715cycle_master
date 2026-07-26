@@ -1,0 +1,150 @@
+{
+  "authoring": {
+    "gender_variant": null,
+    "notes": [],
+    "npc_item_notes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "sensory": null,
+    "trigger_description": "F节点延伸探索可选进入白鹅潭废弃酒吧"
+  },
+  "choices": [
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "flag": "drank_river_water",
+          "type": "set_flag",
+          "value": true
+        },
+        {
+          "attribute": "sanity",
+          "clamp": true,
+          "operation": "add",
+          "type": "modify_attribute",
+          "value": -5
+        }
+      ],
+      "hint": "喝下珠江的记忆——你会看到1650年。之后几秒，san值会下降——但H节点不会触发血月。",
+      "id": "S12_choice_01",
+      "next": {
+        "mode": "stay",
+        "target": "S12"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S12_choice_01_result_paragraph_01_01",
+          "text": "你端起那只还挂着水珠的玻璃杯。水无色无味——入口的瞬间却是凉的，不是冰块的凉，是江底深处那种不见天日的凉。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S12_choice_01_result_paragraph_02_01",
+          "text": "然后画面来了——不是从眼前闪过，是从骨头里面涌出来的。1650年的珠江，水面倒映着城墙上冲天的大火。清兵的铁甲在火光里闪着冷光。有人在江边跪下，有人在江水里沉没。江水目睹了一切——江水记住了每一帧。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S12_choice_01_result_paragraph_03_01",
+          "text": "画面跳转——1871年，沙面的领事馆灯火通明。一个外国人在江边踱步，往水里扔了一枚硬币。1903年，一个法国女人站在同一段江岸，用铅笔在纸上写着什么。1942年——2014年——江水承载了太多人的倒影。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S12_choice_01_result_paragraph_04_01",
+          "text": "你猛地睁开眼睛——你还在酒吧里，杯子已经空了。吧台上的灰尘没有动过。但你知道你刚才看到的不是幻觉。那是珠江的记忆。它把这杯水留在这里——等一个能喝下它的人。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "喝水",
+      "text": "喝下那杯水"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "S12_choice_02",
+      "next": {
+        "mode": "travel",
+        "target": "F"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S12_choice_02_result_paragraph_01_01",
+          "text": "你放下那杯水——水面轻轻晃了一下，倒映出天花板上裂开的木板。你转身推开酒吧的门，白鹅潭的夜风裹着江水的气味涌进来，像是珠江在你身后叹了口气。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "离开",
+      "text": "离开酒吧"
+    }
+  ],
+  "entry_sequences": [
+    {
+      "blocks": [
+        {
+          "id": "S12_entry_default_paragraph_01_01",
+          "text": "白鹅潭边上一家已经废弃多年的酒吧。招牌只剩下一半——\"江\"字还在，\"景\"字掉在门口的花坛里。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S12_entry_default_paragraph_02_01",
+          "text": "酒吧内部昏暗潮湿。吧台上积了一层灰，但有一只玻璃杯是干净的——杯壁上还挂着水珠，像是刚有人用过。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S12_entry_default_paragraph_03_01",
+          "text": "吧台后面的酒架上，所有的酒瓶都空了——除了一瓶。那是一瓶没有标签的透明液体。不是酒——闻起来没有酒精味。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S12_entry_default_paragraph_04_01",
+          "text": "_（这是水。珠江的水。但它在这里放了很久——比这栋建筑还要久。）_",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S12_entry_default_paragraph_05_01",
+          "text": "如果你喝了这杯水——你会短暂地看到一些东西。不是幻觉——是记忆。珠江的记忆。这条江在1650年看到了什么。它在几百年间看到了什么。水流承载记忆——而时间裂隙把一部分记忆困在了这杯水里。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "id": "S12_entry_default",
+      "when": null
+    }
+  ],
+  "id": "S12",
+  "meta": {
+    "name": "白鹅潭废弃酒吧",
+    "node_type": "normal",
+    "parent_node_id": "F",
+    "position": 125.0,
+    "terminal": null,
+    "time_label": "第三天·深夜"
+  },
+  "routing": null,
+  "scene": {
+    "allow_no_background": true,
+    "ambient_id": null,
+    "atmosphere": [],
+    "background_id": null,
+    "palette": null
+  },
+  "schema_version": 3
+}

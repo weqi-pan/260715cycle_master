@@ -1,0 +1,198 @@
+{
+  "authoring": {
+    "gender_variant": null,
+    "notes": [],
+    "npc_item_notes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "sensory": null,
+    "trigger_description": "F节点探索沙面老建筑内部时可选进入"
+  },
+  "choices": [
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "item_id": "item_fossil_pipe",
+          "operation": "add",
+          "quantity": 1,
+          "type": "inventory"
+        }
+      ],
+      "hint": "一支被时间加速石化了几百万年的烟斗",
+      "id": "S11_choice_01",
+      "next": {
+        "mode": "stay",
+        "target": "S11"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S11_choice_01_result_paragraph_01_01",
+          "text": "你伸出手握住那支烟斗。它比你想象的重得多——石化的木头密度已经和岩石无异。触感冰凉，不是普通的冷——是那种吸收了几百年夜晚寒气、再也不会回暖的冷。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S11_choice_01_result_paragraph_02_01",
+          "text": "手指碰到烟斗的瞬间，你感到一阵短暂的晕眩——耳边掠过模糊的声音：马蹄声、粤语的叫喊、火焰的噼啪声。然后一切恢复寂静。烟斗静静地躺在你掌心，石质外壳上倒映着窗外珠江的灯火。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S11_choice_01_result_paragraph_03_01",
+          "text": "_（这支烟斗的主人是谁？一个站在窗边抽烟的外国人，在1860年代看着珠江对岸的城墙？他在时间裂隙的边缘做了什么——让这支烟斗被加速石化了百万年？）_",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "取烟斗",
+      "text": "拿起窗台上的石化烟斗"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": "窗外出现了1650年的广州城墙——很短暂",
+      "id": "S11_choice_02",
+      "next": {
+        "mode": "stay",
+        "target": "S11"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S11_choice_02_result_paragraph_01_01",
+          "text": "你没有去拿烟斗，而是靠在窗框上——等。窗外的城墙幻象起初只有轮廓，但如果你不眨眼地盯着——它开始变清晰。你能看到城墙上的垛口，能看到城楼飞檐的弧度。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S11_choice_02_result_paragraph_02_01",
+          "text": "火焰在城墙后方无声地燃烧。那是1650年平南王尚可喜攻陷广州的那场大火。没有人尖叫——这幅幻象只有影像，没有声音。但你能感觉到热度——从窗户外面辐射进来，烤着你的脸。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S11_choice_02_result_paragraph_03_01",
+          "text": "城墙下方——城门口——有个模糊的小点在移动。是一个人。那人从城墙的侧门走了出来，朝珠江这边看了一眼——然后幻象消散了。窗外恢复成现代的广州夜景。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "等待闪回",
+      "text": "在窗边等待闪回结束"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "S11_choice_03",
+      "next": {
+        "mode": "travel",
+        "target": "F"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S11_choice_03_result_paragraph_01_01",
+          "text": "你沿着吱嘎作响的木楼梯回到一楼。窗外的珠江恢复了现代的光景——高楼灯光，桥梁车流。但那支石化的烟斗和1650年的城墙，像两枚钉子一样扎进了你的记忆里。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "离开",
+      "text": "离开老建筑"
+    }
+  ],
+  "entry_sequences": [
+    {
+      "blocks": [
+        {
+          "id": "S11_entry_default_paragraph_01_01",
+          "text": "沙面这栋废弃的殖民时代建筑内部已经被时间侵蚀得面目全非。木制楼梯的台阶踩上去会发出危险的呻吟。墙壁上的灰泥大片剥落——露出底下的红砖。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S11_entry_default_paragraph_02_01",
+          "text": "二楼靠窗的房间——窗户玻璃碎了半扇。从窗口望出去，能看到珠江和对岸的灯火。但窗框的木头上——有什么东西不对劲。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S11_entry_default_paragraph_03_01",
+          "text": "窗台上放着一支石楠木烟斗。不是普通的烟斗——它表面覆盖着一层灰白色的石质外壳。不是灰尘——是真正的石化层。木头在石化过程中被某种力量加速了几百万年——用几百年走完了地质时间需要几百万年的路程。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S11_entry_default_paragraph_04_01",
+          "text": "_（这支烟斗被夹在时间裂隙的边缘。一只脚在过去——另一只脚在永恒的现在。）_",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S11_entry_default_paragraph_05_01",
+          "text": "如果你在窗边站得足够久——你会发现窗外的珠江对面，不是现代的广州。是1650年的城墙。火焰在城墙后方燃烧——但没有声音。只是一幅无声的画卷，在你面前短暂地展开，然后消散。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "id": "S11_entry_default",
+      "when": null
+    },
+    {
+      "blocks": [
+        {
+          "id": "S11_entry_cycle_2_paragraph_01_01",
+          "text": "你再次走进沙面这栋老建筑。窗台上的石化烟斗还在——覆盖它的石质外壳似乎比上次更厚了一点。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S11_entry_cycle_2_paragraph_02_01",
+          "text": "窗外的\"闪回\"持续的时间也比上次长了。这次你能看到城墙上的清兵旗帜——黄色底纹上绣着五爪龙。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "id": "S11_entry_cycle_2",
+      "when": {
+        "counter": "current_cycle",
+        "operator": "eq",
+        "type": "counter_compare",
+        "value": 2
+      }
+    }
+  ],
+  "id": "S11",
+  "meta": {
+    "name": "沙面老建筑内部",
+    "node_type": "normal",
+    "parent_node_id": "F",
+    "position": 125.0,
+    "terminal": null,
+    "time_label": "第三天·夜晚"
+  },
+  "routing": null,
+  "scene": {
+    "allow_no_background": true,
+    "ambient_id": null,
+    "atmosphere": [],
+    "background_id": null,
+    "palette": null
+  },
+  "schema_version": 3
+}

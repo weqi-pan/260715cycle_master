@@ -1,0 +1,490 @@
+{
+  "attributes": {
+    "courage": {
+      "default": 5,
+      "display_name": "勇气",
+      "maximum": 10,
+      "minimum": 0
+    },
+    "insight": {
+      "default": 3,
+      "display_name": "洞察",
+      "maximum": 10,
+      "minimum": 0
+    },
+    "sanity": {
+      "default": 100,
+      "display_name": "理智",
+      "maximum": 100,
+      "minimum": 0
+    },
+    "sanity_max": {
+      "default": 100,
+      "display_name": "理智上限",
+      "maximum": 100,
+      "minimum": 0
+    },
+    "zhang_trust": {
+      "default": 0,
+      "display_name": "张天民信任",
+      "maximum": 3,
+      "minimum": 0
+    }
+  },
+  "counters": [
+    "completed_cycles",
+    "half_cycles"
+  ],
+  "entry_node_id": "A",
+  "flags": {
+    "A_note_from_H_exists": {
+      "default": false,
+      "display_name": "A note from H exists"
+    },
+    "added_to_shrine_stele": {
+      "default": false,
+      "display_name": "added to shrine stele"
+    },
+    "b_hid_under_blanket": {
+      "default": false,
+      "display_name": "b hid under blanket"
+    },
+    "b_recorded_wall_sound": {
+      "default": false,
+      "display_name": "b recorded wall sound"
+    },
+    "bed_entity_encountered": {
+      "default": false,
+      "display_name": "bed entity encountered"
+    },
+    "buddha_protection": {
+      "default": false,
+      "display_name": "buddha protection"
+    },
+    "checked_pocket_item": {
+      "default": false,
+      "display_name": "checked pocket item"
+    },
+    "checked_rental_info": {
+      "default": false,
+      "display_name": "checked rental info"
+    },
+    "deja_vu_triggered": {
+      "default": false,
+      "display_name": "deja vu triggered"
+    },
+    "drank_river_water": {
+      "default": false,
+      "display_name": "drank river water"
+    },
+    "elevator_to_b1": {
+      "default": false,
+      "display_name": "elevator to b1"
+    },
+    "ergou_debt_paid": {
+      "default": false,
+      "display_name": "ergou debt paid"
+    },
+    "explored_b1_deep": {
+      "default": false,
+      "display_name": "explored b1 deep"
+    },
+    "exploring_surroundings": {
+      "default": false,
+      "display_name": "exploring surroundings"
+    },
+    "found_chen_shuisheng_identity": {
+      "default": false,
+      "display_name": "found chen shuisheng identity"
+    },
+    "found_lion_inscription": {
+      "default": false,
+      "display_name": "found lion inscription"
+    },
+    "found_own_note": {
+      "default": false,
+      "display_name": "found own note"
+    },
+    "found_rooftop_memorial": {
+      "default": false,
+      "display_name": "found rooftop memorial"
+    },
+    "ghost_lady_seen": {
+      "default": false,
+      "display_name": "ghost lady seen"
+    },
+    "heard_banxian_ramble": {
+      "default": false,
+      "display_name": "heard banxian ramble"
+    },
+    "heard_eyewitness": {
+      "default": false,
+      "display_name": "heard eyewitness"
+    },
+    "heard_firefighter_story": {
+      "default": false,
+      "display_name": "heard firefighter story"
+    },
+    "helped_ergou": {
+      "default": false,
+      "display_name": "helped ergou"
+    },
+    "knew_missing_worker": {
+      "default": false,
+      "display_name": "knew missing worker"
+    },
+    "knew_previous_tenant": {
+      "default": false,
+      "display_name": "knew previous tenant"
+    },
+    "know_secret_tunnel": {
+      "default": false,
+      "display_name": "know secret tunnel"
+    },
+    "lake_reflection_seen": {
+      "default": false,
+      "display_name": "lake reflection seen"
+    },
+    "li_mingchen_story_heard": {
+      "default": false,
+      "display_name": "li mingchen story heard"
+    },
+    "memory_synthesis": {
+      "default": false,
+      "display_name": "memory synthesis"
+    },
+    "qing_exposed": {
+      "default": false,
+      "display_name": "qing exposed"
+    },
+    "replied_to_chen_botao": {
+      "default": false,
+      "display_name": "replied to chen botao"
+    },
+    "respected_wish": {
+      "default": false,
+      "display_name": "respected wish"
+    },
+    "river_crossed": {
+      "default": false,
+      "display_name": "river crossed"
+    },
+    "saw_2014_girl": {
+      "default": false,
+      "display_name": "saw 2014 girl"
+    },
+    "saw_loop_boundary": {
+      "default": false,
+      "display_name": "saw loop boundary"
+    },
+    "saw_subway_looper": {
+      "default": false,
+      "display_name": "saw subway looper"
+    },
+    "started_standard_path": {
+      "default": false,
+      "display_name": "started standard path"
+    },
+    "subway_looper_locker_found": {
+      "default": false,
+      "display_name": "subway looper locker found"
+    },
+    "taoist_chant": {
+      "default": false,
+      "display_name": "taoist chant"
+    },
+    "timeline_mapped": {
+      "default": false,
+      "display_name": "timeline mapped"
+    },
+    "told_zhou_truth": {
+      "default": false,
+      "display_name": "told zhou truth"
+    },
+    "wuying_cooperated": {
+      "default": false,
+      "display_name": "wuying cooperated"
+    },
+    "yan_yan_accompany": {
+      "default": false,
+      "display_name": "yan yan accompany"
+    },
+    "zhang_notebook_full": {
+      "default": false,
+      "display_name": "zhang notebook full"
+    }
+  },
+  "items": {
+    "A_note_from_H": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "A_note_from_H"
+    },
+    "item_amulet": {
+      "cross_surface": true,
+      "discardable": false,
+      "display_name": "阿六的护身符"
+    },
+    "item_anshen_herb": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "安神药包"
+    },
+    "item_beads": {
+      "cross_surface": true,
+      "discardable": false,
+      "display_name": "菩提子念珠"
+    },
+    "item_black_jade": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "墨玉吊坠"
+    },
+    "item_bridge_coin": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "天桥许愿硬币"
+    },
+    "item_broken_mirror": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "八卦铜镜碎片"
+    },
+    "item_chen_letter": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "陈伯陶回信"
+    },
+    "item_denim_rag": {
+      "cross_surface": true,
+      "discardable": true,
+      "display_name": "一块破布"
+    },
+    "item_family_tree": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "陈氏家族谱系图"
+    },
+    "item_ferry_ticket": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "珠江轮渡旧船票"
+    },
+    "item_fossil_pipe": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "石化烟斗"
+    },
+    "item_graffiti_photo": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "消防栓涂鸦照片"
+    },
+    "item_hardhat": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "施工安全帽"
+    },
+    "item_incense_stub": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "香炉残香"
+    },
+    "item_jade_pendant": {
+      "cross_surface": true,
+      "discardable": false,
+      "display_name": "李氏传家玉佩"
+    },
+    "item_joss_paper": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "冥纸残片"
+    },
+    "item_lion_inscription": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "铜狮底座拓片"
+    },
+    "item_loop_newspaper": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "循环报纸"
+    },
+    "item_merit_stele_photo": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "功德碑照片"
+    },
+    "item_milk_tea_receipt": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "便利店奶茶收据"
+    },
+    "item_notebook_full": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "张天民笔记(完整)"
+    },
+    "item_notebook_page": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "张天民笔记(单页)"
+    },
+    "item_old_doorplate": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "第十二甫旧门牌"
+    },
+    "item_old_key": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "锈蚀铜钥匙"
+    },
+    "item_old_newspaper": {
+      "cross_surface": false,
+      "discardable": true,
+      "display_name": "1993年旧报纸"
+    },
+    "item_old_photo": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "糖水铺老照片"
+    },
+    "item_photo_negative": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "老照相馆底片"
+    },
+    "item_porcelain_shard": {
+      "cross_surface": true,
+      "discardable": false,
+      "display_name": "青花瓷碎片"
+    },
+    "item_qing_coin": {
+      "cross_surface": true,
+      "discardable": true,
+      "display_name": "清代顺治通宝"
+    },
+    "item_rainbow_stone": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "老榕树下雨花石"
+    },
+    "item_river_lantern_note": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "河灯感谢纸条"
+    },
+    "item_river_porcelain": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "明代青花碗底残片"
+    },
+    "item_rooftop_tile": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "天台红瓦片"
+    },
+    "item_scholar_diary": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "陈伯陶日记"
+    },
+    "item_shamian_doorplate": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "沙面法文老门牌"
+    },
+    "item_shrine_incense": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "路边神龛香灰"
+    },
+    "item_sutra": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "慧觉经文残片"
+    },
+    "item_talisman": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "镇魂符纸"
+    },
+    "item_tunnel_map": {
+      "cross_surface": false,
+      "discardable": false,
+      "display_name": "密道地图"
+    },
+    "item_warning_note": {
+      "cross_surface": false,
+      "discardable": true,
+      "display_name": "警告便签"
+    }
+  },
+  "jump_modes": [
+    "stay",
+    "travel",
+    "shortcut",
+    "warp"
+  ],
+  "npcs": {
+    "npc_a_liu": {
+      "display_name": "阿六"
+    },
+    "npc_breakfast_elder": {
+      "display_name": "粥铺老人"
+    },
+    "npc_deleng": {
+      "display_name": "德楞"
+    },
+    "npc_firefighter": {
+      "display_name": "值班消防员"
+    },
+    "npc_huijue": {
+      "display_name": "慧觉"
+    },
+    "npc_li_ergou": {
+      "display_name": "李二狗"
+    },
+    "npc_li_mingchen": {
+      "display_name": "李铭宸"
+    },
+    "npc_liu_qisheng": {
+      "display_name": "刘启盛"
+    },
+    "npc_old_doctor": {
+      "display_name": "老中医"
+    },
+    "npc_old_monk": {
+      "display_name": "扫地老和尚"
+    },
+    "npc_photo_master": {
+      "display_name": "照相馆老师傅"
+    },
+    "npc_river_fisher": {
+      "display_name": "江边钓鱼老人"
+    },
+    "npc_shen_banxian": {
+      "display_name": "沈半仙"
+    },
+    "npc_stranded_commuter": {
+      "display_name": "滞留乘客"
+    },
+    "npc_wu_yingzhi": {
+      "display_name": "吴应执"
+    },
+    "npc_yan_yan": {
+      "display_name": "燕妍"
+    },
+    "npc_zhang_tianmin": {
+      "display_name": "张天民"
+    },
+    "npc_zhou_mingyuan": {
+      "display_name": "周明远"
+    },
+    "player": {
+      "display_name": "玩家"
+    }
+  },
+  "schema_version": 3
+}

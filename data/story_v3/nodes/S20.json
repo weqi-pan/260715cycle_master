@@ -1,0 +1,148 @@
+{
+  "authoring": {
+    "gender_variant": null,
+    "notes": [],
+    "npc_item_notes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "sensory": null,
+    "trigger_description": "attr:sanity<40 且位于西侧路径时静默开放"
+  },
+  "choices": [
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "attribute": "sanity",
+          "type": "restore_entry_attribute"
+        }
+      ],
+      "hint": "井水很冷——冷到骨头里。洗完脸之后，你暂时能\"看到\"平时看不到的东西。",
+      "id": "S20_choice_01",
+      "next": {
+        "mode": "stay",
+        "target": "S20"
+      },
+      "repeat_policy": "once_per_cycle",
+      "result": [
+        {
+          "id": "S20_choice_01_result_paragraph_01_01",
+          "text": "你用井边的铁桶放下绳子。桶碰到水面——发出一种异常的清脆回音，像是敲钟——不是水声，是金属敲击在很深很深的空洞里的声音。往上拉的时候，桶的重量超过你的预期——这水的密度太大了。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S20_choice_01_result_paragraph_02_01",
+          "text": "你把水捧起来——双手立刻被冻得发白。不是冬天的冷——是一种深入骨髓的寒，像是手伸进了时间裂缝里。你咬紧牙关把水拍到脸上——一瞬间，整个世界变了样。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S20_choice_01_result_paragraph_03_01",
+          "text": "_（你看到了——龙脉在地板下方三丈处流过，像一条被囚禁的发光河流。会馆的墙壁上叠印着无数前人的面孔——丝绸商人、举人老爷、民国学生——每一个来过锦纶会馆的人都在这里留下了时间的痕迹。）_",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S20_choice_01_result_paragraph_04_01",
+          "text": "_（在最里面的角落里——正对着井口的东侧——一个穿着清朝五品官服的老人盘腿坐在蒲团上。他闭着眼睛——但眉心在发光。陈德修，咸丰十一年自愿入定镇守龙脉节点。一百六十余年来未曾离开。他感觉到你在看他——微微睁开眼。向你点了一下头——然后重新闭上了眼睛。）_",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "打水洗脸",
+      "text": "打一桶古井水洗脸"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "S20_choice_02",
+      "next": {
+        "mode": "travel",
+        "target": "H"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S20_choice_02_result_paragraph_01_01",
+          "text": "你没有碰那桶水。井底的水面还在黑暗中泛着幽光——那个清朝官员的脸还倒映在水面上，仰着头从井底看着你。你慢慢退出庭院，轻轻带上会馆的木门。身后传来井水深处的一声轻微响动——像是有人在井底叹了口气。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "离开",
+      "text": "离开会馆"
+    }
+  ],
+  "entry_sequences": [
+    {
+      "blocks": [
+        {
+          "id": "S20_entry_default_paragraph_01_01",
+          "text": "锦纶会馆是广州现存最完整的清代行业会馆——建于雍正年间，原是丝绸商人的聚会场所。现在它被夹在两栋现代高层之间——像一颗被遗忘在牙缝里的米粒。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S20_entry_default_paragraph_02_01",
+          "text": "会馆的庭院里有一口老井。井口被铁栅栏封着——但铁栅栏的锁是开的。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S20_entry_default_paragraph_03_01",
+          "text": "井水在深处泛着幽暗的光。如果你趴在井口往下看——能看到水面倒映出的不是你的脸。是一个穿清朝官服的人的脸——在井底仰头看着你。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S20_entry_default_paragraph_04_01",
+          "text": "_（这口井在地下连通着龙脉。井水从时间裂隙中流过——带着不同时间层的信息。）_",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S20_entry_default_paragraph_05_01",
+          "text": "如果你打一桶水上来——它会比正常的井水凉得多。凉到能冻伤手指。这是从时间裂隙中渗出的\"原水\"——不是饮水用的。是用来\"清洗\"的。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S20_entry_default_paragraph_06_01",
+          "text": "用它洗一把脸——你能暂时看到平时看不到的东西。持续大约一个时辰。但每一轮只能使用一次——第二次用就没效果了。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "id": "S20_entry_default",
+      "when": null
+    }
+  ],
+  "id": "S20",
+  "meta": {
+    "name": "锦纶会馆",
+    "node_type": "normal",
+    "parent_node_id": "H",
+    "position": 150.0,
+    "terminal": null,
+    "time_label": "任意时间·san<40%触发"
+  },
+  "routing": null,
+  "scene": {
+    "allow_no_background": true,
+    "ambient_id": null,
+    "atmosphere": [],
+    "background_id": null,
+    "palette": null
+  },
+  "schema_version": 3
+}

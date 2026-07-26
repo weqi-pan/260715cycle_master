@@ -1,0 +1,153 @@
+{
+  "authoring": {
+    "gender_variant": null,
+    "notes": [],
+    "npc_item_notes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "sensory": null,
+    "trigger_description": "H节点途经龙津路时可选进入老药铺"
+  },
+  "choices": [
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "item_id": "item_anshen_herb",
+          "operation": "add",
+          "quantity": 1,
+          "type": "inventory"
+        }
+      ],
+      "hint": null,
+      "id": "S17_choice_01",
+      "next": {
+        "mode": "stay",
+        "target": "S17"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S17_choice_01_result_paragraph_01_01",
+          "text": "你接过黄纸包好的药包。纸包温热——老中医的手掌温度透过七层黄纸传到你手心里。朱砂在药包深处散发出淡淡的矿物腥味——不像药材的味道，更像是庙里香炉的灰，或者德星路那个神龛上陈年符纸的气息。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S17_choice_01_result_paragraph_02_01",
+          "text": "老中医看着你收下药包，微微点了点头。他没有再说别的。但他转身关药柜的时候——你的余光扫到朱砂抽屉的角落里压着一叠用红纸折的符咒，和你在德星路神龛看到的一模一样。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "收药包",
+      "text": "收下老中医的安神药包"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "S17_choice_02",
+      "next": {
+        "mode": "travel",
+        "target": "H"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S17_choice_02_result_paragraph_01_01",
+          "text": "你推开药铺的木门。龙津路的夜风裹着中药铺里特有的药香——当归、陈皮、茯苓——飘散在街巷里。走了几步回头——老中医已经关了灯。药铺的木质招牌在路灯下只留下一个深色的剪影。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "离开",
+      "text": "离开药铺"
+    }
+  ],
+  "entry_sequences": [
+    {
+      "blocks": [
+        {
+          "id": "S17_entry_default_paragraph_01_01",
+          "text": "龙津路这家老药铺开了将近一百年——和上下九步行街的历史一样长。药柜是紫檀木打的，几百个小抽屉上贴着毛笔写的药名——很多药名还用的是繁体字。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S17_entry_default_paragraph_02_01",
+          "text": "老中医已经准备打烊了——但他看到你时，手上的动作停了。他盯着你的脸看了好几秒。不是看病人——是看一个\"被什么东西跟着\"的人。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S17_entry_default_paragraph_03_01_dialogue",
+          "speaker_id": "npc_old_doctor",
+          "text": "你最近——睡得不太好吧。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "S17_entry_default_paragraph_03_02_narration",
+          "text": "他说。不是疑问句。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S17_entry_default_paragraph_04_01",
+          "text": "他没等你回答，转身拉开几个药柜——酸枣仁、茯苓、远志、合欢皮——抓了七味安神药材，用黄纸包好，系上红棉线。然后他犹豫了一下——又多抓了一味放进去。那一味不在方子上。是朱砂。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S17_entry_default_paragraph_05_01_dialogue",
+          "speaker_id": "npc_old_doctor",
+          "text": "这个——不收钱。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "S17_entry_default_paragraph_05_02_narration",
+          "text": "他把药包推到你面前。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S17_entry_default_paragraph_05_03_dialogue",
+          "speaker_id": "npc_old_doctor",
+          "text": "喝完那晚——你耳边那个嗡嗡声会停一会儿。不长。但够你喘口气了。",
+          "type": "dialogue",
+          "when": null
+        }
+      ],
+      "id": "S17_entry_default",
+      "when": null
+    }
+  ],
+  "id": "S17",
+  "meta": {
+    "name": "龙津路老药铺",
+    "node_type": "normal",
+    "parent_node_id": "H",
+    "position": 175.0,
+    "terminal": null,
+    "time_label": "第四天·深夜"
+  },
+  "routing": null,
+  "scene": {
+    "allow_no_background": true,
+    "ambient_id": null,
+    "atmosphere": [],
+    "background_id": null,
+    "palette": null
+  },
+  "schema_version": 3
+}

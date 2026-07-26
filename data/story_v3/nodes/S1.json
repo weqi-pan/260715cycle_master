@@ -1,0 +1,143 @@
+{
+  "authoring": {
+    "gender_variant": null,
+    "notes": [],
+    "npc_item_notes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "sensory": null,
+    "trigger_description": "A节点选择'先在周边转转'后可选进入"
+  },
+  "choices": [
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "flag": "explored_b1_deep",
+          "type": "set_flag",
+          "value": true
+        }
+      ],
+      "hint": "走廊尽头有被警戒线围起来的区域",
+      "id": "S1_choice_01",
+      "next": {
+        "mode": "stay",
+        "target": "S1"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S1_choice_01_result_paragraph_01_01",
+          "text": "消防通道的门在你推开时发出一声极长的金属摩擦声——铰链很久没上油了。走廊里的应急灯每隔两盏才亮一盏，把墙壁上的消防栓涂鸦照得忽明忽暗。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S1_choice_01_result_paragraph_02_01",
+          "text": "警戒线在你脚下拖着——黄色的塑料带上印着\"禁止进入\"，但字迹已经褪得快看不清了。地面上散落着烧过的纸钱灰烬，被地下涌上来的冷风吹得微微颤动。灰烬还很新——边缘没有完全炭化，说明火灭掉不超过三天。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S1_choice_01_result_paragraph_03_01",
+          "text": "_（不是祭祖。纸钱是烧给死人的——但有人在这里烧纸钱，是在镇压什么东西。这下面——B1的下面——还有更深层的空间。那股冷风带着铁锈和潮湿泥土的味道，不像是空调的循环风。它从地底涌上来，像是某种东西在呼吸。）_",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "深入探索",
+      "text": "推开消防通道门深入探索"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "S1_choice_02",
+      "next": {
+        "mode": "travel",
+        "target": "A"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S1_choice_02_result_paragraph_01_01",
+          "text": "你松开消防通道的门把手，退回到电梯口。扶手电梯仍在运转——橡胶扶手一圈一圈地转着，发出有节奏的摩擦声。身后的冷风慢慢散去，商场的空调暖意重新涌上来。但你知道那扇门后面有什么——下次再来，你不会再从门口退开了。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "返回正门",
+      "text": "返回正门"
+    }
+  ],
+  "entry_sequences": [
+    {
+      "blocks": [
+        {
+          "id": "S1_entry_default_paragraph_01_01",
+          "text": "B1入口的扶手电梯仍在运行——橡胶扶手上蒙着一层擦不掉的灰。你站在电梯顶端往下看：负一层的珠宝卖场大部分柜台已经熄了灯，只有几盏应急灯在角落亮着惨淡的白光。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S1_entry_default_paragraph_02_01",
+          "text": "空气中有一股冷风从下面涌上来——不是商场的空调，是更深层的东西。带着铁锈和潮湿泥土的味道。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S1_entry_default_paragraph_03_01",
+          "text": "电梯旁的消防通道门上贴着一张泛黄的通知：\"B1层局部维修中，请勿进入未开放区域。——管理处 2014.7.15\"",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S1_entry_default_paragraph_04_01",
+          "text": "---",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S1_entry_default_paragraph_05_01",
+          "text": "消防通道门没有锁。推开门——走廊尽头是一片被警戒线围起来的区域。警戒线已经松了，在地上拖着。地面有一些烧过纸钱的痕迹——灰烬还很新。有人在最近几天来这里烧过纸。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S1_entry_default_paragraph_06_01",
+          "text": "_（不是祭祖——是在镇压什么东西。）_",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "id": "S1_entry_default",
+      "when": null
+    }
+  ],
+  "id": "S1",
+  "meta": {
+    "name": "B1珠宝卖场入口",
+    "node_type": "normal",
+    "parent_node_id": "A",
+    "position": 0.0,
+    "terminal": null,
+    "time_label": "第一天·傍晚"
+  },
+  "routing": null,
+  "scene": {
+    "allow_no_background": true,
+    "ambient_id": null,
+    "atmosphere": [],
+    "background_id": null,
+    "palette": null
+  },
+  "schema_version": 3
+}

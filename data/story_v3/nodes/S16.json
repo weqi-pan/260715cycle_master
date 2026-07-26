@@ -1,0 +1,172 @@
+{
+  "authoring": {
+    "gender_variant": null,
+    "notes": [],
+    "npc_item_notes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "sensory": null,
+    "trigger_description": "H节点途经康王路消防站时可选进入"
+  },
+  "choices": [
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "flag": "heard_firefighter_story",
+          "type": "set_flag",
+          "value": true
+        }
+      ],
+      "hint": "他见证了一个物品同时出现在两个时代",
+      "id": "S16_choice_01",
+      "next": {
+        "mode": "stay",
+        "target": "S16"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S16_choice_01_result_paragraph_01_01",
+          "text": "消防员沉默了很久。他把搪瓷茶杯转了又转——茶水已经凉了。他不像是在回忆——更像是在确认自己有没有勇气把这件事说出第二遍。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S16_choice_01_result_paragraph_02_01",
+          "speaker_id": "npc_firefighter",
+          "text": "1993年——林国强，他是南塔工地的工头。我赶到现场的时候，他从脚手架上掉了下来。旁边有一顶黄色安全帽——上面写着他的名字。那个毛绒兔子挂件就掉在帽子旁边——干干净净的，一滴灰都没沾。不像是工地上该有的东西。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "S16_choice_01_result_paragraph_03_01",
+          "text": "_（同一个兔子挂件——出现在1993年林国强身边，又出现在2014年坠楼女孩的口袋里。二十一年。不是复制品——是同一件物品。它在裂隙中漂流——从一个人的手里传到另一个人的手里——标记着每一个被循环吞噬的人。）_",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "听故事",
+      "text": "听消防员讲完2014年跳楼事件的细节"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "S16_choice_02",
+      "next": {
+        "mode": "travel",
+        "target": "H"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S16_choice_02_result_paragraph_01_01",
+          "text": "你向消防员道了谢——虽然他可能不会记得你明天还会来。推开消防站的玻璃门，康王路的夜风灌进来，带着一种说不清的焦糊味——不是火灾的焦味，像是时间本身在某个角落里缓慢燃烧。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "离开",
+      "text": "离开消防站"
+    }
+  ],
+  "entry_sequences": [
+    {
+      "blocks": [
+        {
+          "id": "S16_entry_default_paragraph_01_01",
+          "text": "康王路消防站的卷帘门半开着。车库里的消防车擦得锃亮——轮毂上反射着天花板的日光灯。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S16_entry_default_paragraph_02_01",
+          "text": "值班的消防员是个四十多岁的中年人。他正坐在值班室里喝茶——看到你在门口张望，招了招手让你进来坐。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S16_entry_default_paragraph_03_01_dialogue",
+          "speaker_id": "npc_firefighter",
+          "text": "你是说——北塔那边？",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "S16_entry_default_paragraph_03_02_narration",
+          "text": "他放下茶杯。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S16_entry_default_paragraph_03_03_dialogue",
+          "speaker_id": "npc_firefighter",
+          "text": "2014年那个女孩——那天是我出警。她掉在北塔和南塔之间的天井里。周围散了一地奶茶。珍珠滚得到处都是。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "S16_entry_default_paragraph_04_01",
+          "text": "他沉默了一会儿。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S16_entry_default_paragraph_05_01_dialogue",
+          "speaker_id": "npc_firefighter",
+          "text": "有一件事我从来没跟别人说过。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "S16_entry_default_paragraph_05_02_narration",
+          "text": "他说。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S16_entry_default_paragraph_05_03_dialogue",
+          "speaker_id": "npc_firefighter",
+          "text": "我翻她口袋里找身份证的时候——从她口袋里掉出来一串钥匙。钥匙上拴着一个毛绒兔子挂件——那个挂件，我在1993年见过。一模一样的兔子——掉在一顶黄色安全帽旁边。那顶安全帽上写着林国强。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "S16_entry_default_paragraph_06_01",
+          "text": "_（同一个物品出现在两个相隔二十一年的事故现场。不是相似——是同一件。）_",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "id": "S16_entry_default",
+      "when": null
+    }
+  ],
+  "id": "S16",
+  "meta": {
+    "name": "康王路消防站",
+    "node_type": "normal",
+    "parent_node_id": "H",
+    "position": 175.0,
+    "terminal": null,
+    "time_label": "第四天·深夜"
+  },
+  "routing": null,
+  "scene": {
+    "allow_no_background": true,
+    "ambient_id": null,
+    "atmosphere": [],
+    "background_id": null,
+    "palette": null
+  },
+  "schema_version": 3
+}
