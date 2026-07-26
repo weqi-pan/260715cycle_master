@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib
 import json
+import re
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -27,6 +28,14 @@ from app.story.v2_migration import (
 
 V2_NODES = StoryV2Loader().nodes
 V2_ROOT = STORY_DATA_V2_DIR
+CANONICAL_V3_ROOT = V2_ROOT.parent / "story_v3"
+
+_FLAG_REFERENCE_RE = re.compile(
+    r"(?:has_flag:|flag:)([A-Za-z][A-Za-z0-9_-]*)"
+)
+_ITEM_REFERENCE_RE = re.compile(
+    r"has_item:([A-Za-z][A-Za-z0-9_-]*)"
+)
 
 
 def _migrate_project(destination: Path) -> None:
@@ -73,6 +82,65 @@ def _all_json_objects(value: Any) -> Iterable[dict[str, Any]]:
     elif isinstance(value, list):
         for nested in value:
             yield from _all_json_objects(nested)
+
+
+def _expected_project_registries() -> tuple[set[str], set[str], set[str]]:
+    flags: set[str] = set()
+    items = set(ITEM_NAMES)
+    npcs = set(NPC_NAMES)
+
+    def collect_condition(expression: str | None) -> None:
+        if expression is None:
+            return
+        flags.update(_FLAG_REFERENCE_RE.findall(expression))
+        items.update(_ITEM_REFERENCE_RE.findall(expression))
+
+    for node in V2_NODES.values():
+        for sequence in node.entry_sequences:
+            collect_condition(sequence.when)
+            for block in sequence.blocks:
+                collect_condition(block.when)
+                if block.speaker_id is not None:
+                    npcs.add(block.speaker_id)
+
+        for choice in node.choices:
+            collect_condition(choice.condition)
+            for block in choice.result_blocks:
+                collect_condition(block.when)
+                if block.speaker_id is not None:
+                    npcs.add(block.speaker_id)
+            for effect in choice.effects:
+                if effect.type == "set_flag" and effect.target is not None:
+                    flags.add(effect.target)
+                elif (
+                    effect.type in {"add_item", "remove_item", "leave_item"}
+                    and effect.target is not None
+                ):
+                    items.add(effect.target)
+
+        for routing_name in ("shortcut", "warp"):
+            routing = getattr(node.routing, routing_name)
+            if routing is not None:
+                collect_condition(routing.get("entry_condition"))
+        if node.routing.crossing is not None:
+            npcs.update(node.routing.crossing.get("available_npcs", []))
+
+        npcs.update(node.authoring.npcs_present)
+        items.update(
+            entry["item_id"] for entry in node.authoring.scene_items
+        )
+        mapping = node.authoring.npc_item_mapping
+        if isinstance(mapping, list):
+            for entry in mapping:
+                npcs.add(entry["npc_id"])
+                items.add(entry["item_id"])
+                required_flag = entry.get("flag")
+                if required_flag is not None:
+                    flags.add(required_flag)
+
+    # v3 explicitly repairs the v2 flag/attribute collision for this value.
+    flags.discard("zhang_trust")
+    return flags, items, npcs
 
 
 def _current_conditions() -> list[Any]:
@@ -638,6 +706,37 @@ def test_migration_builds_typed_crossing_shortcut_and_warp_routing(
     ]
 
 
+def test_migration_has_one_exact_shortcut_choice(tmp_path: Path):
+    story = _compile_migration(tmp_path / "story_v3")
+
+    assert [
+        (choice.id, choice.next.mode, choice.next.target)
+        for node in story.nodes.values()
+        for choice in node.choices
+        if choice.next.mode == "shortcut"
+    ] == [("J_choice_01", "shortcut", "A")]
+
+
+def test_migration_has_eight_exact_warp_choices(tmp_path: Path):
+    story = _compile_migration(tmp_path / "story_v3")
+
+    assert [
+        (choice.id, choice.next.mode, choice.next.target)
+        for node in story.nodes.values()
+        for choice in node.choices
+        if choice.next.mode == "warp"
+    ] == [
+        ("K_choice_02", "warp", "A"),
+        ("K_choice_03", "warp", "B"),
+        ("K_choice_04", "warp", "C"),
+        ("K_choice_05", "warp", "D"),
+        ("K_choice_06", "warp", "E"),
+        ("K_choice_07", "warp", "F"),
+        ("K_choice_08", "warp", "G"),
+        ("K_choice_09", "warp", "H"),
+    ]
+
+
 def test_migration_preserves_choice_order_and_locked_visibility(
     tmp_path: Path,
 ):
@@ -687,6 +786,9 @@ def test_migration_emits_closed_runtime_data_and_explicit_scenes(
 def test_migration_builds_complete_typed_project_registries(tmp_path: Path):
     story = _compile_migration(tmp_path / "story_v3")
     project = story.project
+    expected_flags, expected_items, expected_npcs = (
+        _expected_project_registries()
+    )
 
     assert project.entry_node_id == "A"
     assert set(project.attributes) == {
@@ -705,12 +807,23 @@ def test_migration_builds_complete_typed_project_registries(tmp_path: Path):
             definition.maximum,
         )
     )
-    assert set(ITEM_NAMES) <= set(project.items)
-    assert "A_note_from_H" in project.items
-    assert set(NPC_NAMES) <= set(project.npcs)
-    assert "player" in project.npcs
+    assert expected_items - set(ITEM_NAMES) == {"A_note_from_H"}
+    assert expected_npcs - set(NPC_NAMES) == {"player"}
+    assert set(project.flags) == expected_flags
+    assert set(project.items) == expected_items
+    assert set(project.npcs) == expected_npcs
     assert project.counters == ["completed_cycles", "half_cycles"]
     assert project.jump_modes == ["stay", "travel", "shortcut", "warp"]
+
+
+def test_committed_canonical_tree_matches_fresh_migration(tmp_path: Path):
+    destination = tmp_path / "story_v3"
+    _migrate_project(destination)
+    fresh = _tree_bytes(destination)
+    committed = _tree_bytes(CANONICAL_V3_ROOT)
+
+    assert len(fresh) == 32
+    assert fresh == committed
 
 
 def test_running_migration_twice_is_byte_identical(tmp_path: Path):
