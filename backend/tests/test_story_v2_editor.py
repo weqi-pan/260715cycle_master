@@ -21,7 +21,7 @@ def write_node(root, node_id: str, target_id: str):
             }],
         }],
         "choices": [{
-            "id": f"{node_id}.to.{target_id}", "label": "前往", "condition": None,
+            "id": f"{node_id}to{target_id}", "label": "前往", "condition": None,
             "locked_visibility": "hide", "repeat_policy": "once_per_visit",
             "priority": 1, "result_blocks": [], "effects": [],
             "next": {"node_id": target_id, "mode": "stay" if node_id == target_id else "travel"},
@@ -42,7 +42,7 @@ def editor(tmp_path):
 
 def test_editor_lists_v2_nodes_and_choices(editor):
     assert [node["id"] for node in editor.list_nodes()] == ["A", "B"]
-    assert {choice["id"] for choice in editor.list_choices()} == {"A.to.B", "B.to.A"}
+    assert {choice["id"] for choice in editor.list_choices()} == {"AtoB", "BtoA"}
 
 
 def test_editor_updates_node_metadata_without_flattening_content_blocks(editor):
@@ -56,7 +56,7 @@ def test_editor_updates_node_metadata_without_flattening_content_blocks(editor):
 
 def test_editor_choice_write_updates_v2_file(editor):
     editor.save_choice({
-        "id": "A.to.B", "from_node_id": "A", "text": "去 B",
+        "id": "AtoB", "from_node_id": "A", "text": "去 B",
         "next_node_id": "B", "condition": None, "effects": [], "priority": 3,
         "repeat_policy": "once_ever",
     })
@@ -65,6 +65,16 @@ def test_editor_choice_write_updates_v2_file(editor):
     assert raw["choices"][0]["label"] == "去 B"
     assert raw["choices"][0]["repeat_policy"] == "once_ever"
     assert raw["choices"][0]["locked_visibility"] == "hide"
+
+
+@pytest.mark.parametrize("choice_id", ["../escape", "NUL"])
+def test_editor_rejects_invalid_choice_ids(editor, choice_id):
+    with pytest.raises(ValueError, match="invalid story id"):
+        editor.save_choice({
+            "id": choice_id,
+            "from_node_id": "A",
+            "next_node_id": "B",
+        })
 
 
 def test_editor_rejects_deleting_referenced_node(editor):

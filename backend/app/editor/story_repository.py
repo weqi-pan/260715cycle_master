@@ -142,9 +142,7 @@ class StoryV2Editor:
         return {"status": status, "id": node_id}
 
     def save_choice(self, data: dict[str, Any]) -> dict[str, str]:
-        choice_id = str(data.get("id", "")).strip()
-        if not choice_id:
-            raise ValueError("Missing choice id or from_node_id")
+        choice_id = validate_story_id(str(data.get("id", "")), kind="choice")
         from_id = validate_story_id(str(data.get("from_node_id", "")), kind="node")
         nodes = self._raw_nodes()
         if from_id not in nodes:
