@@ -126,6 +126,15 @@ def main(argv: list[str] | None = None) -> int:
             )
         )
         return 1
+    except OSError:
+        _print_diagnostic(
+            _cli_error(
+                "STORY_ACTIVE_REVISION_IO_FAILED",
+                "Active story revision could not be read.",
+                "build/current.json",
+            )
+        )
+        return 1
 
     try:
         publisher.publish(

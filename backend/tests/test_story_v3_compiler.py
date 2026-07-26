@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import FrozenInstanceError
+import errno
 import hashlib
 import json
 import os
@@ -1208,6 +1209,65 @@ def test_compile_cli_rejects_overlap_before_compiler_construction(
     }
 
 
+def test_compile_cli_rejects_resolved_build_alias_inside_source(
+    story_root: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+):
+    from backend.scripts import compile_story_v3
+
+    source_before = _tree_bytes(story_root)
+    source_alias = tmp_path / "source_alias"
+    try:
+        source_alias.symlink_to(story_root, target_is_directory=True)
+    except NotImplementedError as exc:
+        pytest.skip(f"directory symlink creation is unavailable: {exc}")
+    except OSError as exc:
+        unsupported = (
+            exc.errno in {errno.EACCES, errno.ENOSYS, errno.EPERM}
+            or getattr(exc, "winerror", None) == 1314
+        )
+        if not unsupported:
+            raise
+        pytest.skip(f"directory symlink creation is unavailable: {exc}")
+    aliased_build_root = source_alias / "nodes" / "build"
+
+    class UnexpectedCompiler:
+        def __init__(self):
+            pytest.fail("resolved overlap reached compiler construction")
+
+    monkeypatch.setattr(
+        compile_story_v3,
+        "StoryCompiler",
+        UnexpectedCompiler,
+    )
+
+    returncode = compile_story_v3.main(
+        [
+            "--source",
+            str(story_root),
+            "--build-root",
+            str(aliased_build_root),
+        ]
+    )
+
+    captured = capsys.readouterr()
+    assert returncode == 1
+    assert captured.out == ""
+    assert json.loads(captured.err) == {
+        "code": "STORY_BUILD_ROOT_OVERLAP",
+        "location": "--build-root",
+        "message": (
+            "Story build root must not be the source root "
+            "or a descendant of it."
+        ),
+        "severity": "error",
+    }
+    assert _tree_bytes(story_root) == source_before
+    assert not (story_root / "nodes" / "build").exists()
+
+
 def test_compile_cli_allows_sibling_build_root(
     story_root: Path,
 ):
@@ -1268,6 +1328,71 @@ def test_compile_cli_corrupt_active_pointer_is_stable_failure(
     )
     assert "Traceback" not in result.stderr
     assert pointer_path.read_bytes() == corrupt_pointer
+
+
+def test_compile_cli_active_pointer_io_failure_is_stable_and_preserves_pointer(
+    story_root: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+):
+    from backend.scripts import compile_story_v3
+
+    build_root = tmp_path / "build"
+    assert (
+        compile_story_v3.main(
+            [
+                "--source",
+                str(story_root),
+                "--build-root",
+                str(build_root),
+            ]
+        )
+        == 0
+    )
+    capsys.readouterr()
+    pointer_path = build_root / "current.json"
+    pointer_before = pointer_path.read_bytes()
+
+    def fail_current_revision(self):
+        raise OSError("permission denied")
+
+    monkeypatch.setattr(
+        compile_story_v3.StoryPublisher,
+        "current_revision",
+        fail_current_revision,
+    )
+
+    try:
+        returncode = compile_story_v3.main(
+            [
+                "--source",
+                str(story_root),
+                "--build-root",
+                str(build_root),
+            ]
+        )
+    except OSError:
+        pytest.fail("active pointer I/O failure escaped compile CLI")
+
+    captured = capsys.readouterr()
+    assert returncode == 1
+    assert captured.out == ""
+    assert captured.err == (
+        json.dumps(
+            {
+                "code": "STORY_ACTIVE_REVISION_IO_FAILED",
+                "location": "build/current.json",
+                "message": "Active story revision could not be read.",
+                "severity": "error",
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+        + "\n"
+    )
+    assert "Traceback" not in captured.err
+    assert pointer_path.read_bytes() == pointer_before
 
 
 @pytest.mark.parametrize(
@@ -1367,6 +1492,73 @@ def test_compile_cli_publication_failure_is_stable_and_preserves_pointer(
         + "\n"
     )
     assert pointer_path.read_bytes() == pointer_before
+
+
+def test_compile_cli_real_pointer_replace_failure_preserves_active_pointer(
+    story_root: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+):
+    from backend.scripts import compile_story_v3
+
+    build_root = tmp_path / "build"
+    assert (
+        compile_story_v3.main(
+            [
+                "--source",
+                str(story_root),
+                "--build-root",
+                str(build_root),
+            ]
+        )
+        == 0
+    )
+    first_summary = json.loads(capsys.readouterr().out)
+    pointer_path = build_root / "current.json"
+    pointer_before = pointer_path.read_bytes()
+    _mutate_json(
+        story_root / "nodes" / "B.json",
+        lambda node: node["meta"].update(name="Changed B"),
+    )
+
+    def fail_before_pointer_replace(self, pointer):
+        raise OSError("pointer replace denied")
+
+    monkeypatch.setattr(
+        compile_story_v3.StoryPublisher,
+        "_replace_pointer",
+        fail_before_pointer_replace,
+    )
+
+    returncode = compile_story_v3.main(
+        [
+            "--source",
+            str(story_root),
+            "--build-root",
+            str(build_root),
+        ]
+    )
+
+    captured = capsys.readouterr()
+    assert returncode == 1
+    assert captured.out == ""
+    assert captured.err == (
+        json.dumps(
+            {
+                "code": "STORY_PUBLISH_IO_FAILED",
+                "location": "build",
+                "message": "Story publication could not be completed.",
+                "severity": "error",
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+        + "\n"
+    )
+    assert pointer_path.read_bytes() == pointer_before
+    assert json.loads(pointer_before)["revision"] == first_summary["revision"]
+    assert len(list((build_root / "revisions").iterdir())) == 2
 
 
 def test_compile_cli_strict_rejects_warnings_without_activating(
