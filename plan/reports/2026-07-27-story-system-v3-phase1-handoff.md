@@ -148,6 +148,21 @@ The following work is deliberately not part of Phase 1 and must not be inferred 
 - authoritative fixes for cycle behavior, K warp exits, E crossing limits, H trust reachability, S20 restoration, and explicit endings;
 - removal of gameplay dependencies on `StoryV2Loader` and in-memory `TurnStore` only after the Phase 2 quality gate passes.
 
+## Final demo closeout verification
+
+The user reduced the closeout to demo scope on 2026-07-27. The exhaustive production-readiness review and function-level Phase 2 specification were intentionally stopped. The Phase 2 document was reduced to a 91-line roadmap focused on demo correctness first.
+
+Fresh verification was run against commit `0e278865f010413fa1e38d2012063a174251112e`:
+
+- `python -m pytest backend/tests -q -rs`: `499 passed, 1 skipped in 7.28s`. The skip is the documented Windows directory-symlink privilege limitation (`WinError 1314`).
+- `python -m backend.scripts.compile_story_v3 --strict --build-root <temporary-directory>`: exit 0, 30 nodes, 143 choices, 846 content blocks, revision `90ff3b90b08ed94e82daeafd6af35b54c3da5aab40e36318dde2e8e4b3eef016`.
+- `npm.cmd run test:unit`: 3 passed, 0 failed.
+- `npm.cmd run build`: exit 0; TypeScript checking and Vite production build succeeded with the previously documented Sass deprecation, dependency annotation, and large-chunk warnings.
+- `git diff --check main..HEAD`: no whitespace errors.
+- Worktree status before this report-only update: clean branch `codex/story-v3-foundation`.
+
+No Phase 2 runtime code was implemented during closeout. Phase 1 is ready for an explicit merge, pull-request, or branch-preservation decision at demo scope.
+
 ## Resume instructions
 
 1. From the repository root, run `git worktree list`, locate the worktree checked out on `codex/story-v3-foundation` (captured here as repository-relative `.worktrees/story-v3-foundation`), enter it, and confirm the branch with `git status --short --branch`.
