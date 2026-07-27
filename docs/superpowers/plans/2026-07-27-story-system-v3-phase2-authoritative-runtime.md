@@ -202,6 +202,7 @@ class PlayerState(FrozenModel):
 class WorldState(FrozenModel):
     flags: dict[str, Scalar]
     persistent_node_items: dict[str, frozenset[str]] = Field(default_factory=dict)
+    interactions: dict[str, frozenset[str]] = Field(default_factory=dict)
 
 
 class LoopState(FrozenModel):
@@ -463,6 +464,10 @@ def _decode_state(payload: str) -> GameState:
     return GameState.model_validate_json(payload)
 
 
+def _utcnow() -> datetime:
+    return datetime.now(timezone.utc)
+
+
 class SessionRepository:
     def __init__(self, db: Session):
         self.db = db
@@ -517,6 +522,11 @@ def load_revision(self, revision: str) -> StorySnapshotV3:
     if not _is_revision(revision):
         raise StoryRevisionIntegrityError("Requested story revision is invalid.")
     return self._verify_revision(self.revisions_root / revision, revision)
+
+
+# Retain the publisher's existing revision guard used by current_revision().
+def _is_revision(value: str) -> bool:
+    return _REVISION_PATTERN.fullmatch(value) is not None
 ```
 
 - [ ] **Step 5: Run GREEN**
@@ -691,7 +701,7 @@ git commit -m "feat: evaluate v3 choice availability"
 - Modify: `backend/app/game/reducer.py`
 - Create: `backend/tests/game/test_effect_reducer.py`
 
-- [ ] **Step 1: Write a failing mid-effect rollback test**
+- [ ] **Step 1: Write failing rollback and complete typed-family tests**
 
 ```python
 # backend/tests/game/test_effect_reducer.py
@@ -699,7 +709,16 @@ import pytest
 
 from app.game.reducer import EffectExecutionError, apply_effects
 from app.game.state import initial_game_state
-from app.schemas.story_v3 import InventoryEffect, SetFlagEffect
+from app.schemas.story_v3 import (
+    InventoryEffect,
+    MarkOnceEffect,
+    ModifyAttributeEffect,
+    ModifyCounterEffect,
+    PersistNodeItemEffect,
+    RecordInteractionEffect,
+    RestoreEntryAttributeEffect,
+    SetFlagEffect,
+)
 
 
 def test_effect_failure_does_not_mutate_original_state(published_story):
@@ -713,6 +732,38 @@ def test_effect_failure_does_not_mutate_original_state(published_story):
         apply_effects(snapshot, original, effects)
     assert original.world.flags["taoist_chant"] is False
     assert original.player.inventory == {}
+
+
+def test_all_typed_effect_families_execute(published_story):
+    snapshot = published_story.snapshot
+    initial = initial_game_state(snapshot)
+    attributes = {**initial.player.attributes, "sanity": 40}
+    prepared = initial.model_copy(update={
+        "player": initial.player.model_copy(update={"attributes": attributes}),
+        "visit": initial.visit.model_copy(update={"entry_attributes": {**attributes, "sanity": 75}}),
+    })
+    result = apply_effects(snapshot, prepared, [
+        ModifyAttributeEffect(type="modify_attribute", attribute="courage", operation="add", value=1, clamp=True),
+        SetFlagEffect(type="set_flag", flag="taoist_chant", value=True),
+        InventoryEffect(type="inventory", item_id="item_amulet", operation="add", quantity=1),
+        PersistNodeItemEffect(type="persist_node_item", node_id="A", item_id="item_amulet"),
+        RecordInteractionEffect(type="record_interaction", group="deep_npc", subject_id="npc_a_liu"),
+        ModifyCounterEffect(type="modify_counter", counter="half_cycles", operation="add", value=1),
+        MarkOnceEffect(type="mark_once", key="visit_mark", scope="visit"),
+        MarkOnceEffect(type="mark_once", key="cycle_mark", scope="cycle"),
+        MarkOnceEffect(type="mark_once", key="session_mark", scope="session"),
+        RestoreEntryAttributeEffect(type="restore_entry_attribute", attribute="sanity"),
+    ])
+    assert result.player.attributes["courage"] == prepared.player.attributes["courage"] + 1
+    assert result.player.attributes["sanity"] == 75
+    assert result.world.flags["taoist_chant"] is True
+    assert result.player.inventory["item_amulet"] == 1
+    assert result.world.persistent_node_items["A"] == frozenset({"item_amulet"})
+    assert result.world.interactions["deep_npc"] == frozenset({"npc_a_liu"})
+    assert result.loop.half_cycles == 1
+    assert result.visit.once_keys == frozenset({"visit_mark"})
+    assert result.loop.cycle_once_keys == frozenset({"cycle_mark"})
+    assert result.history.session_once_keys == frozenset({"session_mark"})
 ```
 
 - [ ] **Step 2: Run RED and confirm effect execution is absent**
@@ -796,13 +847,40 @@ def _apply_scoped_effect(snapshot: StorySnapshotV3, state: GameState, effect: St
     if isinstance(effect, PersistNodeItemEffect):
         return _persist_node_item(state, node_id=effect.node_id, item_id=effect.item_id)
     raise EffectExecutionError(f"unsupported compiled effect: {type(effect).__name__}")
+
+
+def _mark_once(state: GameState, *, key: str, scope: Literal["visit", "cycle", "session"]) -> GameState:
+    if scope == "visit":
+        visit = state.visit.model_copy(update={"once_keys": state.visit.once_keys | {key}})
+        return state.model_copy(update={"visit": visit})
+    if scope == "cycle":
+        loop = state.loop.model_copy(update={"cycle_once_keys": state.loop.cycle_once_keys | {key}})
+        return state.model_copy(update={"loop": loop})
+    if scope == "session":
+        history = state.history.model_copy(update={"session_once_keys": state.history.session_once_keys | {key}})
+        return state.model_copy(update={"history": history})
+    raise EffectExecutionError(f"unsupported once scope: {scope}")
+
+
+def _record_interaction(state: GameState, *, group: str, subject_id: str) -> GameState:
+    interactions = dict(state.world.interactions)
+    interactions[group] = interactions.get(group, frozenset()) | {subject_id}
+    world = state.world.model_copy(update={"interactions": interactions})
+    return state.model_copy(update={"world": world})
+
+
+def _persist_node_item(state: GameState, *, node_id: str, item_id: str) -> GameState:
+    persistent = dict(state.world.persistent_node_items)
+    persistent[node_id] = persistent.get(node_id, frozenset()) | {item_id}
+    world = state.world.model_copy(update={"persistent_node_items": persistent})
+    return state.model_copy(update={"world": world})
 ```
 
 - [ ] **Step 5: Run GREEN**
 
 Run: `backend\venv\Scripts\python.exe -m pytest backend/tests/game/test_effect_reducer.py -q`
 
-Expected: PASS; the first effect exists only in the discarded working copy after the second effect fails.
+Expected: PASS with `2 passed`; rollback leaves the original untouched and every `StoryEffectV3` family updates its declared state scope.
 
 - [ ] **Step 6: Run focused and full verification**
 
@@ -1717,12 +1795,12 @@ git commit -m "fix: enforce v3 gameplay semantics"
 // frontend/tests/sessionStore.test.ts
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { createSessionActions, type SessionApi, type SessionState } from '../src/stores/sessionStore.ts'
+import { createSessionActions, type SessionApi, type SessionIdStorage, type SessionState } from '../src/stores/sessionStore.ts'
 import type { SaveView, TurnView } from '../src/types/index.ts'
 
 const turn = (revision: number): TurnView => ({
   session_id: 's1', story_revision: 'a'.repeat(64), turn_revision: revision,
-  status: 'active', node: { id: 'A', name: 'A', scene: { allow_no_background: true } },
+  status: 'active', node: { id: 'A', name: 'A', scene: { background_id: null, allow_no_background: true, ambient_id: null, palette: null, atmosphere: [] } },
   content: [], choices: [], attributes: {}, inventory: {}, completed_cycles: 0, current_cycle: 1,
 })
 
@@ -1735,13 +1813,18 @@ const apiStub = (overrides: Partial<SessionApi>): SessionApi => ({
   ...overrides,
 })
 
+const storageStub = (initial: string | null = null): SessionIdStorage => {
+  let value: string | null = initial
+  return { load: () => value, save: sessionId => { value = sessionId } }
+}
+
 test('ordinary choose failure retains the current turn', async () => {
   const original = turn(3)
   const state: SessionState = { currentTurn: original, error: null, loading: false }
   const actions = createSessionActions(state, apiStub({
     chooseSession: async () => { throw new Error('offline') },
     getSession: async () => { throw new Error('must not refresh') },
-  }))
+  }), storageStub())
   await actions.choose('A_choice_01')
   assert.equal(state.currentTurn, original)
   assert.equal(state.error, 'offline')
@@ -1756,7 +1839,7 @@ test('409 refreshes the same session without creating a new game', async () => {
     chooseSession: async () => { throw { isAxiosError: true, response: { status: 409 } } },
     getSession: async () => refreshed,
     createSession: async () => { creates += 1; return refreshed },
-  }))
+  }), storageStub())
   await actions.choose('A_choice_01')
   assert.equal(state.currentTurn, refreshed)
   assert.equal(creates, 0)
@@ -1770,13 +1853,28 @@ test('create get save and resume use the current authoritative identifiers', asy
     getSession: async id => { calls.push(`get:${id}`); return turn(2) },
     saveSession: async (id, revision, name) => { calls.push(`save:${id}:${revision}:${name}`); return { save_id: 'save-1', name, story_revision: 'a'.repeat(64), turn_revision: revision } as SaveView },
     resumeSession: async id => { calls.push(`resume:${id}`); return turn(5) },
-  }))
+  }), storageStub())
   await actions.create()
   await actions.get('s1')
   await actions.save('slot')
   await actions.resume('save-1')
   assert.deepEqual(calls, ['create', 'get:s1', 'save:s1:2:slot', 'resume:save-1'])
   assert.equal(state.currentTurn?.turn_revision, 5)
+})
+
+test('initialize reloads the stored session instead of creating a new one', async () => {
+  const state: SessionState = { currentTurn: null, error: null, loading: false }
+  let creates = 0
+  let gets = 0
+  const actions = createSessionActions(state, apiStub({
+    createSession: async () => { creates += 1; return turn(0) },
+    getSession: async id => { gets += 1; assert.equal(id, 's1'); return turn(4) },
+  }), storageStub('s1'))
+  await actions.initialize()
+  assert.equal(creates, 0)
+  assert.equal(gets, 1)
+  assert.equal(state.currentTurn?.session_id, 's1')
+  assert.equal(state.currentTurn?.turn_revision, 4)
 })
 ```
 
@@ -1792,32 +1890,118 @@ Run: `npm run test:unit --prefix frontend`
 
 Expected: FAIL with `ERR_MODULE_NOT_FOUND` for `frontend/src/stores/sessionStore.ts`.
 
-- [ ] **Step 3: Add a command-only session API**
+- [ ] **Step 3: Define exact turn, save, lock, status, and command types**
+
+```typescript
+// frontend/src/types/index.ts
+export type RunStatus = 'active' | 'ending' | 'cycle_complete' | 'blocked'
+
+export interface LockReason {
+  code: string
+  message: string
+}
+
+export interface TurnScene {
+  background_id: string | null
+  allow_no_background: boolean
+  ambient_id: string | null
+  palette: string | null
+  atmosphere: string[]
+}
+
+export interface TurnNode {
+  id: string
+  name: string
+  scene: TurnScene
+}
+
+export interface TurnChoice {
+  id: string
+  text: string
+  short_text: string | null
+  available: boolean
+  lock_reason: LockReason | null
+}
+
+export interface TurnView {
+  session_id: string
+  story_revision: string
+  turn_revision: number
+  status: RunStatus
+  node: TurnNode
+  content: ContentBlock[]
+  choices: TurnChoice[]
+  attributes: Record<string, number>
+  inventory: Record<string, number>
+  completed_cycles: number
+  current_cycle: number
+}
+
+export interface SaveView {
+  save_id: string
+  name: string
+  story_revision: string
+  turn_revision: number
+}
+
+export interface ChooseSessionRequest {
+  turn_revision: number
+  choice_id: string
+}
+
+export interface SaveSessionRequest {
+  turn_revision: number
+  name: string
+}
+
+export interface ResumeSessionRequest {
+  save_id: string
+}
+```
+
+- [ ] **Step 4: Add a command-only session API**
 
 ```typescript
 // frontend/src/api/sessions.ts
 import axios from 'axios'
-import type { SaveView, TurnView } from '@/types'
+import type {
+  ChooseSessionRequest,
+  ResumeSessionRequest,
+  SaveSessionRequest,
+  SaveView,
+  TurnView,
+} from '@/types'
 
 const api = axios.create({ baseURL: '/api' })
 
 export const createSession = async (): Promise<TurnView> => (await api.post<TurnView>('/sessions', {})).data
 export const getSession = async (sessionId: string): Promise<TurnView> => (await api.get<TurnView>(`/sessions/${sessionId}`)).data
-export const chooseSession = async (sessionId: string, turnRevision: number, choiceId: string): Promise<TurnView> => (
-  await api.post<TurnView>(`/sessions/${sessionId}/choose`, { turn_revision: turnRevision, choice_id: choiceId })
-).data
-export const saveSession = async (sessionId: string, turnRevision: number, name: string): Promise<SaveView> => (
-  await api.post<SaveView>(`/sessions/${sessionId}/saves`, { turn_revision: turnRevision, name })
-).data
-export const resumeSession = async (saveId: string): Promise<TurnView> => (await api.post<TurnView>('/sessions/resume', { save_id: saveId })).data
+export const chooseSession = async (sessionId: string, turnRevision: number, choiceId: string): Promise<TurnView> => {
+  const command: ChooseSessionRequest = { turn_revision: turnRevision, choice_id: choiceId }
+  return (await api.post<TurnView>(`/sessions/${sessionId}/choose`, command)).data
+}
+export const saveSession = async (sessionId: string, turnRevision: number, name: string): Promise<SaveView> => {
+  const command: SaveSessionRequest = { turn_revision: turnRevision, name }
+  return (await api.post<SaveView>(`/sessions/${sessionId}/saves`, command)).data
+}
+export const resumeSession = async (saveId: string): Promise<TurnView> => {
+  const command: ResumeSessionRequest = { save_id: saveId }
+  return (await api.post<TurnView>('/sessions/resume', command)).data
+}
 ```
 
 No function in this file accepts node ID, attributes, flags, inventory, cycle counters, or a complete state object.
 
-- [ ] **Step 4: Store the read-only turn and refresh on conflict**
+- [ ] **Step 5: Store the read-only turn and refresh on conflict**
 
 ```typescript
 // frontend/src/stores/sessionStore.ts
+import axios from 'axios'
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
+import * as sessionsApi from '@/api/sessions'
+import type { SaveView, TurnView } from '@/types'
+
 export interface SessionState {
   currentTurn: TurnView | null
   error: string | null
@@ -1832,51 +2016,76 @@ export interface SessionApi {
   resumeSession(saveId: string): Promise<TurnView>
 }
 
-export function createSessionActions(state: SessionState, api: SessionApi) {
+export interface SessionIdStorage {
+  load(): string | null
+  save(sessionId: string): void
+}
+
+export const SESSION_ID_KEY = 'cycle-master-session-id'
+
+const browserSessionIdStorage: SessionIdStorage = {
+  load: () => window.localStorage.getItem(SESSION_ID_KEY),
+  save: sessionId => window.localStorage.setItem(SESSION_ID_KEY, sessionId),
+}
+
+export function createSessionActions(state: SessionState, api: SessionApi, storage: SessionIdStorage = browserSessionIdStorage) {
   const fail = (error: unknown) => {
     state.error = error instanceof Error ? error.message : '请求失败'
   }
-  return {
-    async create() {
-      state.loading = true
-      state.error = null
-      try { state.currentTurn = await api.createSession() } catch (error) { fail(error) } finally { state.loading = false }
-    },
-    async get(sessionId: string) {
-      state.loading = true
-      state.error = null
-      try { state.currentTurn = await api.getSession(sessionId) } catch (error) { fail(error) } finally { state.loading = false }
-    },
-    async choose(choiceId: string) {
-      const current = state.currentTurn
-      if (!current) return
-      state.loading = true
-      state.error = null
-      try {
-        state.currentTurn = await api.chooseSession(current.session_id, current.turn_revision, choiceId)
-      } catch (error: unknown) {
-        if (axios.isAxiosError(error) && error.response?.status === 409) {
-          state.currentTurn = await api.getSession(current.session_id)
-          state.error = '回合已刷新，请重新选择'
-          return
-        }
-        fail(error)
-      } finally {
-        state.loading = false
-      }
-    },
-    async save(name: string): Promise<SaveView | null> {
-      const current = state.currentTurn
-      if (!current) return null
-      state.error = null
-      try { return await api.saveSession(current.session_id, current.turn_revision, name) } catch (error) { fail(error); return null }
-    },
-    async resume(saveId: string) {
-      state.loading = true
-      state.error = null
-      try { state.currentTurn = await api.resumeSession(saveId) } catch (error) { fail(error) } finally { state.loading = false }
-    },
+
+  const accept = (turn: TurnView) => {
+    state.currentTurn = turn
+    storage.save(turn.session_id)
   }
+
+  async function create() {
+    state.loading = true
+    state.error = null
+    try { accept(await api.createSession()) } catch (error) { fail(error) } finally { state.loading = false }
+  }
+
+  async function get(sessionId: string) {
+    state.loading = true
+    state.error = null
+    try { accept(await api.getSession(sessionId)) } catch (error) { fail(error) } finally { state.loading = false }
+  }
+
+  async function initialize() {
+    const sessionId = storage.load()
+    if (sessionId === null) await create()
+    else await get(sessionId)
+  }
+
+  async function choose(choiceId: string) {
+    const current = state.currentTurn
+    if (!current) return
+    state.loading = true
+    state.error = null
+    try {
+      accept(await api.chooseSession(current.session_id, current.turn_revision, choiceId))
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response?.status === 409) {
+        accept(await api.getSession(current.session_id))
+        state.error = '回合已刷新，请重新选择'
+      } else fail(error)
+    } finally { state.loading = false }
+  }
+
+  async function save(name: string): Promise<SaveView | null> {
+    const current = state.currentTurn
+    if (!current) return null
+    state.error = null
+    try { return await api.saveSession(current.session_id, current.turn_revision, name) }
+    catch (error) { fail(error); return null }
+  }
+
+  async function resume(saveId: string) {
+    state.loading = true
+    state.error = null
+    try { accept(await api.resumeSession(saveId)) } catch (error) { fail(error) } finally { state.loading = false }
+  }
+
+  return { initialize, create, get, choose, save, resume }
 }
 
 
@@ -1898,11 +2107,24 @@ export const useSessionStore = defineStore('session', () => {
 
 Remove the `visibleChoices` import and the `choice list excludes unavailable choices defensively` test from `frontend/tests/playbackTimeline.test.ts`; server-returned `TurnChoice.available` is now rendered directly and is covered by `sessionStore.test.ts` plus Playwright.
 
-- [ ] **Step 5: Migrate `GamePlay.vue` to server choices and statuses**
+- [ ] **Step 6: Migrate `GamePlay.vue` to server choices and statuses**
 
-Replace `useGameStore()` with `useSessionStore()`, render `turn.choices` without `visibleChoices()`, disable buttons when `available === false`, show `lock_reason.message`, render explicit `ending`, `cycle_complete`, and `blocked` panels, and keep the current turn visible beneath a non-blocking error banner. Save sends only `{turn_revision, name}` and resume sends only `{save_id}`.
+Replace `useGameStore()` with `useSessionStore()`. On mount call `initialize()`: it loads `cycle-master-session-id` and calls `GET /api/sessions/{id}`; only a first visit with no stored ID calls `POST /api/sessions`. A failed reload keeps the stored ID and shows the error instead of creating a replacement session. Render `turn.choices` without `visibleChoices()`, disable buttons when `available === false`, show `lock_reason.message`, render explicit `ending`, `cycle_complete`, and `blocked` panels, and keep the current turn visible beneath a non-blocking error banner. Save sends only `{turn_revision, name}` and resume sends only `{save_id}`.
 
 ```vue
+<script setup lang="ts">
+import { onMounted } from 'vue'
+import { useSessionStore } from '@/stores/sessionStore'
+
+const store = useSessionStore()
+onMounted(() => store.initialize())
+</script>
+
+<template>
+  <main class="game-play">
+    <span data-testid="session-id">{{ store.currentTurn?.session_id ?? '' }}</span>
+    <span data-testid="turn-revision">{{ store.currentTurn?.turn_revision ?? '' }}</span>
+    <div v-if="store.error" class="error-banner">{{ store.error }}</div>
 <button
   v-for="choice in store.currentTurn?.choices ?? []"
   :key="choice.id"
@@ -1913,15 +2135,17 @@ Replace `useGameStore()` with `useSessionStore()`, render `turn.choices` without
   <span class="choice-text">{{ choice.text }}</span>
   <span v-if="choice.lock_reason" class="choice-lock-reason">{{ choice.lock_reason.message }}</span>
 </button>
+  </main>
+</template>
 ```
 
-- [ ] **Step 6: Run GREEN**
+- [ ] **Step 7: Run GREEN**
 
 Run: `npm run test:unit --prefix frontend`
 
 Expected: PASS; ordinary errors retain the same object and HTTP 409 refreshes `session_id=s1` without calling `createSession`.
 
-- [ ] **Step 7: Run frontend focused and production verification**
+- [ ] **Step 8: Run frontend focused and production verification**
 
 Run: `npm run build --prefix frontend`
 
@@ -1931,7 +2155,7 @@ Run: `rg -n "GameState|resumeGame|currentState|visibleChoices" frontend/src/api/
 
 Expected: no matches.
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 9: Commit**
 
 ```powershell
 git add frontend/src/api/sessions.ts frontend/src/stores/sessionStore.ts frontend/tests/sessionStore.test.ts frontend/tests/playbackTimeline.test.ts frontend/src/types/index.ts frontend/src/views/GamePlay.vue frontend/package.json
@@ -1945,6 +2169,7 @@ git commit -m "feat: migrate player to session turns"
 - Modify: `backend/app/paths.py`
 - Modify: `backend/app/config.py`
 - Modify: `backend/tests/conftest.py`
+- Modify: `frontend/vite.config.ts`
 - Modify: `tests/e2e/conftest.py`
 - Create: `tests/e2e/test_authoritative_runtime.py`
 - Create: `backend/tests/api/test_session_isolation.py`
@@ -2029,6 +2254,16 @@ STORY_BUILD_DIR = Path(os.environ.get("CYCLE_MASTER_STORY_BUILD_ROOT", DATA_DIR 
 DATABASE_PATH = Path(os.environ.get("CYCLE_MASTER_DATABASE_PATH", DATA_DIR / "cycle_master.db")).resolve()
 ```
 
+```typescript
+// frontend/vite.config.ts
+proxy: {
+  '/api': {
+    target: process.env.CYCLE_MASTER_API_ORIGIN ?? 'http://127.0.0.1:8000',
+    changeOrigin: true,
+  },
+},
+```
+
 `backend/app/config.py` must import the resolved `DATABASE_PATH` once and construct `DATABASE_URL` from it. Tests set all three environment variables before importing `app.main` in the server subprocess.
 
 - [ ] **Step 4: Define the backend isolation fixture with exact roots**
@@ -2073,7 +2308,7 @@ def runtime_servers(tmp_path_factory):
     build_root = root / "story_build"
     database_path = root / "cycle_master.db"
     shutil.copytree(PROJECT_ROOT / "data" / "story_v3", story_root)
-    subprocess.run([PYTHON, "-m", "backend.scripts.compile_story_v3", "--source", str(story_root), "--build-root", str(build_root), "--strict"], cwd=PROJECT_ROOT, check=True)
+    subprocess.run([sys.executable, "-m", "backend.scripts.compile_story_v3", "--source", str(story_root), "--build-root", str(build_root), "--strict"], cwd=PROJECT_ROOT, check=True)
     environment = {
         **os.environ,
         "CYCLE_MASTER_DATABASE_PATH": str(database_path),
@@ -2085,7 +2320,140 @@ def runtime_servers(tmp_path_factory):
     servers.stop()
 ```
 
-`RuntimeServers.start()` launches hidden backend and frontend subprocesses on reserved loopback ports, polls `/api/health` and the Vite root with a 20-second deadline, exposes `restart_backend()`, and terminates only the PIDs it created. The fixture never points a write-capable process at canonical `data/story_v3`, `data/story_build`, or `data/cycle_master.db`.
+Add the complete lifecycle helper in the same file:
+
+```python
+# tests/e2e/conftest.py
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+
+def _reserve_port() -> int:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as listener:
+        listener.bind(("127.0.0.1", 0))
+        return listener.getsockname()[1]
+
+
+def _wait_http(url: str, *, timeout: float = 20.0) -> None:
+    deadline = time.monotonic() + timeout
+    last_error: Exception | None = None
+    while time.monotonic() < deadline:
+        try:
+            with urllib.request.urlopen(url, timeout=1.0) as response:
+                if 200 <= response.status < 500:
+                    return
+        except (OSError, urllib.error.URLError) as exc:
+            last_error = exc
+        time.sleep(0.1)
+    raise RuntimeError(f"server did not become ready: {url}") from last_error
+
+
+def _spawn(command: list[str], *, cwd: Path, environment: dict[str, str]) -> subprocess.Popen:
+    creationflags = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
+    return subprocess.Popen(
+        command,
+        cwd=cwd,
+        env=environment,
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        creationflags=creationflags,
+    )
+
+
+def _stop_process(process: subprocess.Popen | None) -> None:
+    if process is None or process.poll() is not None:
+        return
+    process.terminate()
+    try:
+        process.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        process.kill()
+        process.wait(timeout=5)
+
+
+@dataclass
+class RuntimeServers:
+    root: Path
+    environment: dict[str, str]
+    backend_port: int
+    frontend_port: int
+    backend_command: list[str]
+    frontend_command: list[str]
+    backend_process: subprocess.Popen
+    frontend_process: subprocess.Popen
+
+    @property
+    def api_url(self) -> str:
+        return f"http://127.0.0.1:{self.backend_port}/api"
+
+    @property
+    def frontend_url(self) -> str:
+        return f"http://127.0.0.1:{self.frontend_port}"
+
+    @classmethod
+    def start(cls, *, root: Path, environment: dict[str, str]) -> "RuntimeServers":
+        backend_port = _reserve_port()
+        frontend_port = _reserve_port()
+        backend_command = [
+            sys.executable, "-m", "uvicorn", "app.main:app",
+            "--host", "127.0.0.1", "--port", str(backend_port),
+        ]
+        node = shutil.which("node")
+        if node is None:
+            raise RuntimeError("node executable is required for Playwright runtime tests")
+        frontend_command = [
+            node,
+            str(PROJECT_ROOT / "frontend" / "node_modules" / "vite" / "bin" / "vite.js"),
+            "--host", "127.0.0.1", "--port", str(frontend_port),
+        ]
+        backend_environment = dict(environment)
+        frontend_environment = {**environment, "CYCLE_MASTER_API_ORIGIN": f"http://127.0.0.1:{backend_port}"}
+        backend_process = _spawn(backend_command, cwd=PROJECT_ROOT / "backend", environment=backend_environment)
+        try:
+            _wait_http(f"http://127.0.0.1:{backend_port}/api/health")
+            frontend_process = _spawn(frontend_command, cwd=PROJECT_ROOT / "frontend", environment=frontend_environment)
+            _wait_http(f"http://127.0.0.1:{frontend_port}")
+        except Exception:
+            _stop_process(backend_process)
+            if "frontend_process" in locals():
+                _stop_process(frontend_process)
+            raise
+        return cls(
+            root=root,
+            environment=environment,
+            backend_port=backend_port,
+            frontend_port=frontend_port,
+            backend_command=backend_command,
+            frontend_command=frontend_command,
+            backend_process=backend_process,
+            frontend_process=frontend_process,
+        )
+
+    def restart_backend(self) -> None:
+        _stop_process(self.backend_process)
+        self.backend_process = _spawn(
+            self.backend_command,
+            cwd=PROJECT_ROOT / "backend",
+            environment=self.environment,
+        )
+        _wait_http(f"http://127.0.0.1:{self.backend_port}/api/health")
+
+    def submit_stale_choice_from_api(self, page: Page) -> None:
+        session_id = page.locator("[data-testid=session-id]").inner_text()
+        current = page.request.get(f"{self.api_url}/sessions/{session_id}").json()
+        choice_id = next(choice["id"] for choice in current["choices"] if choice["available"])
+        response = page.request.post(
+            f"{self.api_url}/sessions/{session_id}/choose",
+            data={"turn_revision": current["turn_revision"], "choice_id": choice_id},
+        )
+        assert response.ok
+
+    def stop(self) -> None:
+        _stop_process(self.frontend_process)
+        _stop_process(self.backend_process)
+```
+
+The module imports `dataclass`, `os`, `Path`, `shutil`, `socket`, `subprocess`, `sys`, `time`, `urllib.error`, `urllib.request`, and `Page`. Backend and Vite are launched directly rather than through wrapper shells, so `stop()` owns and terminates the exact server PIDs. The fixture never points a write-capable process at canonical `data/story_v3`, `data/story_build`, or `data/cycle_master.db`.
 
 - [ ] **Step 6: Run GREEN for isolation and core journeys**
 
@@ -2128,7 +2496,7 @@ Expected: the authoritative create/choose/conflict/save/resume/restart journeys 
 - [ ] **Step 9: Commit**
 
 ```powershell
-git add backend/app/paths.py backend/app/config.py backend/tests/conftest.py tests/e2e/conftest.py tests/e2e/test_authoritative_runtime.py backend/tests/api/test_session_isolation.py
+git add backend/app/paths.py backend/app/config.py backend/tests/conftest.py frontend/vite.config.ts tests/e2e/conftest.py tests/e2e/test_authoritative_runtime.py backend/tests/api/test_session_isolation.py
 git commit -m "test: isolate authoritative runtime journeys"
 ```
 
