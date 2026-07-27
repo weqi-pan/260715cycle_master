@@ -45,13 +45,13 @@ ba6f457 docs: define story v3 phase1 closeout
 | --- | --- | --- |
 | 1. Identifier validation and path protection | `db63820`, `fea65b1` | Shared identifier guard applied to node and choice identifiers, including the active v2 editor boundary. |
 | 2. Strict v3 authoring models | `587441a`, `bf8cf2a` | Closed Pydantic v3 contracts, typed discriminated unions, strict public-boundary tests, and explicit routing/terminal models. |
-| 3. Deterministic v2-to-v3 migration | `20ca283`, `a2513cd` | Pure migration for the full v2 corpus with typed conditions/effects and deterministic, collision-safe local identifiers. |
+| 3. Deterministic v2-to-v3 migration | `20ca283`, `a2513cd` | Deterministic migration with pure conversion helpers for the full v2 corpus, typed conditions/effects, and collision-safe local identifiers. |
 | 4. Whole-project compilation and diagnostics | `776d94d`, `c650baa` | Deterministic compiler, structured diagnostics, graph/reference checks, resource safety, and content-addressed revision calculation. |
 | 5. Immutable revision publication | `112ab2d`, `b757bdc` | Immutable revision directories, manifest verification, optimistic base-revision checks, atomic active-pointer replacement, and lazy public exports. |
 | 6. Save persistence decoupling | `0352a53` | Save and node-persistent-state tables no longer require legacy story-content rows; clean-database coverage added. |
 | 7. Canonical v3 migration | `0184f33`, `b865e03` | All canonical content migrated to `data/story_v3`, with counts, repairs, topology, and deterministic bytes locked by tests. |
 | 8. Schema export and quality gates | `baee17b`, `34b30be`, `69eab06` | Deterministic JSON Schema export, strict compile CLI, publication failure gates, README commands, and committed schema parity. |
-| Phase 1 closeout definition | `ba6f457`, `50b4801` | Approved closeout design and task-by-task closeout execution plan; no runtime behavior change. |
+| Phase 1 closeout definition | `ba6f457`, `50b4801` | Closeout design marked `approved for written-spec review` and a task-by-task closeout execution plan; no runtime behavior change. |
 
 ## Delivered interfaces
 
@@ -60,7 +60,7 @@ ba6f457 docs: define story v3 phase1 closeout
 - `app.story.StoryCompiler.compile(source_root)` returns `StoryCompilation`, whose diagnostics are stable structured values and whose successful snapshot carries the canonical revision.
 - `app.story.StoryPublisher` exposes `current_revision()`, `publish(...)`, and `load_active()` for immutable, verified revisions with optimistic conflict detection. Public package exports also include `PublishedRevision`, `StoryCompileError`, `StoryDiagnostic`, `DiagnosticSeverity`, `StoryRevisionConflict`, and `StoryRevisionIntegrityError`.
 - `app.story.v2_migration.migrate_project(source_root, destination_root)` provides deterministic whole-corpus migration.
-- `python -m backend.scripts.migrate_story_v3`, `python -m backend.scripts.compile_story_v3 --strict`, and `python -m backend.scripts.export_story_v3_schema` are the migration, validation/publication, and schema-export command interfaces.
+- `python -m backend.scripts.migrate_story_v3`, `python -m backend.scripts.compile_story_v3 --strict`, and `python -m backend.scripts.export_story_v3_schema` are the migration, validation/publication, and schema-export command interfaces. The migration command's default destination is tracked `data/story_v3`: it overwrites canonical `project.json`, `assets.json`, and node JSON, and deletes stale `nodes/*.json` files from that destination. Audit or reproducibility runs should pass a temporary directory through `--destination`.
 - `data/story_v3/project.json`, `assets.json`, 30 node files, and `story-node-v3.schema.json` are the committed canonical authoring inputs and generated schema.
 - Save persistence now accepts story node IDs as values without foreign keys to legacy story-content tables, allowing clean-database save/load while keeping gameplay runtime behavior unchanged.
 
@@ -71,9 +71,9 @@ ba6f457 docs: define story v3 phase1 closeout
 - Canonical inventory: fresh strict compilation produced exactly 30 nodes, 143 choices, and 846 content blocks. `test_full_migration_preserves_real_corpus_counts` locks the same totals.
 - Typed rules: `ConditionV3` and `StoryEffectV3` are discriminated unions; `test_v3_rejects_string_conditions`, condition/effect discriminator tests, and strict canonical compilation demonstrate that executable rules are not accepted as free-form strings.
 - Cycle semantics: `test_migration_uses_one_based_current_cycle_for_first_run_content` verifies first-run content as `current_cycle == 1`.
-- Topology repairs: `test_migration_applies_known_story_repairs` verifies the parent/return metadata for S10, S13, S14, S19, and S20 against their actual choices.
+- Topology repairs: `test_migration_applies_known_story_repairs` verifies `S10.parent_node_id == F`, `S13.parent_node_id == G`, `S14.parent_node_id == G`, `S19.parent_node_id == H` with `S19_choice_02` returning to H, and `S20.parent_node_id == H` with `S20_choice_02` returning to H.
 - Typed special routing: `test_migration_builds_typed_crossing_shortcut_and_warp_routing` verifies E crossing rules, the deep-interaction limit, J shortcut routing, K allowed warp targets, and K's typed `sanity_max -1` exit effect.
-- H trust reachability: canonical migration sets `D_choice_05` to `zhang_trust = 3`, matching the required reachable threshold covered by the migration repair test.
+- H trust data boundary: the migration repair test verifies that `D_choice_05` sets `zhang_trust = 3`, while canonical `H_choice_01` requires `zhang_trust >= 3`. Runtime and end-to-end reachability of that choice are deferred to Phase 2.
 - S20 restoration: `S20_choice_01` is verified as `once_per_cycle` with `restore_entry_attribute(sanity)`, rather than a fixed `+5` mutation.
 - Compiler-generated integrity: `test_revision_is_canonical_manifest_checksum`, strict CLI coverage, and publisher tests verify content-addressed revisions and generated manifests.
 - Publication atomicity: pointer-replacement, stale-base, integrity, invalid-active-pointer, and failed-publication tests verify that failure cannot replace the active revision.
@@ -82,6 +82,15 @@ ba6f457 docs: define story v3 phase1 closeout
 ## Verification commands and results
 
 Verification was run from `.worktrees/story-v3-foundation` on 2026-07-27 against implementation head `50b480132f5c42a449d3713db8024f62cbd203b0`.
+
+```powershell
+[System.Environment]::OSVersion.VersionString
+python --version
+node --version
+npm.cmd --version
+```
+
+Environment: Microsoft Windows NT `10.0.26200.0`, Python `3.12.10`, Node.js `v24.18.0`, and npm `11.16.0`.
 
 ```powershell
 python -m pytest backend/tests -q -rs
@@ -141,7 +150,7 @@ The following work is deliberately not part of Phase 1 and must not be inferred 
 
 ## Resume instructions
 
-1. Open `C:\Users\31346\Desktop\260715cycle_master\.worktrees\story-v3-foundation` and confirm branch `codex/story-v3-foundation` with `git status --short --branch`.
+1. From the repository root, run `git worktree list`, locate the worktree checked out on `codex/story-v3-foundation` (captured here as repository-relative `.worktrees/story-v3-foundation`), enter it, and confirm the branch with `git status --short --branch`.
 2. Read this handoff, `docs/superpowers/specs/2026-07-27-story-system-v3-phase1-closeout-design.md`, and `docs/superpowers/plans/2026-07-27-story-system-v3-phase1-closeout.md` before continuing closeout.
 3. Recalculate `git rev-parse main` and `git rev-parse HEAD`; later documentation, review, or verification commits will move HEAD beyond the implementation head captured here.
 4. Complete the separate Phase 2 authoritative-runtime plan, independent Phase 1 review, and final full quality gate in their planned closeout tasks. Record later review and final-head evidence without rewriting the historical Phase 1 execution checkboxes.
