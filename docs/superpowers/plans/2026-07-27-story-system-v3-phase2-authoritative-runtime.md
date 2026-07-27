@@ -1465,6 +1465,11 @@ git commit -m "feat: add authoritative session API"
 
 ```python
 # backend/tests/api/test_session_saves.py
+import shutil
+
+from app.models.game_session import GameSession
+
+
 def test_save_and_resume_are_bound_to_story_revision(session_client):
     turn = session_client.post("/api/sessions", json={}).json()
     saved = session_client.post(
@@ -1485,10 +1490,44 @@ def test_save_rejects_stale_turn_revision(session_client):
     session_client.post(f"/api/sessions/{turn['session_id']}/choose", json={"turn_revision": 0, "choice_id": "A_choice_01"})
     response = session_client.post(f"/api/sessions/{turn['session_id']}/saves", json={"turn_revision": 0, "name": "stale"})
     assert response.status_code == 409
+    assert response.json()["detail"] == {
+        "code": "stale_turn_revision",
+        "expected": 0,
+        "actual": 1,
+    }
+
+
+def test_resume_returns_410_when_bound_revision_is_unavailable(
+    session_client,
+    isolated_db_session,
+    published_story,
+):
+    turn = session_client.post("/api/sessions", json={}).json()
+    saved = session_client.post(
+        f"/api/sessions/{turn['session_id']}/saves",
+        json={"turn_revision": turn["turn_revision"], "name": "bound"},
+    ).json()
+    before = isolated_db_session.query(GameSession).count()
+    shutil.rmtree(published_story.build_root / "revisions" / turn["story_revision"])
+
+    response = session_client.post(
+        "/api/sessions/resume",
+        json={"save_id": saved["save_id"]},
+    )
+
+    assert response.status_code == 410
+    assert response.json()["detail"] == {
+        "code": "story_revision_unavailable",
+        "story_revision": turn["story_revision"],
+    }
+    assert isolated_db_session.query(GameSession).count() == before
 ```
 
 ```python
 # backend/tests/game/test_session_restart.py
+from app.game.turn_service import StoryRevisionUnavailable
+
+
 def test_service_restart_recovers_session_and_save(tmp_path, published_story):
     database_path = tmp_path / "restart.db"
     engine = create_engine(f"sqlite:///{database_path}", connect_args={"check_same_thread": False})
@@ -1523,8 +1562,9 @@ def test_missing_bound_revision_does_not_create_resumed_session(tmp_path, publis
     saved = service.save(created.session_id, SaveCommand(turn_revision=0, name="bound"))
     before = db.query(GameSession).count()
     shutil.rmtree(published_story.build_root / "revisions" / created.story_revision)
-    with pytest.raises(StoryRevisionIntegrityError):
+    with pytest.raises(StoryRevisionUnavailable) as exc_info:
         service.resume(ResumeCommand(save_id=saved.save_id))
+    assert exc_info.value.story_revision == created.story_revision
     assert db.query(GameSession).count() == before
     db.close()
     engine.dispose()
@@ -1570,35 +1610,73 @@ def get_save(self, save_id: str) -> SaveRecord:
 
 ```python
 # backend/app/game/turn_service.py
-def save(self, session_id: str, command: SaveCommand) -> SaveView:
-    record = self.repository.get(session_id)
-    self.publisher.load_revision(record.story_revision)
-    saved = self.repository.create_save(session_id, expected_revision=command.turn_revision, name=command.name)
-    return SaveView(save_id=saved.id, name=saved.name, story_revision=saved.story_revision, turn_revision=saved.source_turn_revision)
+from app.story.publisher import StoryRevisionIntegrityError
 
 
-def resume(self, command: ResumeCommand) -> TurnView:
-    saved = self.repository.get_save(command.save_id)
-    snapshot = self.publisher.load_revision(saved.story_revision)
-    saved.state.validate_against(snapshot)
-    preview = build_turn_view(snapshot, saved.state, session_id="pending", turn_revision=0, result_blocks=[], status=saved.status)
-    record = self.repository.create(saved.state, story_revision=saved.story_revision, status=saved.status)
-    return preview.model_copy(update={"session_id": record.id, "turn_revision": record.turn_revision})
+class StoryRevisionUnavailable(RuntimeError):
+    def __init__(self, story_revision: str):
+        self.story_revision = story_revision
+        super().__init__(story_revision)
+
+
+class TurnService:
+    def _load_bound_revision(self, story_revision: str) -> StorySnapshotV3:
+        try:
+            return self.publisher.load_revision(story_revision)
+        except StoryRevisionIntegrityError as exc:
+            raise StoryRevisionUnavailable(story_revision) from exc
+
+    def save(self, session_id: str, command: SaveCommand) -> SaveView:
+        record = self.repository.get(session_id)
+        if record.turn_revision != command.turn_revision:
+            raise StaleTurnRevision(command.turn_revision, record.turn_revision)
+        self._load_bound_revision(record.story_revision)
+        saved = self.repository.create_save(session_id, expected_revision=command.turn_revision, name=command.name)
+        return SaveView(save_id=saved.id, name=saved.name, story_revision=saved.story_revision, turn_revision=saved.source_turn_revision)
+
+    def resume(self, command: ResumeCommand) -> TurnView:
+        saved = self.repository.get_save(command.save_id)
+        snapshot = self._load_bound_revision(saved.story_revision)
+        saved.state.validate_against(snapshot)
+        preview = build_turn_view(snapshot, saved.state, session_id="pending", turn_revision=0, result_blocks=[], status=saved.status)
+        record = self.repository.create(saved.state, story_revision=saved.story_revision, status=saved.status)
+        return preview.model_copy(update={"session_id": record.id, "turn_revision": record.turn_revision})
 ```
 
 ```python
 # backend/app/routers/sessions.py
+from app.game.session_repository import StaleTurnRevision
+from app.game.turn_service import StoryRevisionUnavailable
+
+
 @router.post("/{session_id}/saves", response_model=SaveView, status_code=201)
 def save_session(session_id: str, command: SaveCommand, service: TurnService = Depends(get_turn_service)):
-    return service.save(session_id, command)
+    try:
+        return service.save(session_id, command)
+    except StaleTurnRevision as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={"code": "stale_turn_revision", "expected": exc.expected, "actual": exc.actual},
+        ) from exc
+    except StoryRevisionUnavailable as exc:
+        raise HTTPException(
+            status_code=410,
+            detail={"code": "story_revision_unavailable", "story_revision": exc.story_revision},
+        ) from exc
 
 
 @router.post("/resume", response_model=TurnView, status_code=201)
 def resume_session(command: ResumeCommand, service: TurnService = Depends(get_turn_service)):
-    return service.resume(command)
+    try:
+        return service.resume(command)
+    except StoryRevisionUnavailable as exc:
+        raise HTTPException(
+            status_code=410,
+            detail={"code": "story_revision_unavailable", "story_revision": exc.story_revision},
+        ) from exc
 ```
 
-The service loads and validates the save's bound snapshot and successfully builds the resumed frame before `SessionRepository.create()` is called. Map a missing bound snapshot to HTTP 410 with `detail.code == "story_revision_unavailable"`; never load the active revision in place of the save's revision, and assert the `game_sessions` row count is unchanged after that 410.
+Keep `_load_bound_revision()` as a `TurnService` method. The service loads and validates the save's bound snapshot and successfully builds the resumed frame before `SessionRepository.create()` is called. Never load the active revision in place of the save's revision; the API test proves the missing revision returns 410 and leaves the `game_sessions` row count unchanged.
 
 - [ ] **Step 5: Run GREEN**
 
@@ -1896,6 +1974,34 @@ Expected: FAIL with `ERR_MODULE_NOT_FOUND` for `frontend/src/stores/sessionStore
 // frontend/src/types/index.ts
 export type RunStatus = 'active' | 'ending' | 'cycle_complete' | 'blocked'
 
+export interface ContentBlockBase {
+  id: string
+  text: string
+}
+
+export interface NarrationContentBlock extends ContentBlockBase {
+  type: 'narration'
+}
+
+export interface DialogueContentBlock extends ContentBlockBase {
+  type: 'dialogue'
+  speaker_id: string
+}
+
+export interface SystemContentBlock extends ContentBlockBase {
+  type: 'system'
+}
+
+export interface CheckResultContentBlock extends ContentBlockBase {
+  type: 'check_result'
+}
+
+export type ContentBlock =
+  | NarrationContentBlock
+  | DialogueContentBlock
+  | SystemContentBlock
+  | CheckResultContentBlock
+
 export interface LockReason {
   code: string
   message: string
@@ -1958,6 +2064,8 @@ export interface ResumeSessionRequest {
   save_id: string
 }
 ```
+
+These response types mirror the backend v3 discriminated union. They intentionally omit the authoring-only `when` condition because `build_turn_view()` filters conditional blocks before serialization.
 
 - [ ] **Step 4: Add a command-only session API**
 
@@ -2125,19 +2233,45 @@ onMounted(() => store.initialize())
     <span data-testid="session-id">{{ store.currentTurn?.session_id ?? '' }}</span>
     <span data-testid="turn-revision">{{ store.currentTurn?.turn_revision ?? '' }}</span>
     <div v-if="store.error" class="error-banner">{{ store.error }}</div>
-<button
-  v-for="choice in store.currentTurn?.choices ?? []"
-  :key="choice.id"
-  class="choice-btn"
-  :disabled="!choice.available || store.loading"
-  @click="store.choose(choice.id)"
->
-  <span class="choice-text">{{ choice.text }}</span>
-  <span v-if="choice.lock_reason" class="choice-lock-reason">{{ choice.lock_reason.message }}</span>
-</button>
+
+    <section data-testid="turn-content" class="turn-content">
+      <article
+        v-for="block in store.currentTurn?.content ?? []"
+        :key="block.id"
+        :data-testid="`content-${block.type.replace('_', '-')}`"
+        :data-block-type="block.type"
+        class="content-block"
+      >
+        <strong v-if="block.type === 'dialogue'" class="speaker">{{ block.speaker_id }}</strong>
+        <p :class="`content-${block.type}`">{{ block.text }}</p>
+      </article>
+    </section>
+
+    <section v-if="store.currentTurn?.status === 'ending'" data-testid="status-ending" class="run-status ending">
+      结局已达成
+    </section>
+    <section v-else-if="store.currentTurn?.status === 'cycle_complete'" data-testid="status-cycle-complete" class="run-status cycle-complete">
+      本轮循环已完成
+    </section>
+    <section v-else-if="store.currentTurn?.status === 'blocked'" data-testid="status-blocked" class="run-status blocked">
+      当前剧情无法继续
+    </section>
+
+    <button
+      v-for="choice in store.currentTurn?.choices ?? []"
+      :key="choice.id"
+      class="choice-btn"
+      :disabled="!choice.available || store.loading"
+      @click="store.choose(choice.id)"
+    >
+      <span class="choice-text">{{ choice.text }}</span>
+      <span v-if="choice.lock_reason" class="choice-lock-reason">{{ choice.lock_reason.message }}</span>
+    </button>
   </main>
 </template>
 ```
+
+The `turn-content`, `content-narration`, `content-dialogue`, `content-system`, `content-check-result`, `status-ending`, `status-cycle-complete`, and `status-blocked` test IDs are the stable browser contract asserted in Task 11.
 
 - [ ] **Step 7: Run GREEN**
 
@@ -2187,7 +2321,73 @@ def test_session_test_roots_are_temporary(isolated_runtime):
 
 ```python
 # tests/e2e/test_authoritative_runtime.py
+import pytest
 from playwright.sync_api import Page, expect
+
+
+def _turn_payload(status: str = "active") -> dict:
+    return {
+        "session_id": "mock-session",
+        "story_revision": "a" * 64,
+        "turn_revision": 0,
+        "status": status,
+        "node": {
+            "id": "A",
+            "name": "Mock node",
+            "scene": {
+                "background_id": None,
+                "allow_no_background": True,
+                "ambient_id": None,
+                "palette": None,
+                "atmosphere": [],
+            },
+        },
+        "content": [
+            {"id": "n1", "type": "narration", "text": "Narration text"},
+            {"id": "d1", "type": "dialogue", "speaker_id": "npc_guide", "text": "Dialogue text"},
+            {"id": "s1", "type": "system", "text": "System text"},
+            {"id": "c1", "type": "check_result", "text": "Check result text"},
+        ],
+        "choices": [],
+        "attributes": {},
+        "inventory": {},
+        "completed_cycles": 0,
+        "current_cycle": 1,
+    }
+
+
+def test_gameplay_renders_all_read_only_content_variants(page: Page, runtime_servers):
+    page.add_init_script("window.localStorage.clear()")
+    page.route(
+        "**/api/sessions",
+        lambda route: route.fulfill(status=201, content_type="application/json", json=_turn_payload()),
+    )
+    page.goto(f"{runtime_servers.frontend_url}/play")
+
+    expect(page.get_by_test_id("turn-content")).to_be_visible()
+    expect(page.get_by_test_id("content-narration")).to_have_text("Narration text")
+    expect(page.get_by_test_id("content-dialogue")).to_contain_text("npc_guide")
+    expect(page.get_by_test_id("content-dialogue")).to_contain_text("Dialogue text")
+    expect(page.get_by_test_id("content-system")).to_have_text("System text")
+    expect(page.get_by_test_id("content-check-result")).to_have_text("Check result text")
+
+
+@pytest.mark.parametrize(
+    ("status", "test_id"),
+    [
+        ("ending", "status-ending"),
+        ("cycle_complete", "status-cycle-complete"),
+        ("blocked", "status-blocked"),
+    ],
+)
+def test_gameplay_renders_explicit_status_panel(page: Page, runtime_servers, status: str, test_id: str):
+    page.add_init_script("window.localStorage.clear()")
+    page.route(
+        "**/api/sessions",
+        lambda route: route.fulfill(status=201, content_type="application/json", json=_turn_payload(status)),
+    )
+    page.goto(f"{runtime_servers.frontend_url}/play")
+    expect(page.get_by_test_id(test_id)).to_be_visible()
 
 
 def test_create_choose_refresh_and_restart_journey(page: Page, runtime_servers):
