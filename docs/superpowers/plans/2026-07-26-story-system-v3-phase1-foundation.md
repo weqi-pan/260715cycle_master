@@ -1,5 +1,9 @@
 # Story System v3 Phase 1 Foundation Implementation Plan
 
+> **Implementation status:** Completed on branch `codex/story-v3-foundation`.
+> **Handoff:** `plan/reports/2026-07-27-story-system-v3-phase1-handoff.md`
+> The original checkboxes are preserved as the execution recipe; current completion evidence lives in the handoff report.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Build the strict v3 authoring contract, compiler, immutable snapshot publisher, safe story repository, clean-install database foundation, and deterministic migration of all 30 existing story nodes.
