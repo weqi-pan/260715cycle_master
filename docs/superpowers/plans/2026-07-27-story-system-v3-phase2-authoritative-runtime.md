@@ -119,7 +119,7 @@ class SessionRepository:
     get(session_id: str) -> SessionRecord
     commit_turn(session_id: str, *, expected_revision: int, state: GameState, status: RunStatus, choice_id: str) -> SessionRecord
     create_save(session_id: str, *, expected_revision: int, name: str) -> SaveRecord
-    resume_save(save_id: str) -> SessionRecord
+    get_save(save_id: str) -> SaveRecord
 
 # backend/app/game/turn_service.py
 class TurnService:
@@ -425,10 +425,19 @@ class SaveRecord:
     name: str
     story_revision: str
     source_turn_revision: int
+    state: GameState
+    status: RunStatus
 
     @classmethod
     def from_row(cls, row: GameSave) -> "SaveRecord":
-        return cls(id=row.id, name=row.name, story_revision=row.story_revision, source_turn_revision=row.source_turn_revision)
+        return cls(
+            id=row.id,
+            name=row.name,
+            story_revision=row.story_revision,
+            source_turn_revision=row.source_turn_revision,
+            state=_decode_state(row.state_json),
+            status=row.status,
+        )
 
 
 class SessionNotFound(RuntimeError):
@@ -457,6 +466,23 @@ def _decode_state(payload: str) -> GameState:
 class SessionRepository:
     def __init__(self, db: Session):
         self.db = db
+
+    def create(self, state: GameState, *, story_revision: str, status: RunStatus) -> SessionRecord:
+        now = _utcnow()
+        row = GameSession(
+            id=uuid4().hex,
+            story_revision=story_revision,
+            turn_revision=0,
+            current_node_id=state.current_node_id,
+            status=status,
+            state_json=_encode_state(state),
+            created_at=now,
+            updated_at=now,
+        )
+        self.db.add(row)
+        self.db.commit()
+        self.db.refresh(row)
+        return SessionRecord.from_row(row)
 
     def get(self, session_id: str) -> SessionRecord:
         row = self.db.get(GameSession, session_id)
@@ -759,7 +785,10 @@ def _apply_scoped_effect(snapshot: StorySnapshotV3, state: GameState, effect: St
         updates = {effect.counter: value}
         if effect.counter == "completed_cycles" and value != current:
             updates["cycle_once_keys"] = frozenset()
-        return state.model_copy(update={"loop": state.loop.model_copy(update=updates)})
+            history = state.history.model_copy(update={"cycle_choice_ids": frozenset()})
+        else:
+            history = state.history
+        return state.model_copy(update={"loop": state.loop.model_copy(update=updates), "history": history})
     if isinstance(effect, MarkOnceEffect):
         return _mark_once(state, key=effect.key, scope=effect.scope)
     if isinstance(effect, RecordInteractionEffect):
@@ -824,6 +853,14 @@ def test_k_warp_applies_snapshot_exit_cost_once(published_story):
     assert result.state.player.attributes["sanity_max"] == state.player.attributes["sanity_max"] - 1
 
 
+def test_j_shortcut_applies_half_cycle_counter_and_reaches_exit(published_story):
+    state = state_at_node(published_story.snapshot, "J")
+    result = reduce_choice(published_story.snapshot, state, "J_choice_01")
+    assert result.state.current_node_id == "A"
+    assert result.state.loop.half_cycles == state.loop.half_cycles + 1
+    assert result.state.loop.completed_cycles == state.loop.completed_cycles
+
+
 def test_cycle_completion_increments_completed_cycles_before_next_cycle(published_story):
     state = state_at_node(published_story.snapshot, "H")
     result = reduce_choice(published_story.snapshot, state, "H_choice_09")
@@ -885,8 +922,8 @@ def reduce_choice(snapshot: StorySnapshotV3, state: GameState, choice_id: str) -
     decision = evaluate_choice(snapshot, state, choice)
     if not decision.visible or not decision.enabled:
         raise InvalidChoice(f"choice is unavailable: {choice_id}")
-    working = apply_effects(snapshot, state, choice.effects)
-    working = _record_choice(working, choice)
+    working = _record_choice(state, choice)
+    working = apply_effects(snapshot, working, choice.effects)
     completed_before = state.loop.completed_cycles
     working = _navigate(snapshot, working, node, choice)
     working.validate_against(snapshot)
@@ -898,6 +935,15 @@ def reduce_choice(snapshot: StorySnapshotV3, state: GameState, choice_id: str) -
     else:
         status = "active"
     return TransitionResult(state=working, result_blocks=choice.result, choice_id=choice.id, status=status)
+
+
+def _record_choice(state: GameState, choice: StoryChoiceV3) -> GameState:
+    visit = state.visit.model_copy(update={"chosen_ids": state.visit.chosen_ids | {choice.id}})
+    history = state.history.model_copy(update={
+        "cycle_choice_ids": state.history.cycle_choice_ids | {choice.id},
+        "session_choice_ids": state.history.session_choice_ids | {choice.id},
+    })
+    return state.model_copy(update={"visit": visit, "history": history})
 ```
 
 - [ ] **Step 5: Define exact navigation policies**
@@ -949,7 +995,7 @@ The reducer emits `cycle_complete` only when this typed effect raises `completed
 
 Run: `backend\venv\Scripts\python.exe -m pytest backend/tests/game/test_navigation.py -q`
 
-Expected: PASS; travel creates a visit, warp applies one configured cost, shortcut applies its configured counter effects, and the first completed loop exposes `current_cycle == 2`.
+Expected: PASS with four tests; travel creates a visit, K warp applies one configured cost, J shortcut adds one `half_cycles` without completing a full cycle, and H→A exposes `current_cycle == 2`.
 
 - [ ] **Step 7: Run focused and full verification**
 
@@ -983,7 +1029,7 @@ git commit -m "feat: add v3 navigation policies"
 # backend/tests/game/test_frame_builder.py
 from app.game.frame_builder import build_turn_view
 from app.game.state import initial_game_state
-from app.schemas.story_v3 import AttributeCompareCondition
+from app.schemas.story_v3 import AttributeCompareCondition, CounterCompareCondition, EntrySequenceV3
 from backend.tests.game.support import state_at_node
 
 
@@ -1014,6 +1060,22 @@ def test_nonterminal_without_enabled_exit_is_blocked(published_story):
     blocked_snapshot = snapshot.model_copy(update={"nodes": {**snapshot.nodes, "A": node.model_copy(update={"choices": choices})}})
     view = build_turn_view(blocked_snapshot, initial_game_state(blocked_snapshot), session_id="s", turn_revision=0, result_blocks=[])
     assert view.status == "blocked"
+
+
+def test_entry_and_result_blocks_use_typed_when_conditions(published_story):
+    snapshot = published_story.snapshot
+    state = initial_game_state(snapshot)
+    base_block = snapshot.nodes["A"].entry_sequences[0].blocks[0]
+    never = AttributeCompareCondition(type="attribute_compare", attribute="sanity", operator="gt", value=100)
+    first_cycle = CounterCompareCondition(type="counter_compare", counter="current_cycle", operator="eq", value=1)
+    hidden_entry = base_block.model_copy(update={"id": "entry.hidden", "when": never})
+    visible_entry = base_block.model_copy(update={"id": "entry.visible", "when": first_cycle})
+    node = snapshot.nodes["A"].model_copy(update={"entry_sequences": [EntrySequenceV3(id="entry.test", when=first_cycle, blocks=[hidden_entry, visible_entry])]})
+    filtered_snapshot = snapshot.model_copy(update={"nodes": {**snapshot.nodes, "A": node}})
+    hidden_result = base_block.model_copy(update={"id": "result.hidden", "when": never})
+    visible_result = base_block.model_copy(update={"id": "result.visible", "when": first_cycle})
+    view = build_turn_view(filtered_snapshot, state, session_id="s", turn_revision=0, result_blocks=[hidden_result, visible_result])
+    assert [block.id for block in view.content] == ["result.visible", "entry.visible"]
 ```
 
 - [ ] **Step 2: Run RED and confirm the builder is absent**
@@ -1090,6 +1152,7 @@ class SaveView(BaseModel):
 def build_turn_view(snapshot: StorySnapshotV3, state: GameState, *, session_id: str, turn_revision: int, result_blocks: list[ContentBlockV3], status: RunStatus | None = None) -> TurnView:
     node = snapshot.nodes[state.current_node_id]
     entry_blocks = _select_entry_blocks(node, state)
+    visible_result_blocks = _visible_blocks(result_blocks, state)
     choices = []
     for choice in node.choices:
         decision = evaluate_choice(snapshot, state, choice)
@@ -1109,13 +1172,24 @@ def build_turn_view(snapshot: StorySnapshotV3, state: GameState, *, session_id: 
         turn_revision=turn_revision,
         status=resolved_status,
         node=TurnNodeView(id=node.id, name=node.meta.name, scene=node.scene),
-        content=[*result_blocks, *entry_blocks],
+        content=[*visible_result_blocks, *entry_blocks],
         choices=choices,
         attributes=dict(state.player.attributes),
         inventory=dict(state.player.inventory),
         completed_cycles=state.loop.completed_cycles,
         current_cycle=state.current_cycle,
     )
+
+
+def _select_entry_blocks(node: StoryNodeV3, state: GameState) -> list[ContentBlockV3]:
+    sequence = next((item for item in node.entry_sequences if evaluate_condition(item.when, state)), None)
+    if sequence is None:
+        return []
+    return _visible_blocks(sequence.blocks, state)
+
+
+def _visible_blocks(blocks: list[ContentBlockV3], state: GameState) -> list[ContentBlockV3]:
+    return [block for block in blocks if evaluate_condition(block.when, state)]
 
 
 def _resolve_status(node: StoryNodeV3, choices: list[TurnChoice], requested: RunStatus | None) -> RunStatus:
@@ -1132,7 +1206,7 @@ def _resolve_status(node: StoryNodeV3, choices: list[TurnChoice], requested: Run
 
 Run: `backend\venv\Scripts\python.exe -m pytest backend/tests/game/test_frame_builder.py -q`
 
-Expected: PASS; status is one of `active`, `ending`, `cycle_complete`, or `blocked`, and no authoritative `GameState` appears in the response schema.
+Expected: PASS with three tests; status is explicit, locked choices are structured, the first matching entry sequence is selected, and typed `when` conditions filter both entry and result blocks.
 
 - [ ] **Step 6: Run focused and full verification**
 
@@ -1337,19 +1411,44 @@ def test_save_rejects_stale_turn_revision(session_client):
 
 ```python
 # backend/tests/game/test_session_restart.py
-def test_service_restart_recovers_session(tmp_path, published_story):
+def test_service_restart_recovers_session_and_save(tmp_path, published_story):
     database_path = tmp_path / "restart.db"
     engine = create_engine(f"sqlite:///{database_path}", connect_args={"check_same_thread": False})
     init_db(bind=engine)
     factory = sessionmaker(bind=engine, autocommit=False, autoflush=False)
     first = factory()
-    created = TurnService(SessionRepository(first), StoryPublisher(published_story.build_root)).create_session()
+    first_service = TurnService(SessionRepository(first), StoryPublisher(published_story.build_root))
+    created = first_service.create_session()
+    saved = first_service.save(created.session_id, SaveCommand(turn_revision=created.turn_revision, name="restart-save"))
     first.close()
 
     second = factory()
-    recovered = TurnService(SessionRepository(second), StoryPublisher(published_story.build_root)).get_session(created.session_id)
+    second_service = TurnService(SessionRepository(second), StoryPublisher(published_story.build_root))
+    recovered = second_service.get_session(created.session_id)
     assert recovered.model_dump() == created.model_dump()
+    resumed = second_service.resume(ResumeCommand(save_id=saved.save_id))
+    assert resumed.session_id != created.session_id
+    assert resumed.story_revision == created.story_revision
+    assert resumed.node.id == created.node.id
     second.close()
+    engine.dispose()
+
+
+def test_missing_bound_revision_does_not_create_resumed_session(tmp_path, published_story):
+    database_path = tmp_path / "missing-revision.db"
+    engine = create_engine(f"sqlite:///{database_path}", connect_args={"check_same_thread": False})
+    init_db(bind=engine)
+    factory = sessionmaker(bind=engine, autocommit=False, autoflush=False)
+    db = factory()
+    service = TurnService(SessionRepository(db), StoryPublisher(published_story.build_root))
+    created = service.create_session()
+    saved = service.save(created.session_id, SaveCommand(turn_revision=0, name="bound"))
+    before = db.query(GameSession).count()
+    shutil.rmtree(published_story.build_root / "revisions" / created.story_revision)
+    with pytest.raises(StoryRevisionIntegrityError):
+        service.resume(ResumeCommand(save_id=saved.save_id))
+    assert db.query(GameSession).count() == before
+    db.close()
     engine.dispose()
 ```
 
@@ -1382,11 +1481,11 @@ def create_save(self, session_id: str, *, expected_revision: int, name: str) -> 
     return SaveRecord.from_row(row)
 
 
-def resume_save(self, save_id: str) -> SessionRecord:
+def get_save(self, save_id: str) -> SaveRecord:
     save = self.db.get(GameSave, save_id)
     if save is None:
         raise SaveNotFound(save_id)
-    return self.create(_decode_state(save.state_json), story_revision=save.story_revision, status=save.status)
+    return SaveRecord.from_row(save)
 ```
 
 - [ ] **Step 4: Add revision verification and save/resume routes**
@@ -1401,9 +1500,12 @@ def save(self, session_id: str, command: SaveCommand) -> SaveView:
 
 
 def resume(self, command: ResumeCommand) -> TurnView:
-    record = self.repository.resume_save(command.save_id)
-    snapshot = self.publisher.load_revision(record.story_revision)
-    return build_turn_view(snapshot, record.state, session_id=record.id, turn_revision=record.turn_revision, result_blocks=[], status=record.status)
+    saved = self.repository.get_save(command.save_id)
+    snapshot = self.publisher.load_revision(saved.story_revision)
+    saved.state.validate_against(snapshot)
+    preview = build_turn_view(snapshot, saved.state, session_id="pending", turn_revision=0, result_blocks=[], status=saved.status)
+    record = self.repository.create(saved.state, story_revision=saved.story_revision, status=saved.status)
+    return preview.model_copy(update={"session_id": record.id, "turn_revision": record.turn_revision})
 ```
 
 ```python
@@ -1418,7 +1520,7 @@ def resume_session(command: ResumeCommand, service: TurnService = Depends(get_tu
     return service.resume(command)
 ```
 
-Map a missing bound snapshot to HTTP 410 with `detail.code == "story_revision_unavailable"`; never load the active revision in place of the save's revision.
+The service loads and validates the save's bound snapshot and successfully builds the resumed frame before `SessionRepository.create()` is called. Map a missing bound snapshot to HTTP 410 with `detail.code == "story_revision_unavailable"`; never load the active revision in place of the save's revision, and assert the `game_sessions` row count is unchanged after that 410.
 
 - [ ] **Step 5: Run GREEN**
 
@@ -1460,6 +1562,9 @@ git commit -m "feat: save and resume versioned sessions"
 
 ```python
 # backend/tests/game/test_v3_gameplay_regressions.py
+from app.game.reducer import apply_effects, evaluate_choice, reduce_choice
+from app.game.state import initial_game_state
+from app.schemas.story_v3 import ModifyCounterEffect
 from backend.tests.game.support import state_at_node
 
 
@@ -1504,6 +1609,13 @@ def test_s20_restores_entry_sanity_only_once_per_cycle(published_story):
     assert first.player.attributes["sanity"] == state_at_s20.visit.entry_attributes["sanity"]
     choice = next(choice for choice in snapshot.nodes["S20"].choices if choice.id == "S20_choice_01")
     assert evaluate_choice(snapshot, first, choice).enabled is False
+    next_cycle = apply_effects(
+        snapshot,
+        first,
+        [ModifyCounterEffect(type="modify_counter", counter="completed_cycles", operation="add", value=1)],
+    )
+    assert next_cycle.history.cycle_choice_ids == frozenset()
+    assert evaluate_choice(snapshot, next_cycle, choice).enabled is True
 
 
 def test_first_second_and_third_cycle_conditions_are_one_based(published_story):
@@ -1596,6 +1708,7 @@ git commit -m "fix: enforce v3 gameplay semantics"
 - Create: `frontend/tests/sessionStore.test.ts`
 - Modify: `frontend/src/types/index.ts`
 - Modify: `frontend/src/views/GamePlay.vue`
+- Modify: `frontend/tests/playbackTimeline.test.ts`
 - Modify: `frontend/package.json`
 
 - [ ] **Step 1: Write failing store tests for retained turns and 409 refresh**
@@ -1604,35 +1717,73 @@ git commit -m "fix: enforce v3 gameplay semantics"
 // frontend/tests/sessionStore.test.ts
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { createSessionActions } from '../src/stores/sessionStore.ts'
-import type { TurnView } from '../src/types/index.ts'
+import { createSessionActions, type SessionApi, type SessionState } from '../src/stores/sessionStore.ts'
+import type { SaveView, TurnView } from '../src/types/index.ts'
+
+const turn = (revision: number): TurnView => ({
+  session_id: 's1', story_revision: 'a'.repeat(64), turn_revision: revision,
+  status: 'active', node: { id: 'A', name: 'A', scene: { allow_no_background: true } },
+  content: [], choices: [], attributes: {}, inventory: {}, completed_cycles: 0, current_cycle: 1,
+})
+
+const apiStub = (overrides: Partial<SessionApi>): SessionApi => ({
+  createSession: async () => turn(0),
+  getSession: async () => turn(0),
+  chooseSession: async () => turn(1),
+  saveSession: async () => ({ save_id: 'save-1', name: 'slot', story_revision: 'a'.repeat(64), turn_revision: 0 } as SaveView),
+  resumeSession: async () => turn(0),
+  ...overrides,
+})
 
 test('ordinary choose failure retains the current turn', async () => {
-  const original = { session_id: 's1', turn_revision: 3 } as TurnView
-  const state = { currentTurn: original, error: null as string | null }
-  const actions = createSessionActions(state, {
+  const original = turn(3)
+  const state: SessionState = { currentTurn: original, error: null, loading: false }
+  const actions = createSessionActions(state, apiStub({
     chooseSession: async () => { throw new Error('offline') },
     getSession: async () => { throw new Error('must not refresh') },
-  })
+  }))
   await actions.choose('A_choice_01')
   assert.equal(state.currentTurn, original)
   assert.equal(state.error, 'offline')
 })
 
 test('409 refreshes the same session without creating a new game', async () => {
-  const original = { session_id: 's1', turn_revision: 3 } as TurnView
-  const refreshed = { session_id: 's1', turn_revision: 4 } as TurnView
-  const state = { currentTurn: original, error: null as string | null }
+  const original = turn(3)
+  const refreshed = turn(4)
+  const state: SessionState = { currentTurn: original, error: null, loading: false }
   let creates = 0
-  const actions = createSessionActions(state, {
+  const actions = createSessionActions(state, apiStub({
     chooseSession: async () => { throw { isAxiosError: true, response: { status: 409 } } },
     getSession: async () => refreshed,
     createSession: async () => { creates += 1; return refreshed },
-  })
+  }))
   await actions.choose('A_choice_01')
   assert.equal(state.currentTurn, refreshed)
   assert.equal(creates, 0)
 })
+
+test('create get save and resume use the current authoritative identifiers', async () => {
+  const calls: string[] = []
+  const state: SessionState = { currentTurn: null, error: null, loading: false }
+  const actions = createSessionActions(state, apiStub({
+    createSession: async () => { calls.push('create'); return turn(0) },
+    getSession: async id => { calls.push(`get:${id}`); return turn(2) },
+    saveSession: async (id, revision, name) => { calls.push(`save:${id}:${revision}:${name}`); return { save_id: 'save-1', name, story_revision: 'a'.repeat(64), turn_revision: revision } as SaveView },
+    resumeSession: async id => { calls.push(`resume:${id}`); return turn(5) },
+  }))
+  await actions.create()
+  await actions.get('s1')
+  await actions.save('slot')
+  await actions.resume('save-1')
+  assert.deepEqual(calls, ['create', 'get:s1', 'save:s1:2:slot', 'resume:save-1'])
+  assert.equal(state.currentTurn?.turn_revision, 5)
+})
+```
+
+Update `frontend/package.json` in the same RED step so the new test is actually executed:
+
+```json
+"test:unit": "node --test tests/playbackTimeline.test.ts tests/sessionStore.test.ts"
 ```
 
 - [ ] **Step 2: Run RED and confirm the session store is absent**
@@ -1667,11 +1818,39 @@ No function in this file accepts node ID, attributes, flags, inventory, cycle co
 
 ```typescript
 // frontend/src/stores/sessionStore.ts
+export interface SessionState {
+  currentTurn: TurnView | null
+  error: string | null
+  loading: boolean
+}
+
+export interface SessionApi {
+  createSession(): Promise<TurnView>
+  getSession(sessionId: string): Promise<TurnView>
+  chooseSession(sessionId: string, turnRevision: number, choiceId: string): Promise<TurnView>
+  saveSession(sessionId: string, turnRevision: number, name: string): Promise<SaveView>
+  resumeSession(saveId: string): Promise<TurnView>
+}
+
 export function createSessionActions(state: SessionState, api: SessionApi) {
+  const fail = (error: unknown) => {
+    state.error = error instanceof Error ? error.message : '请求失败'
+  }
   return {
+    async create() {
+      state.loading = true
+      state.error = null
+      try { state.currentTurn = await api.createSession() } catch (error) { fail(error) } finally { state.loading = false }
+    },
+    async get(sessionId: string) {
+      state.loading = true
+      state.error = null
+      try { state.currentTurn = await api.getSession(sessionId) } catch (error) { fail(error) } finally { state.loading = false }
+    },
     async choose(choiceId: string) {
       const current = state.currentTurn
       if (!current) return
+      state.loading = true
       state.error = null
       try {
         state.currentTurn = await api.chooseSession(current.session_id, current.turn_revision, choiceId)
@@ -1681,8 +1860,21 @@ export function createSessionActions(state: SessionState, api: SessionApi) {
           state.error = '回合已刷新，请重新选择'
           return
         }
-        state.error = error instanceof Error ? error.message : '请求失败'
+        fail(error)
+      } finally {
+        state.loading = false
       }
+    },
+    async save(name: string): Promise<SaveView | null> {
+      const current = state.currentTurn
+      if (!current) return null
+      state.error = null
+      try { return await api.saveSession(current.session_id, current.turn_revision, name) } catch (error) { fail(error); return null }
+    },
+    async resume(saveId: string) {
+      state.loading = true
+      state.error = null
+      try { state.currentTurn = await api.resumeSession(saveId) } catch (error) { fail(error) } finally { state.loading = false }
     },
   }
 }
@@ -1697,10 +1889,14 @@ export const useSessionStore = defineStore('session', () => {
     set currentTurn(value) { currentTurn.value = value },
     get error() { return error.value },
     set error(value) { error.value = value },
+    get loading() { return loading.value },
+    set loading(value) { loading.value = value },
   }, sessionsApi)
   return { currentTurn, error, loading, ...actions }
 })
 ```
+
+Remove the `visibleChoices` import and the `choice list excludes unavailable choices defensively` test from `frontend/tests/playbackTimeline.test.ts`; server-returned `TurnChoice.available` is now rendered directly and is covered by `sessionStore.test.ts` plus Playwright.
 
 - [ ] **Step 5: Migrate `GamePlay.vue` to server choices and statuses**
 
@@ -1738,7 +1934,7 @@ Expected: no matches.
 - [ ] **Step 8: Commit**
 
 ```powershell
-git add frontend/src/api/sessions.ts frontend/src/stores/sessionStore.ts frontend/tests/sessionStore.test.ts frontend/src/types/index.ts frontend/src/views/GamePlay.vue frontend/package.json
+git add frontend/src/api/sessions.ts frontend/src/stores/sessionStore.ts frontend/tests/sessionStore.test.ts frontend/tests/playbackTimeline.test.ts frontend/src/types/index.ts frontend/src/views/GamePlay.vue frontend/package.json
 git commit -m "feat: migrate player to session turns"
 ```
 
@@ -1748,6 +1944,7 @@ git commit -m "feat: migrate player to session turns"
 
 - Modify: `backend/app/paths.py`
 - Modify: `backend/app/config.py`
+- Modify: `backend/tests/conftest.py`
 - Modify: `tests/e2e/conftest.py`
 - Create: `tests/e2e/test_authoritative_runtime.py`
 - Create: `backend/tests/api/test_session_isolation.py`
@@ -1788,6 +1985,29 @@ def test_locked_choice_and_stale_click_recovery(page: Page, runtime_servers):
     page.locator(".choice-btn:not(:disabled)").first.click()
     expect(page.locator(".error-banner")).to_contain_text("回合已刷新")
     expect(page.locator(".game-play")).to_be_visible()
+
+
+def test_save_and_resume_survive_backend_restart(page: Page, runtime_servers):
+    created = page.request.post(f"{runtime_servers.api_url}/sessions", data={}).json()
+    choice_id = next(choice["id"] for choice in created["choices"] if choice["available"])
+    chosen = page.request.post(
+        f"{runtime_servers.api_url}/sessions/{created['session_id']}/choose",
+        data={"turn_revision": created["turn_revision"], "choice_id": choice_id},
+    ).json()
+    saved = page.request.post(
+        f"{runtime_servers.api_url}/sessions/{created['session_id']}/saves",
+        data={"turn_revision": chosen["turn_revision"], "name": "restart-e2e"},
+    ).json()
+    runtime_servers.restart_backend()
+    resumed = page.request.post(
+        f"{runtime_servers.api_url}/sessions/resume",
+        data={"save_id": saved["save_id"]},
+    )
+    assert resumed.status == 201
+    body = resumed.json()
+    assert body["session_id"] != created["session_id"]
+    assert body["story_revision"] == created["story_revision"]
+    assert body["node"]["id"] == chosen["node"]["id"]
 ```
 
 - [ ] **Step 2: Run RED and confirm isolated runtime fixtures do not exist**
@@ -1811,7 +2031,38 @@ DATABASE_PATH = Path(os.environ.get("CYCLE_MASTER_DATABASE_PATH", DATA_DIR / "cy
 
 `backend/app/config.py` must import the resolved `DATABASE_PATH` once and construct `DATABASE_URL` from it. Tests set all three environment variables before importing `app.main` in the server subprocess.
 
-- [ ] **Step 4: Build isolated fixtures with temporary copies and dynamic ports**
+- [ ] **Step 4: Define the backend isolation fixture with exact roots**
+
+```python
+# backend/tests/conftest.py
+@dataclass(frozen=True, slots=True)
+class IsolatedRuntime:
+    root: Path
+    database_path: Path
+    story_root: Path
+    build_root: Path
+
+
+@pytest.fixture
+def isolated_runtime(tmp_path) -> IsolatedRuntime:
+    story_root = tmp_path / "story_v3"
+    build_root = tmp_path / "story_build"
+    database_path = tmp_path / "cycle_master.db"
+    shutil.copytree(PROJECT_ROOT / "data" / "story_v3", story_root)
+    compilation = StoryCompiler().compile(story_root)
+    StoryPublisher(build_root).publish(compilation, base_revision=None)
+    engine = create_engine(f"sqlite:///{database_path}", connect_args={"check_same_thread": False})
+    init_db(bind=engine)
+    engine.dispose()
+    return IsolatedRuntime(
+        root=tmp_path,
+        database_path=database_path,
+        story_root=story_root,
+        build_root=build_root,
+    )
+```
+
+- [ ] **Step 5: Build Playwright servers with temporary copies and dynamic ports**
 
 ```python
 # tests/e2e/conftest.py
@@ -1836,7 +2087,7 @@ def runtime_servers(tmp_path_factory):
 
 `RuntimeServers.start()` launches hidden backend and frontend subprocesses on reserved loopback ports, polls `/api/health` and the Vite root with a 20-second deadline, exposes `restart_backend()`, and terminates only the PIDs it created. The fixture never points a write-capable process at canonical `data/story_v3`, `data/story_build`, or `data/cycle_master.db`.
 
-- [ ] **Step 5: Run GREEN for isolation and core journeys**
+- [ ] **Step 6: Run GREEN for isolation and core journeys**
 
 Run: `backend\venv\Scripts\python.exe -m pytest backend/tests/api/test_session_isolation.py -q`
 
@@ -1846,7 +2097,7 @@ Run: `backend\venv\Scripts\python.exe -m pytest tests/e2e/test_authoritative_run
 
 Expected: PASS without fixed sleeps, forced clicks, swallowed exceptions, recursive retries, or writes to canonical story/build/database paths.
 
-- [ ] **Step 6: Run focused verification and confirm canonical data is unchanged**
+- [ ] **Step 7: Run focused verification and confirm canonical data is unchanged**
 
 Run: `git status --short data/story_v3 data/story_build data/cycle_master.db`
 
@@ -1856,7 +2107,7 @@ Run: `backend\venv\Scripts\python.exe -m pytest backend/tests/api/test_sessions_
 
 Expected: PASS.
 
-- [ ] **Step 7: Run full pre-removal gate**
+- [ ] **Step 8: Run full pre-removal gate**
 
 Run: `backend\venv\Scripts\python.exe -m pytest backend/tests -q -rs`
 
@@ -1872,12 +2123,12 @@ Expected: TypeScript checking and production build pass.
 
 Run: `backend\venv\Scripts\python.exe -m pytest tests/e2e/test_authoritative_runtime.py -q`
 
-Expected: the authoritative create/choose/conflict/save/restart journeys pass.
+Expected: the authoritative create/choose/conflict/save/resume/restart journeys pass.
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 9: Commit**
 
 ```powershell
-git add backend/app/paths.py backend/app/config.py tests/e2e/conftest.py tests/e2e/test_authoritative_runtime.py backend/tests/api/test_session_isolation.py
+git add backend/app/paths.py backend/app/config.py backend/tests/conftest.py tests/e2e/conftest.py tests/e2e/test_authoritative_runtime.py backend/tests/api/test_session_isolation.py
 git commit -m "test: isolate authoritative runtime journeys"
 ```
 
@@ -1927,6 +2178,10 @@ Expected: PASS.
 Run: `npm run test:unit --prefix frontend`
 
 Expected: PASS.
+
+Run: `rg -n "choiceVisibility|visibleChoices" frontend/tests frontend/src/views frontend/src/stores frontend/src/api`
+
+Expected: no matches; Task 10 already removed the playback test's legacy visibility import, so deleting `frontend/src/player/choiceVisibility.ts` cannot break the unit command.
 
 Run: `npm run build --prefix frontend`
 
@@ -1982,7 +2237,7 @@ Replace `StoryV2Loader().nodes` use in migration tests with `load_v2_nodes(STORY
 
 - [ ] **Step 5: Remove legacy runtime, save-state API, and story-table coupling**
 
-Delete the files listed above, register only `sessions` and `editor` routers in `backend/app/main.py`, import only `GameSession`, `GameSave`, and `ChoiceAudit` for database initialization, and keep v2 authoring/migration schemas only where the one-time migration and current editor still require them. Remove every client path that posts or receives a full authoritative state.
+Delete the files listed above, including `frontend/src/player/choiceVisibility.ts` only after the preceding import scan is empty. Register only `sessions` and `editor` routers in `backend/app/main.py`, import only `GameSession`, `GameSave`, and `ChoiceAudit` for database initialization, and keep v2 authoring/migration schemas only where the one-time migration and current editor still require them. Remove every client path that posts or receives a full authoritative state.
 
 - [ ] **Step 6: Run GREEN for the removal guard**
 
@@ -1998,7 +2253,7 @@ Expected: the complete retained backend suite passes.
 
 Run: `npm run test:unit --prefix frontend`
 
-Expected: the complete frontend unit suite passes.
+Expected: both `frontend/tests/playbackTimeline.test.ts` and `frontend/tests/sessionStore.test.ts` run and pass after `choiceVisibility.ts` has been deleted.
 
 Run: `npm run build --prefix frontend`
 
