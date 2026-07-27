@@ -5,6 +5,8 @@
 > Related implementation plan: `docs/superpowers/plans/2026-07-26-story-system-v3-phase1-foundation.md`
 > Related architecture design: `docs/superpowers/specs/2026-07-26-story-system-v3-design.md`
 
+> **Scope update (2026-07-27):** The user confirmed that Cycle Master is currently a demo and requested a fast closeout. This overrides the production-grade parts of sections 3.3-3.5: Phase 2 is now a concise roadmap, the full-branch deep review is deferred, and closeout requires only the existing handoff plus a fresh backend/story/frontend verification.
+
 ## 1. Objective
 
 Close the completed Story System v3 Phase 1 foundation work without extending its runtime scope. The closeout must leave an auditable handoff, a concrete Phase 2 authoritative-runtime implementation plan, a reviewed and verified feature branch, and an explicit integration decision.

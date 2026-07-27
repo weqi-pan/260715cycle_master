@@ -6,7 +6,7 @@ Story System v3 Phase 1 is implemented on branch `codex/story-v3-foundation` and
 
 Runtime v2 remains intentionally authoritative for gameplay in Phase 1. `backend/app/routers/game.py` still imports and instantiates `StoryV2Loader` and `TurnStore`; no partial v3 runtime switch is included in this handoff.
 
-This report records the implementation head before the handoff commit. Independent full-branch review, final post-closeout verification, integration, and all authoritative-runtime work remain separate closeout or Phase 2 activities.
+This report records the implementation head before the handoff commit. On 2026-07-27 the user reduced the closeout to demo scope: the production-grade full-branch review and detailed Phase 2 specification are deferred. A concise Phase 2 roadmap, final verification, and the integration decision remain in scope.
 
 ## Branch and commit range
 
@@ -153,7 +153,7 @@ The following work is deliberately not part of Phase 1 and must not be inferred 
 1. From the repository root, run `git worktree list`, locate the worktree checked out on `codex/story-v3-foundation` (captured here as repository-relative `.worktrees/story-v3-foundation`), enter it, and confirm the branch with `git status --short --branch`.
 2. Read this handoff, `docs/superpowers/specs/2026-07-27-story-system-v3-phase1-closeout-design.md`, and `docs/superpowers/plans/2026-07-27-story-system-v3-phase1-closeout.md` before continuing closeout.
 3. Recalculate `git rev-parse main` and `git rev-parse HEAD`; later documentation, review, or verification commits will move HEAD beyond the implementation head captured here.
-4. Complete the separate Phase 2 authoritative-runtime plan, independent Phase 1 review, and final full quality gate in their planned closeout tasks. Record later review and final-head evidence without rewriting the historical Phase 1 execution checkboxes.
+4. Use `docs/superpowers/plans/2026-07-27-story-system-v3-phase2-authoritative-runtime.md` as a roadmap only. For the current demo, start with its Milestone 1 correctness work and defer persistent sessions, full v3 cutover, and production tooling until there is a concrete need.
 5. Keep runtime gameplay on v2 until the Phase 2 session API, runtime, frontend migration, and removal task pass their complete tests.
 6. Use a new temporary `--build-root` for strict compilation so generated revisions never write into `data/story_v3`.
 7. Do not push, merge, delete the branch, or remove the worktree until the user selects an integration option.

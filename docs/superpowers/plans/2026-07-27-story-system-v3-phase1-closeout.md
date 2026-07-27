@@ -8,6 +8,8 @@
 
 **Tech Stack:** Markdown, Git, Python 3.12, pytest, FastAPI/Pydantic/SQLAlchemy, Vue 3, TypeScript, Vite, Node test runner.
 
+> **Scope update (2026-07-27):** At the user's request, this demo closeout no longer requires a production-grade Phase 2 implementation plan or a new exhaustive full-branch review. Task 1 remains complete; Task 2 is replaced by a concise roadmap; Task 3 is deferred; Tasks 4 and 5 remain the active closeout steps.
+
 ---
 
 ## File Structure
