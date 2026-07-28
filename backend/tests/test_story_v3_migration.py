@@ -619,6 +619,27 @@ def test_migration_applies_known_story_repairs(tmp_path: Path):
     assert trust_effect.operation == "set"
     assert trust_effect.value == 3
 
+    assert [
+        effect.model_dump() for effect in _choice(story, "D_choice_09").effects
+    ] == [
+        {
+            "type": "modify_counter",
+            "counter": "half_cycles",
+            "operation": "add",
+            "value": 1,
+        }
+    ]
+    assert [
+        effect.model_dump() for effect in _choice(story, "H_choice_09").effects
+    ] == [
+        {
+            "type": "modify_counter",
+            "counter": "completed_cycles",
+            "operation": "add",
+            "value": 1,
+        }
+    ]
+
 
 def test_migration_uses_one_based_current_cycle_for_first_run_content(
     tmp_path: Path,

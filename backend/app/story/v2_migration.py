@@ -518,6 +518,24 @@ def _apply_project_repairs(
                     value=3,
                 )
             ]
+        elif choice.id == "D_choice_09":
+            effects = [
+                ModifyCounterEffect(
+                    type="modify_counter",
+                    counter="half_cycles",
+                    operation="add",
+                    value=1,
+                )
+            ]
+        elif choice.id == "H_choice_09":
+            effects = [
+                ModifyCounterEffect(
+                    type="modify_counter",
+                    counter="completed_cycles",
+                    operation="add",
+                    value=1,
+                )
+            ]
         elif choice.id == "S20_choice_01":
             effects = [
                 RestoreEntryAttributeEffect(

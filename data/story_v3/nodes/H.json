@@ -420,7 +420,14 @@
         "locked_reason": null,
         "locked_visibility": "show"
       },
-      "effects": [],
+      "effects": [
+        {
+          "counter": "completed_cycles",
+          "operation": "add",
+          "type": "modify_counter",
+          "value": 1
+        }
+      ],
       "hint": "跨过正门的瞬间，一切将回到起点",
       "id": "H_choice_09",
       "next": {

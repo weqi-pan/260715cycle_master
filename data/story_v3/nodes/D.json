@@ -433,7 +433,14 @@
         "locked_reason": null,
         "locked_visibility": "show"
       },
-      "effects": [],
+      "effects": [
+        {
+          "counter": "half_cycles",
+          "operation": "add",
+          "type": "modify_counter",
+          "value": 1
+        }
+      ],
       "hint": null,
       "id": "D_choice_09",
       "next": {
