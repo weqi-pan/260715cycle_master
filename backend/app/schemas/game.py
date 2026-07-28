@@ -118,8 +118,16 @@ class GameState(BaseModel):
     ) -> "GameState":
         """Return a validated copy aligned with the active v3 registries."""
 
-        if self.current_node_id not in node_ids:
-            raise ValueError(f"Unknown story node: {self.current_node_id}")
+        known_node_ids = set(node_ids)
+        referenced_node_ids = {
+            self.current_node_id,
+            *self.visited_nodes,
+            *self.persistent_nodes,
+        }
+        unknown_node_ids = referenced_node_ids - known_node_ids
+        if unknown_node_ids:
+            unknown = sorted(unknown_node_ids)[0]
+            raise ValueError(f"Unknown story node: {unknown}")
 
         normalized = self.model_copy(deep=True)
         normalized.player_attributes = {
@@ -144,22 +152,33 @@ class GameState(BaseModel):
             if key not in project.flags
         }
 
-        inventory: list[dict] = []
-        for entry in normalized.inventory:
+        def hydrate_item(entry: dict, *, location: str) -> dict:
             item_id = str(entry.get("id", ""))
             definition = project.items.get(item_id)
             if definition is None:
-                raise ValueError(f"Unknown inventory item: {item_id}")
-            inventory.append(
-                {
-                    **entry,
-                    "id": item_id,
-                    "name": definition.display_name,
-                    "discardable": definition.discardable,
-                    "cross_surface": definition.cross_surface,
-                }
-            )
-        normalized.inventory = inventory
+                raise ValueError(f"Unknown {location} item: {item_id}")
+            return {
+                **entry,
+                "id": item_id,
+                "name": definition.display_name,
+                "discardable": definition.discardable,
+                "cross_surface": definition.cross_surface,
+            }
+
+        normalized.inventory = [
+            hydrate_item(entry, location="inventory")
+            for entry in normalized.inventory
+        ]
+        normalized.persistent_nodes = {
+            node_id: {
+                **node_state,
+                "items": [
+                    hydrate_item(entry, location="persistent")
+                    for entry in node_state.get("items", [])
+                ],
+            }
+            for node_id, node_state in normalized.persistent_nodes.items()
+        }
         return normalized
 
 

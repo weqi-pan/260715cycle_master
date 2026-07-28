@@ -71,6 +71,27 @@ def test_normalized_state_rejects_unknown_current_node(canonical_v3_snapshot):
         )
 
 
+@pytest.mark.parametrize(
+    "state",
+    [
+        GameState(current_node_id="A", visited_nodes=["missing_node"]),
+        GameState(
+            current_node_id="A",
+            persistent_nodes={"missing_node": {"items": [], "dangers": []}},
+        ),
+    ],
+)
+def test_normalized_state_rejects_unknown_referenced_nodes(
+    canonical_v3_snapshot,
+    state,
+):
+    with pytest.raises(ValueError, match="Unknown story node"):
+        state.normalized(
+            canonical_v3_snapshot.project,
+            node_ids=canonical_v3_snapshot.nodes,
+        )
+
+
 def test_normalized_state_rejects_unknown_inventory_item(canonical_v3_snapshot):
     state = GameState(
         current_node_id="A",
@@ -78,6 +99,21 @@ def test_normalized_state_rejects_unknown_inventory_item(canonical_v3_snapshot):
     )
 
     with pytest.raises(ValueError, match="Unknown inventory item"):
+        state.normalized(
+            canonical_v3_snapshot.project,
+            node_ids=canonical_v3_snapshot.nodes,
+        )
+
+
+def test_normalized_state_rejects_unknown_persistent_item(canonical_v3_snapshot):
+    state = GameState(
+        current_node_id="A",
+        persistent_nodes={
+            "A": {"items": [{"id": "missing_item"}], "dangers": []},
+        },
+    )
+
+    with pytest.raises(ValueError, match="Unknown persistent item"):
         state.normalized(
             canonical_v3_snapshot.project,
             node_ids=canonical_v3_snapshot.nodes,
@@ -105,6 +141,41 @@ def test_normalized_state_hydrates_item_metadata_from_v3_project(
         "count": 2,
         "discardable": definition.discardable,
         "cross_surface": definition.cross_surface,
+    }
+
+
+def test_normalized_state_hydrates_persistent_items_from_v3_project(
+    canonical_v3_snapshot,
+):
+    state = GameState(
+        current_node_id="A",
+        persistent_nodes={
+            "E": {
+                "items": [
+                    {"id": "item_qing_coin", "name": "stale", "count": 1},
+                ],
+                "dangers": [{"id": "danger-1"}],
+            },
+        },
+    )
+
+    normalized = state.normalized(
+        canonical_v3_snapshot.project,
+        node_ids=canonical_v3_snapshot.nodes,
+    )
+
+    definition = canonical_v3_snapshot.project.items["item_qing_coin"]
+    assert normalized.persistent_nodes["E"] == {
+        "items": [
+            {
+                "id": "item_qing_coin",
+                "name": definition.display_name,
+                "count": 1,
+                "discardable": definition.discardable,
+                "cross_surface": definition.cross_surface,
+            },
+        ],
+        "dangers": [{"id": "danger-1"}],
     }
 
 
