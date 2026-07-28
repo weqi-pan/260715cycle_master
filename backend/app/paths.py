@@ -62,7 +62,7 @@ TESTS_DIR = PROJECT_ROOT / "tests"              # E2E 测试
 _required = {
     "BACKEND_DIR": BACKEND_DIR,
     "DATA_DIR": DATA_DIR,
-    "STORY_DATA_V2_DIR": STORY_DATA_V2_DIR,
+    "STORY_V3_DIR": STORY_V3_DIR,
 }
 _missing = [f"{name}: {path}" for name, path in _required.items() if not path.exists()]
 if _missing:

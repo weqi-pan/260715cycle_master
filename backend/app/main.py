@@ -5,7 +5,7 @@ FastAPI 应用入口。
     1. 创建 FastAPI 应用实例，配置 CORS 和静态文件挂载
     2. 注册三个路由模块（game / saves / editor）
     3. 挂载 assets/ 静态资源目录（背景图、角色立绘、音频文件）
-    4. @app.on_event("startup") 启动时初始化数据库表结构
+    4. @app.on_event("startup") 启动时加载 v3 快照并初始化数据库表结构
     5. 提供 /api/health 健康检查端点
 """
 
@@ -49,7 +49,8 @@ app.include_router(editor.router)
 
 @app.on_event("startup")
 def on_startup():
-    """应用启动回调：自动建表，确保数据库结构是最新的。"""
+    """严格加载 v3 快照后自动建表；任一步失败都阻止应用启动。"""
+    game.story_v3.refresh()
     init_db()
 
 

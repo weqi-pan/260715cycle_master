@@ -19,16 +19,19 @@
 # backend/app/routers/game.py
 from fastapi import APIRouter, HTTPException
 from ..engine.engine import GameEngine
+from ..engine.story_v3_repository import StoryV3Repository
 from ..engine.story_v2_loader import StoryV2Loader
 from ..domain.items import item_definition
 from ..engine.turn_store import TurnStore
+from ..paths import STORY_BUILD_DIR, STORY_V3_DIR
 from ..schemas.game import Frame, ChooseRequest, GameState, NodeData, TurnRequest
 
 router = APIRouter(prefix="/api/game", tags=["game"])
 
 # ── 模块级单例 ──────────────────────────────────────────────
-# v2 是唯一剧情数据源；SQLite 仅保存玩家存档。
+# v3 canonical snapshot 在启动时严格加载；游戏端点仍由后续任务切换。
 engine = GameEngine()
+story_v3 = StoryV3Repository(STORY_V3_DIR, STORY_BUILD_DIR)
 story_v2 = StoryV2Loader()
 turns = TurnStore()
 
