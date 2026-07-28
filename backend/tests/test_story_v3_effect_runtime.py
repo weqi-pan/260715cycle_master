@@ -417,3 +417,15 @@ def test_mismatched_effect_discriminator_is_rejected(executor, state):
 
     with pytest.raises(EffectExecutionError, match="Unsupported v3 effect type"):
         executor.apply([effect], state, node_id="A")
+
+
+def test_missing_effect_discriminator_is_rejected(executor, state):
+    effect = ModifyAttributeEffect.model_construct(
+        attribute="courage",
+        operation="add",
+        value=1,
+        clamp=True,
+    )
+
+    with pytest.raises(EffectExecutionError, match="Unsupported v3 effect type"):
+        executor.apply([effect], state, node_id="A")

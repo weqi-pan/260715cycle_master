@@ -79,9 +79,10 @@ class EffectExecutor:
             raise EffectExecutionError(
                 f"Unsupported v3 effect: {type(effect).__name__}"
             )
-        if effect.type != expected_type:
+        actual_type = getattr(effect, "type", None)
+        if actual_type != expected_type:
             raise EffectExecutionError(
-                f"Unsupported v3 effect type: {effect.type}"
+                f"Unsupported v3 effect type: {actual_type}"
             )
 
         if isinstance(effect, ModifyAttributeEffect):
