@@ -29,9 +29,32 @@
 """
 
 # backend/app/engine/condition_eval.py
+import operator
 import re
+
 from app.schemas.game import GameState
+from app.schemas.story_v3 import (
+    AllCondition,
+    AnyCondition,
+    AtNodeCondition,
+    AttributeCompareCondition,
+    ConditionV3,
+    CounterCompareCondition,
+    FlagEqualsCondition,
+    ItemCondition,
+    NotCondition,
+)
 from app.domain.items import ITEM_NAMES as CANONICAL_ITEM_NAMES
+
+
+_COMPARE_OPERATORS = {
+    "lt": operator.lt,
+    "lte": operator.le,
+    "eq": operator.eq,
+    "ne": operator.ne,
+    "gte": operator.ge,
+    "gt": operator.gt,
+}
 
 
 class ConditionEvaluator:
@@ -59,22 +82,49 @@ class ConditionEvaluator:
     # 条件求值（evaluate / check）
     # ============================================================
 
-    def check(self, condition: str | None, state: GameState) -> bool:
-        """
-        条件检查入口。
+    def check(self, condition: ConditionV3 | None, state: GameState) -> bool:
+        """Recursively evaluate a typed v3 condition against runtime state."""
 
-        空或 None 条件视为无约束，始终返回 True。
-        非空条件委托给 evaluate() 递归求值。
-
-        参数:
-            condition: 条件表达式字符串（可为 None）
-            state:     当前游戏状态
-        返回:
-            条件是否满足
-        """
-        if condition is None or condition.strip() == "":
+        if condition is None:
             return True
-        return self.evaluate(condition, state)
+        if isinstance(condition, str):
+            # Temporary compatibility for v2 callers until the runtime cutover.
+            if condition.strip() == "":
+                return True
+            return self.evaluate(condition, state)
+        if isinstance(condition, AttributeCompareCondition):
+            return _COMPARE_OPERATORS[condition.operator](
+                state.player_attributes[condition.attribute],
+                condition.value,
+            )
+        if isinstance(condition, FlagEqualsCondition):
+            return state.flags.get(condition.flag) == condition.value
+        if isinstance(condition, ItemCondition):
+            present = any(
+                item.get("id") == condition.item_id
+                and item.get("count", item.get("quantity", 1)) > 0
+                for item in state.inventory
+            )
+            return present is condition.present
+        if isinstance(condition, CounterCompareCondition):
+            counters = {
+                "completed_cycles": state.cycle_count,
+                "current_cycle": state.cycle_count + 1,
+                "half_cycles": state.half_cycle_count,
+            }
+            return _COMPARE_OPERATORS[condition.operator](
+                counters[condition.counter],
+                condition.value,
+            )
+        if isinstance(condition, AtNodeCondition):
+            return state.current_node_id == condition.node_id
+        if isinstance(condition, AllCondition):
+            return all(self.check(item, state) for item in condition.conditions)
+        if isinstance(condition, AnyCondition):
+            return any(self.check(item, state) for item in condition.conditions)
+        if isinstance(condition, NotCondition):
+            return not self.check(condition.condition, state)
+        raise TypeError(f"Unsupported v3 condition: {type(condition).__name__}")
 
     def evaluate(self, condition: str, state: GameState) -> bool:
         """
