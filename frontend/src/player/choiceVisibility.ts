@@ -1,8 +1,16 @@
-interface ChoiceAvailability {
+interface ChoiceEntry {
+  id: string
+  text: string
+  next_node_id: string
   available: boolean
 }
 
-/** 后端是权威来源；前端仍防御性过滤旧响应中的锁定选项。 */
-export function visibleChoices<T extends ChoiceAvailability>(choices: readonly T[]): T[] {
-  return choices.filter(choice => choice.available)
+/** The backend authors visibility; this only rejects malformed response entries. */
+export function visibleChoices<T extends ChoiceEntry>(choices: readonly T[]): T[] {
+  return choices.filter(choice => Boolean(
+    choice.id
+    && choice.text
+    && choice.next_node_id
+    && typeof choice.available === 'boolean',
+  ))
 }

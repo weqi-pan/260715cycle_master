@@ -27,10 +27,20 @@ import re
 
 from .graph import GraphBundle, ChoiceData
 from .condition_eval import ConditionEvaluator
+from .content_v3 import entry_blocks, visible_blocks
+from .effects_v3 import EffectExecutor
 from ..domain.items import item_definition
 from ..domain.npcs import NPC_NAMES
 from .special_router import SpecialRouter
-from ..schemas.game import GameState, Frame, NodeData, ChoiceResult, PersistentFound
+from ..schemas.game import (
+    ChoiceResult,
+    ContentBlockView,
+    Frame,
+    GameState,
+    NodeData,
+    PersistentFound,
+)
+from ..schemas.story_v3 import StoryChoiceV3, StoryNodeV3, StorySnapshotV3
 
 
 class GameEngine:
@@ -61,6 +71,201 @@ class GameEngine:
         """初始化引擎，创建条件求值器和特殊路由器。"""
         self.evaluator = ConditionEvaluator()
         self.special_router = SpecialRouter(self.evaluator)
+
+    # ============================================================
+    # Story System v3 runtime
+    # ============================================================
+
+    def start(self, snapshot: StorySnapshotV3) -> Frame:
+        """Start a new game from the v3 project's declared entry node."""
+
+        return self._v3_frame(snapshot, GameState.new(snapshot.project))
+
+    def resume(self, snapshot: StorySnapshotV3, state: GameState) -> Frame:
+        """Validate a persisted v3 state and render its current node."""
+
+        normalized = state.normalized(
+            snapshot.project,
+            node_ids=snapshot.nodes,
+        )
+        return self._v3_frame(snapshot, normalized)
+
+    def choose(
+        self,
+        snapshot: StorySnapshotV3,
+        state: GameState,
+        *,
+        node_id: str,
+        choice_id: str,
+    ) -> Frame:
+        """Execute one ordinary authored v3 choice atomically."""
+
+        if node_id not in snapshot.nodes:
+            raise ValueError(f"Node '{node_id}' not found")
+        normalized = state.normalized(
+            snapshot.project,
+            node_ids=snapshot.nodes,
+        )
+        if normalized.current_node_id != node_id:
+            raise ValueError(
+                f"State node mismatch: path='{node_id}', "
+                f"state='{normalized.current_node_id}'"
+            )
+
+        node = snapshot.nodes[node_id]
+        choice = self._find_v3_choice(node, choice_id)
+        if not self.evaluator.check(choice.availability.condition, normalized):
+            raise ValueError(f"Choice is locked: {choice.id}")
+        if not self._repeat_available(choice, normalized):
+            raise ValueError(
+                f"Choice already selected under repeat policy: {choice.id}"
+            )
+        if choice.next.target not in snapshot.nodes:
+            raise ValueError(f"Target node '{choice.next.target}' not found")
+
+        updated = EffectExecutor(
+            snapshot.project,
+            node_ids=snapshot.nodes,
+        ).apply(choice.effects, normalized, node_id=node_id)
+        self._record_choice(choice, updated)
+
+        if node_id not in updated.visited_nodes:
+            updated.visited_nodes.append(node_id)
+        if choice.next.mode != "stay" and choice.next.target != node_id:
+            updated.visit_id += 1
+        updated.current_node_id = choice.next.target
+
+        results = visible_blocks(choice.result, updated, self.evaluator)
+        return self._v3_frame(snapshot, updated, result_blocks=results)
+
+    def discard(
+        self,
+        snapshot: StorySnapshotV3,
+        state: GameState,
+        *,
+        item_id: str,
+    ) -> Frame:
+        """Discard one registered, discardable item without advancing time."""
+
+        definition = snapshot.project.items.get(item_id)
+        if definition is None:
+            raise ValueError(f"Unknown item: {item_id}")
+        if not definition.discardable:
+            raise ValueError(f"Item cannot be discarded: {item_id}")
+
+        updated = state.normalized(
+            snapshot.project,
+            node_ids=snapshot.nodes,
+        )
+        item = next(
+            (entry for entry in updated.inventory if entry.get("id") == item_id),
+            None,
+        )
+        if item is None:
+            raise ValueError(f"Item not in inventory: {item_id}")
+        count = int(item.get("count", item.get("quantity", 1)))
+        if count > 1:
+            item["count"] = count - 1
+            item.pop("quantity", None)
+        else:
+            updated.inventory = [
+                entry
+                for entry in updated.inventory
+                if entry.get("id") != item_id
+            ]
+        return self._v3_frame(snapshot, updated)
+
+    def _v3_frame(
+        self,
+        snapshot: StorySnapshotV3,
+        state: GameState,
+        *,
+        result_blocks: list[ContentBlockView] | None = None,
+    ) -> Frame:
+        node = snapshot.nodes.get(state.current_node_id)
+        if node is None:
+            raise ValueError(f"Node '{state.current_node_id}' not found")
+        rendered_entry = entry_blocks(node, state, self.evaluator)
+        node_state = state.persistent_nodes.get(node.id, {})
+        return Frame(
+            node=NodeData(
+                id=node.id,
+                name=node.meta.name,
+                node_type=node.meta.node_type,
+                position=node.meta.position,
+                time_label=node.meta.time_label,
+                content="\n\n".join(block.text for block in rendered_entry),
+                background=self._v3_asset_path(snapshot, node.scene.background_id),
+                ambient=self._v3_asset_path(snapshot, node.scene.ambient_id),
+                color_palette=node.scene.palette,
+                entry_blocks=rendered_entry,
+            ),
+            state=state,
+            available_choices=self._v3_choices(node, state),
+            persistent_found=PersistentFound(
+                items=list(node_state.get("items", [])),
+                dangers=list(node_state.get("dangers", [])),
+            ),
+            result_blocks=result_blocks or [],
+            speaker_names={
+                npc_id: definition.display_name
+                for npc_id, definition in snapshot.project.npcs.items()
+            },
+        )
+
+    def _v3_choices(
+        self,
+        node: StoryNodeV3,
+        state: GameState,
+    ) -> list[ChoiceResult]:
+        results: list[ChoiceResult] = []
+        for choice in node.choices:
+            if not self._repeat_available(choice, state):
+                continue
+            available = self.evaluator.check(
+                choice.availability.condition,
+                state,
+            )
+            if not available and choice.availability.locked_visibility == "hide":
+                continue
+            results.append(
+                ChoiceResult(
+                    id=choice.id,
+                    text=choice.text,
+                    short_text=choice.short_text,
+                    next_node_id=choice.next.target,
+                    available=available,
+                    reason=(
+                        None
+                        if available
+                        else choice.availability.locked_reason
+                    ),
+                    source="static",
+                )
+            )
+        return results
+
+    @staticmethod
+    def _find_v3_choice(
+        node: StoryNodeV3,
+        choice_id: str,
+    ) -> StoryChoiceV3:
+        for choice in node.choices:
+            if choice.id == choice_id:
+                return choice
+        raise ValueError(f"Choice '{choice_id}' not found in node '{node.id}'")
+
+    @staticmethod
+    def _v3_asset_path(
+        snapshot: StorySnapshotV3,
+        asset_id: str | None,
+    ) -> str | None:
+        if asset_id is None:
+            return None
+        asset = snapshot.assets.assets.get(asset_id)
+        if asset is None:
+            raise ValueError(f"Asset '{asset_id}' not found")
+        return asset.path
 
     # 进入 A/E 本身不足以证明完成循环。只有明确的拓扑入口才产生领域事件。
     # v2 Turn 契约接入后，这两个集合将由 NextAction.navigation 取代。

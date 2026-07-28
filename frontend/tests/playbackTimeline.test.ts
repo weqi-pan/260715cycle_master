@@ -59,10 +59,19 @@ test('typing update changes only the active block and keeps history', () => {
   assert.equal(initial[1].displayed_text, '')
 })
 
-test('choice list excludes unavailable choices defensively', () => {
+test('choice list preserves server-authored visible locked choices', () => {
   const choices = [
     { id: 'open', text: '可选', next_node_id: 'A', available: true, source: 'static' as const },
     { id: 'locked', text: '不可选', next_node_id: 'A', available: false, source: 'static' as const },
+  ]
+
+  assert.deepEqual(visibleChoices(choices).map(choice => choice.id), ['open', 'locked'])
+})
+
+test('choice list drops malformed response entries defensively', () => {
+  const choices = [
+    { id: 'open', text: 'Open', next_node_id: 'A', available: true },
+    { id: '', text: 'Malformed', next_node_id: 'A', available: true },
   ]
 
   assert.deepEqual(visibleChoices(choices).map(choice => choice.id), ['open'])
