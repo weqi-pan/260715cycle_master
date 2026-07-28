@@ -105,6 +105,7 @@ class GameEngine:
         normalized = state.normalized(
             snapshot.project,
             node_ids=snapshot.nodes,
+            clamp_attributes=False,
         )
         if normalized.current_node_id != node_id:
             raise ValueError(
@@ -156,6 +157,7 @@ class GameEngine:
         updated = state.normalized(
             snapshot.project,
             node_ids=snapshot.nodes,
+            clamp_attributes=False,
         )
         item = next(
             (entry for entry in updated.inventory if entry.get("id") == item_id),

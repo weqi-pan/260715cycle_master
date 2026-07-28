@@ -440,3 +440,53 @@ def test_canonical_ordinary_stay_choice_executes_directly_from_v3(
     assert frame.state.visit_id == 0
     assert frame.state.flags["exploring_surroundings"] is True
     assert frame.result_blocks
+
+
+def test_choose_preserves_unclamped_attribute_values_between_turns():
+    snapshot = make_snapshot(
+        a_choices=[
+            make_choice(
+                "raise_insight",
+                effects=[
+                    {
+                        "type": "modify_attribute",
+                        "attribute": "insight",
+                        "operation": "set",
+                        "value": 15,
+                        "clamp": False,
+                    }
+                ],
+            ),
+            make_choice("observe"),
+        ]
+    )
+    engine = GameEngine()
+
+    raised = engine.choose(
+        snapshot,
+        GameState.new(snapshot.project),
+        node_id="A",
+        choice_id="raise_insight",
+    )
+    observed = engine.choose(
+        snapshot,
+        raised.state,
+        node_id="A",
+        choice_id="observe",
+    )
+
+    assert observed.state.player_attributes["insight"] == 15
+
+
+def test_discard_preserves_unclamped_attribute_values():
+    snapshot = make_snapshot()
+    state = GameState.new(snapshot.project).model_copy(
+        update={
+            "player_attributes": {"insight": 15},
+            "inventory": [{"id": "token", "count": 1}],
+        }
+    )
+
+    frame = GameEngine().discard(snapshot, state, item_id="token")
+
+    assert frame.state.player_attributes["insight"] == 15
