@@ -50,7 +50,7 @@ app.include_router(editor.router)
 @app.on_event("startup")
 def on_startup():
     """严格加载 v3 快照后自动建表；任一步失败都阻止应用启动。"""
-    game.story_v3.refresh()
+    game.story.refresh()
     init_db()
 
 

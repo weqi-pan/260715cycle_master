@@ -3,8 +3,15 @@
 import pytest
 
 from app.engine.engine import GameEngine
+from app.engine.turn_store import TurnStore
+from app.routers import game
 from app.schemas.game import GameState, TurnRequest
-from app.routers.game import discard_inventory_item, turns
+
+
+@pytest.fixture(autouse=True)
+def configure_game_runtime(monkeypatch, canonical_v3_snapshot):
+    monkeypatch.setattr(game.story, "_snapshot", canonical_v3_snapshot)
+    monkeypatch.setattr(game, "turns", TurnStore())
 
 
 def test_add_item_uses_canonical_metadata():
@@ -45,8 +52,11 @@ def test_discard_inventory_item_is_validated_by_server():
         }],
     )
 
-    turn_id = turns.issue(state)
-    frame = discard_inventory_item("item_qing_coin", TurnRequest(turn_id=turn_id))
+    turn_id = game.turns.issue(state)
+    frame = game.discard_inventory_item(
+        "item_qing_coin",
+        TurnRequest(turn_id=turn_id),
+    )
 
     assert frame.state.inventory[0]["count"] == 1
 
@@ -58,8 +68,9 @@ def test_non_discardable_item_is_rejected_by_server():
     )
 
     with pytest.raises(Exception, match="cannot be discarded"):
-        discard_inventory_item(
-            "item_old_key", TurnRequest(turn_id=turns.issue(state))
+        game.discard_inventory_item(
+            "item_old_key",
+            TurnRequest(turn_id=game.turns.issue(state)),
         )
 
 

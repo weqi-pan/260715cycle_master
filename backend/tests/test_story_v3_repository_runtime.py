@@ -106,7 +106,7 @@ def test_application_startup_loads_v3_before_initializing_database(monkeypatch):
 
     events: list[str] = []
     monkeypatch.setattr(
-        main.game.story_v3,
+        main.game.story,
         "refresh",
         lambda: events.append("story_v3"),
     )
@@ -137,7 +137,7 @@ def test_application_startup_propagates_story_compile_failure(monkeypatch):
         nonlocal database_initialized
         database_initialized = True
 
-    monkeypatch.setattr(main.game.story_v3, "refresh", fail_refresh)
+    monkeypatch.setattr(main.game.story, "refresh", fail_refresh)
     monkeypatch.setattr(main, "init_db", record_database_initialization)
 
     with pytest.raises(StoryCompileError) as raised:

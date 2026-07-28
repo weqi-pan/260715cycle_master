@@ -1,10 +1,13 @@
 """v2 JSON 编辑器仓库测试。"""
 
 import json
+from unittest.mock import Mock
 
 import pytest
 
 from app.editor.story_repository import StoryV2Editor
+from app.routers import editor as editor_router
+from app.routers import game
 
 
 def write_node(root, node_id: str, target_id: str):
@@ -52,6 +55,17 @@ def test_editor_updates_node_metadata_without_flattening_content_blocks(editor):
     assert result["status"] == "updated"
     assert raw["meta"]["name"] == "新名称"
     assert raw["entry_sequences"][0]["blocks"][0]["id"] == "A.entry.01"
+
+
+def test_editor_router_write_does_not_refresh_game_runtime(editor, monkeypatch):
+    monkeypatch.setattr(editor_router, "repository", editor)
+    refresh = Mock(side_effect=AssertionError("v3 runtime refresh was called"))
+    monkeypatch.setattr(game.story, "refresh", refresh)
+
+    result = editor_router.save_node({"id": "A", "name": "Updated", "position": 3})
+
+    assert result["status"] == "updated"
+    refresh.assert_not_called()
 
 
 def test_editor_choice_write_updates_v2_file(editor):

@@ -35,4 +35,4 @@ class TurnStore:
         if state is None:
             return
         with self._lock:
-            self._states[turn_id] = state.model_copy(deep=True)
+            self._states.setdefault(turn_id, state.model_copy(deep=True))

@@ -2,7 +2,7 @@
 
 from app.engine.condition_eval import ConditionEvaluator
 from app.engine.story_v2_loader import StoryV2Loader
-from app.routers.game import start_game
+from app.routers import game
 from app.schemas.game import GameState
 
 
@@ -75,8 +75,13 @@ def test_v2_is_a_complete_runtime_graph_source():
     assert graph["K"].warp_config["warp_targets"] == list("ABCDEFGH")
 
 
-def test_new_game_starts_without_a_story_database_session():
-    frame = start_game()
+def test_new_game_starts_from_v3_without_a_story_database_session(
+    monkeypatch,
+    canonical_v3_snapshot,
+):
+    monkeypatch.setattr(game.story, "_snapshot", canonical_v3_snapshot)
+
+    frame = game.start_game()
 
     assert frame.node.id == "A"
     assert frame.node.entry_blocks

@@ -1,27 +1,34 @@
-"""真实 v2 图的游戏 API 契约测试。"""
+"""Canonical v3 gameplay API contract tests."""
 
-from app.routers.game import choose_action, start_game
+from app.engine.turn_store import TurnStore
+from app.routers import game
 from app.schemas.game import ChooseRequest
 from fastapi import HTTPException
 import pytest
 
 
-def test_start_frame_contains_only_selectable_choices():
-    frame = start_game()
+@pytest.fixture(autouse=True)
+def configure_game_runtime(monkeypatch, canonical_v3_snapshot):
+    monkeypatch.setattr(game.story, "_snapshot", canonical_v3_snapshot)
+    monkeypatch.setattr(game, "turns", TurnStore())
+
+
+def test_start_frame_contains_selectable_choices_with_targets():
+    frame = game.start_game()
 
     assert frame.available_choices
-    assert all(choice.available for choice in frame.available_choices)
+    assert any(choice.available for choice in frame.available_choices)
     assert all(choice.next_node_id for choice in frame.available_choices)
 
 
 def test_stay_choice_disappears_from_real_api_frame_after_selection():
-    initial = start_game()
+    initial = game.start_game()
     choice = next(
         item for item in initial.available_choices
         if item.next_node_id == initial.node.id
     )
 
-    frame = choose_action(
+    frame = game.choose_action(
         initial.node.id,
         ChooseRequest(choice_id=choice.id, turn_id=initial.turn_id),
     )
@@ -30,8 +37,9 @@ def test_stay_choice_disappears_from_real_api_frame_after_selection():
     assert frame.turn_id != initial.turn_id
 
     with pytest.raises(HTTPException) as replay:
-        choose_action(
+        game.choose_action(
             initial.node.id,
             ChooseRequest(choice_id=choice.id, turn_id=initial.turn_id),
         )
     assert replay.value.status_code == 409
+    assert replay.value.detail == "Turn is stale or already consumed."

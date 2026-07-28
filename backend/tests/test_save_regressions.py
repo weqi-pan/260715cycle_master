@@ -1,11 +1,9 @@
 """存档与恢复链路回归测试。"""
 
-from app.models.story import StoryNode
-from app.routers.game import _state_frame
+from app.engine.engine import GameEngine
 from app.routers.saves import create_save, delete_save, load_save, update_save
 from app.models.save import NodePersistentState, Save
 from app.schemas.game import GameState
-from app.engine.graph import GraphBundle
 
 
 def test_save_round_trip_includes_persistent_nodes(isolated_db_session):
@@ -58,16 +56,12 @@ def test_update_save_replaces_removed_persistent_nodes(isolated_db_session):
     assert load_save(created["id"], isolated_db_session).persistent_nodes == {}
 
 
-def test_resume_frame_uses_saved_node_without_advancing_state():
-    node_a = StoryNode(id="A", name="A", position=0, node_type="main", content="A")
-    node_e = StoryNode(id="E", name="E", position=100, node_type="main", content="E")
-    graph = {
-        "A": GraphBundle(node_a, []),
-        "E": GraphBundle(node_e, []),
-    }
+def test_resume_frame_uses_saved_node_without_advancing_state(
+    canonical_v3_snapshot,
+):
     state = GameState(current_node_id="E", cycle_count=3)
 
-    frame = _state_frame(graph, state)
+    frame = GameEngine().resume(canonical_v3_snapshot, state)
 
     assert frame.node.id == "E"
     assert frame.state.current_node_id == "E"

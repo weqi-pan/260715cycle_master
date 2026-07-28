@@ -1,198 +1,153 @@
-"""
-游戏运行时 API 路由。
+"""Gameplay API backed exclusively by the Story System v3 runtime."""
 
-提供游戏核心交互所需的所有 REST 端点。
-
-端点列表：
-    GET  /api/game/start              — 开始新游戏（初始化状态 + 加载起始节点 A）
-    POST /api/game/choose/{node_id}   — 在当前节点选择分支，推进到下一帧
-
-数据流：
-    前端                             后端
-    ────                             ────
-    GET /api/game/start ──────────→ 加载图 → 创建初始 GameState → 返回起始 Frame
-    POST /choose/A {choice,state} → 引擎 process_choice() → 返回下一 Frame
-    POST /choose/B {choice,state} → 引擎 process_choice() → 返回下一 Frame
-    ...（前端持有 state，每次请求回传）
-"""
-
-# backend/app/routers/game.py
 from fastapi import APIRouter, HTTPException
+
+from ..engine.effects_v3 import EffectExecutionError
 from ..engine.engine import GameEngine
 from ..engine.story_v3_repository import StoryV3Repository
-from ..engine.story_v2_loader import StoryV2Loader
-from ..domain.items import item_definition
-from ..domain.npcs import NPC_NAMES
 from ..engine.turn_store import TurnStore
 from ..paths import STORY_BUILD_DIR, STORY_V3_DIR
-from ..schemas.game import Frame, ChooseRequest, GameState, NodeData, TurnRequest
+from ..schemas.game import ChooseRequest, Frame, GameState, TurnRequest
+
 
 router = APIRouter(prefix="/api/game", tags=["game"])
 
-# ── 模块级单例 ──────────────────────────────────────────────
-# v3 canonical snapshot 在启动时严格加载；游戏端点仍由后续任务切换。
+story = StoryV3Repository(STORY_V3_DIR, STORY_BUILD_DIR)
 engine = GameEngine()
-story_v3 = StoryV3Repository(STORY_V3_DIR, STORY_BUILD_DIR)
-story_v2 = StoryV2Loader()
 turns = TurnStore()
 
-
-def _get_graph():
-    """
-    从启动时严格校验过的 v2 节点构建完整图结构。
-    返回:
-        {node_id: GraphBundle} 字典
-    """
-    return story_v2.load_graph()
+_STALE_TURN_DETAIL = "Turn is stale or already consumed."
 
 
-def _state_frame(graph: dict, state: GameState) -> Frame:
-    """
-    构造起始帧（新游戏或加载存档后进入游戏时使用）。
+def _runtime_error(exc: ValueError) -> HTTPException | None:
+    """Map known v3 validation failures to stable client responses."""
 
-    与 process_choice 不同，_start_frame 不需要 choice_id——
-    它直接将玩家放置在节点 A，并解析 A 的所有可用选项。
+    detail = str(exc)
+    if isinstance(exc, EffectExecutionError):
+        if detail.startswith("Inventory removal would go below zero:"):
+            return HTTPException(status_code=400, detail=detail)
+        if detail.startswith("Missing entry attribute:"):
+            return HTTPException(status_code=409, detail=detail)
+        return None
 
-    参数:
-        graph: 完整图字典
-        state: 初始游戏状态
-    返回:
-        起始 Frame（节点 A + 初始状态 + 可用选项）
-    """
-    if state.current_node_id not in graph:
-        raise ValueError(f"Node '{state.current_node_id}' not found")
-    bundle = graph[state.current_node_id]
-    available = engine.resolve_available_choices(graph, bundle.id, state)
-    return Frame(
-        node=NodeData(
-            id=bundle.id,
-            name=bundle.name,
-            node_type=bundle.node_type,
-            position=bundle.position,
-            time_label=bundle.time_label,
-            content=engine._resolve_content(bundle, state),
-            speaker=bundle.speaker,
-            background=bundle.background,
-            ambient=bundle.ambient,
-            color_palette=bundle.color_palette,
-            dialogue_lines=bundle.dialogue_lines,
-            entry_blocks=story_v2.entry_blocks(bundle.id, state, engine.evaluator),
-        ),
-        state=state,
-        available_choices=available,
-        speaker_names=dict(NPC_NAMES),
+    not_found_prefixes = (
+        "Unknown story node:",
+        "Unknown inventory item:",
+        "Unknown persistent item:",
+        "Unknown item:",
+        "Item not in inventory:",
+        "Node '",
+        "Choice '",
+    )
+    conflict_prefixes = (
+        "State node mismatch:",
+        "Choice already selected under repeat policy:",
+        "Terminal node has no exits:",
+        "Crossing interaction limit reached:",
+    )
+    bad_request_prefixes = (
+        "Choice is locked:",
+        "Item cannot be discarded:",
+        "Shortcut choice requires shortcut routing:",
+        "Shortcut entry condition not met",
+        "Shortcut target must be exit node:",
+        "Shortcut entry must come from:",
+        "Warp choice requires warp routing:",
+        "Warp entry condition not met",
+        "Warp target is not allowed:",
     )
 
+    if detail.startswith(not_found_prefixes):
+        status_code = 404
+    elif detail.startswith(conflict_prefixes):
+        status_code = 409
+    elif detail.startswith(bad_request_prefixes):
+        status_code = 400
+    else:
+        return None
+    return HTTPException(status_code=status_code, detail=detail)
 
-# ============================================================
-# 端点实现
-# ============================================================
+
+def _consume_turn(turn_id: str) -> GameState:
+    state = turns.consume(turn_id)
+    if state is None:
+        raise HTTPException(status_code=409, detail=_STALE_TURN_DETAIL)
+    return state
+
 
 @router.get("/start", response_model=Frame)
-def start_game():
-    """
-    开始新游戏。
-
-    创建初始 GameState（所有属性默认值），加载图结构，
-    返回起始节点 A 的完整 Frame。
-
-    返回:
-        Frame: 包含节点 A 的数据、初始 GameState 和可用选项列表
-
-    前端调用时机:
-        - 用户点击"新游戏"
-        - 用户加载存档后（由前端构造 GameState 调用 choose 而非此接口）
-    """
-    graph = _get_graph()
-    state = GameState(current_node_id="A")
-    frame = _state_frame(graph, state)
+def start_game() -> Frame:
+    frame = engine.start(story.snapshot)
     frame.turn_id = turns.issue(frame.state)
     return frame
 
 
 @router.post("/resume", response_model=Frame)
-def resume_game(state: GameState):
-    """根据完整存档状态重建当前节点画面，不推进剧情、不重置到 A。"""
-    graph = _get_graph()
+def resume_game(state: GameState) -> Frame:
+    snapshot = story.snapshot
     try:
-        frame = _state_frame(graph, state)
-        frame.turn_id = turns.issue(frame.state)
-        return frame
+        frame = engine.resume(snapshot, state)
     except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc))
+        mapped = _runtime_error(exc)
+        if mapped is None:
+            raise
+        raise mapped from exc
+    frame.state.entry_attributes = {
+        key: frame.state.player_attributes[key]
+        for key in snapshot.project.attributes
+    } | frame.state.entry_attributes
+    frame.turn_id = turns.issue(frame.state)
+    return frame
 
 
 @router.post("/choose/{node_id}", response_model=Frame)
-def choose_action(node_id: str, req: ChooseRequest):
-    """
-    玩家选择分支选项。
-
-    接收玩家在当前节点的选择 ID 和客户端当前的 GameState，
-    引擎处理后返回下一帧完整画面。
-
-    路径参数:
-        node_id: 玩家当前所在节点 ID（如 "A", "B", "S5"）
-
-    请求体:
-        choice_id: 玩家选择的选项 ID（如 "A_choice_1" 或 "__warp_K_enter"）
-        state:     客户端当前游戏状态
-
-    返回:
-        Frame: 下一帧的完整数据（新节点 + 更新后的状态 + 可用选项）
-
-    错误:
-        400 Bad Request — choice_id 不存在或条件不满足
-
-    前端调用时机:
-        - 每次玩家在选项列表中做出选择时
-        - 加载存档后进入游戏时（前端将存档还原为 GameState 后调用此接口）
-    """
-    graph = _get_graph()
-    state = turns.consume(req.turn_id)
-    if state is None:
-        raise HTTPException(status_code=409, detail="Turn is stale or unknown")
+def choose_action(node_id: str, req: ChooseRequest) -> Frame:
+    state = _consume_turn(req.turn_id)
+    original_state = state.model_copy(deep=True)
     try:
-        frame = engine.process_choice(graph, node_id, req.choice_id, state)
-        frame.node.entry_blocks = story_v2.entry_blocks(
-            frame.node.id, frame.state, engine.evaluator
+        frame = engine.choose(
+            story.snapshot,
+            state,
+            node_id=node_id,
+            choice_id=req.choice_id,
         )
-        frame.result_blocks = story_v2.result_blocks(
-            node_id, req.choice_id, frame.state, engine.evaluator
-        )
-        frame.turn_id = turns.issue(frame.state, req.turn_id)
-        return frame
-    except ValueError as e:
-        turns.restore(req.turn_id, state)
-        raise HTTPException(status_code=400, detail=str(e))
+    except ValueError as exc:
+        turns.restore(req.turn_id, original_state)
+        mapped = _runtime_error(exc)
+        if mapped is None:
+            raise
+        raise mapped from exc
+    except Exception:
+        turns.restore(req.turn_id, original_state)
+        raise
+    frame.turn_id = turns.issue(
+        frame.state,
+        previous_turn_id=req.turn_id,
+    )
+    return frame
 
 
 @router.post("/inventory/discard/{item_id}", response_model=Frame)
-def discard_inventory_item(item_id: str, req: TurnRequest):
-    """由服务端校验并丢弃一件道具，返回同节点的新 Frame。"""
-    state = turns.consume(req.turn_id)
-    if state is None:
-        raise HTTPException(status_code=409, detail="Turn is stale or unknown")
+def discard_inventory_item(item_id: str, req: TurnRequest) -> Frame:
+    state = _consume_turn(req.turn_id)
+    original_state = state.model_copy(deep=True)
     try:
-        try:
-            definition = item_definition(item_id)
-        except ValueError as exc:
-            raise HTTPException(status_code=404, detail=str(exc))
-        if not definition["discardable"]:
-            raise HTTPException(status_code=400, detail=f"Item cannot be discarded: {item_id}")
-        item = next((entry for entry in state.inventory if entry.get("id") == item_id), None)
-        if item is None:
-            raise HTTPException(status_code=404, detail=f"Item not in inventory: {item_id}")
-        count = int(item.get("count", 1))
-        if count > 1:
-            item["count"] = count - 1
-        else:
-            state.inventory = [entry for entry in state.inventory if entry.get("id") != item_id]
-        frame = _state_frame(_get_graph(), state)
-        frame.turn_id = turns.issue(frame.state, req.turn_id)
-        return frame
-    except HTTPException:
-        turns.restore(req.turn_id, state)
-        raise
+        frame = engine.discard(
+            story.snapshot,
+            state,
+            item_id=item_id,
+        )
     except ValueError as exc:
-        turns.restore(req.turn_id, state)
-        raise HTTPException(status_code=400, detail=str(exc))
+        turns.restore(req.turn_id, original_state)
+        mapped = _runtime_error(exc)
+        if mapped is None:
+            raise
+        raise mapped from exc
+    except Exception:
+        turns.restore(req.turn_id, original_state)
+        raise
+    frame.turn_id = turns.issue(
+        frame.state,
+        previous_turn_id=req.turn_id,
+    )
+    return frame
