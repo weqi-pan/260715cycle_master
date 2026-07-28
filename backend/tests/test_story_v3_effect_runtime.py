@@ -63,6 +63,36 @@ def test_attribute_effects_use_project_clamps_without_mutating_input(
     assert state == before
 
 
+def test_unclamped_attribute_survives_later_unrelated_effect_batch(executor, state):
+    changed = executor.apply(
+        [
+            ModifyAttributeEffect(
+                type="modify_attribute",
+                attribute="courage",
+                operation="set",
+                value=99,
+                clamp=False,
+            ),
+        ],
+        state,
+        node_id="A",
+    )
+
+    result = executor.apply(
+        [
+            SetFlagEffect(
+                type="set_flag",
+                flag="checked_pocket_item",
+                value=True,
+            ),
+        ],
+        changed,
+        node_id="A",
+    )
+
+    assert result.player_attributes["courage"] == 99
+
+
 def test_set_flag_requires_registered_flag_and_matching_scalar_type(
     executor,
     state,
@@ -373,4 +403,17 @@ def test_unsupported_effect_type_is_rejected(executor, state):
     effect = cast(Any, object())
 
     with pytest.raises(EffectExecutionError, match="Unsupported v3 effect: object"):
+        executor.apply([effect], state, node_id="A")
+
+
+def test_mismatched_effect_discriminator_is_rejected(executor, state):
+    effect = ModifyAttributeEffect.model_construct(
+        type="unknown",
+        attribute="courage",
+        operation="add",
+        value=1,
+        clamp=True,
+    )
+
+    with pytest.raises(EffectExecutionError, match="Unsupported v3 effect type"):
         executor.apply([effect], state, node_id="A")

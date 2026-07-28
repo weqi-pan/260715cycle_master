@@ -115,6 +115,7 @@ class GameState(BaseModel):
         project: StoryProjectV3,
         *,
         node_ids: Collection[str],
+        clamp_attributes: bool = True,
     ) -> "GameState":
         """Return a validated copy aligned with the active v3 registries."""
 
@@ -130,19 +131,16 @@ class GameState(BaseModel):
             raise ValueError(f"Unknown story node: {unknown}")
 
         normalized = self.model_copy(deep=True)
-        normalized.player_attributes = {
-            **normalized.player_attributes,
-            **{
-                key: min(
+        player_attributes = dict(normalized.player_attributes)
+        for key, definition in project.attributes.items():
+            value = player_attributes.get(key, definition.default)
+            if clamp_attributes:
+                value = min(
                     definition.maximum,
-                    max(
-                        definition.minimum,
-                        normalized.player_attributes.get(key, definition.default),
-                    ),
+                    max(definition.minimum, value),
                 )
-                for key, definition in project.attributes.items()
-            },
-        }
+            player_attributes[key] = value
+        normalized.player_attributes = player_attributes
         normalized.flags = {
             key: normalized.flags.get(key, definition.default)
             for key, definition in project.flags.items()

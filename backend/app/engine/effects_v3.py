@@ -21,6 +21,18 @@ class EffectExecutionError(ValueError):
     """Raised when a typed effect cannot be applied to runtime state."""
 
 
+_EXPECTED_EFFECT_TYPES = {
+    ModifyAttributeEffect: "modify_attribute",
+    SetFlagEffect: "set_flag",
+    InventoryEffect: "inventory",
+    PersistNodeItemEffect: "persist_node_item",
+    RecordInteractionEffect: "record_interaction",
+    ModifyCounterEffect: "modify_counter",
+    MarkOnceEffect: "mark_once",
+    RestoreEntryAttributeEffect: "restore_entry_attribute",
+}
+
+
 class EffectExecutor:
     def __init__(
         self,
@@ -46,6 +58,7 @@ class EffectExecutor:
             candidate = state.normalized(
                 self.project,
                 node_ids=self.node_ids,
+                clamp_attributes=False,
             )
         except ValueError as exc:
             raise EffectExecutionError(str(exc)) from exc
@@ -61,6 +74,16 @@ class EffectExecutor:
         *,
         node_id: str,
     ) -> None:
+        expected_type = _EXPECTED_EFFECT_TYPES.get(type(effect))
+        if expected_type is None:
+            raise EffectExecutionError(
+                f"Unsupported v3 effect: {type(effect).__name__}"
+            )
+        if effect.type != expected_type:
+            raise EffectExecutionError(
+                f"Unsupported v3 effect type: {effect.type}"
+            )
+
         if isinstance(effect, ModifyAttributeEffect):
             self._modify_attribute(effect, state)
             return
