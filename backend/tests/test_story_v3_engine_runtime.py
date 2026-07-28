@@ -72,7 +72,7 @@ def make_node(
     }
 
 
-def make_snapshot(*, a_entries=None, a_choices=None) -> StorySnapshotV3:
+def make_snapshot(*, a_entries=None, a_choices=None, b_choices=None) -> StorySnapshotV3:
     return StorySnapshotV3.model_validate(
         {
             "schema_version": 3,
@@ -117,7 +117,7 @@ def make_snapshot(*, a_entries=None, a_choices=None) -> StorySnapshotV3:
             },
             "nodes": {
                 "A": make_node("A", entries=a_entries, choices=a_choices),
-                "B": make_node("B"),
+                "B": make_node("B", choices=b_choices),
             },
         }
     )
@@ -188,6 +188,14 @@ def test_resume_selects_first_matching_entry_and_filters_blocks():
     assert frame.node.entry_blocks[1].speaker_id == "guide"
     assert frame.node.entry_blocks[0].speaker_id is None
     assert frame.speaker_names == {"guide": "Guide"}
+
+
+def test_start_captures_initial_entry_attributes():
+    snapshot = make_snapshot()
+
+    frame = GameEngine().start(snapshot)
+
+    assert frame.state.entry_attributes == {"insight": 1}
 
 
 def test_locked_visibility_is_authored_by_the_server():
@@ -490,3 +498,60 @@ def test_discard_preserves_unclamped_attribute_values():
     frame = GameEngine().discard(snapshot, state, item_id="token")
 
     assert frame.state.player_attributes["insight"] == 15
+
+
+def test_travel_captures_entry_attributes_for_later_restoration():
+    snapshot = make_snapshot(
+        a_choices=[
+            make_choice(
+                "travel_to_b",
+                target="B",
+                mode="travel",
+                effects=[
+                    {
+                        "type": "modify_attribute",
+                        "attribute": "insight",
+                        "operation": "set",
+                        "value": 6,
+                    }
+                ],
+            )
+        ],
+        b_choices=[
+            make_choice(
+                "restore_insight",
+                target="B",
+                effects=[
+                    {
+                        "type": "modify_attribute",
+                        "attribute": "insight",
+                        "operation": "add",
+                        "value": -4,
+                    },
+                    {
+                        "type": "restore_entry_attribute",
+                        "attribute": "insight",
+                    },
+                ],
+            )
+        ],
+    )
+    engine = GameEngine()
+
+    entered = engine.choose(
+        snapshot,
+        GameState.new(snapshot.project),
+        node_id="A",
+        choice_id="travel_to_b",
+    )
+
+    assert entered.state.entry_attributes == {"insight": 6}
+
+    restored = engine.choose(
+        snapshot,
+        entered.state,
+        node_id="B",
+        choice_id="restore_insight",
+    )
+
+    assert restored.state.player_attributes["insight"] == 6

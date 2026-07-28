@@ -79,7 +79,9 @@ class GameEngine:
     def start(self, snapshot: StorySnapshotV3) -> Frame:
         """Start a new game from the v3 project's declared entry node."""
 
-        return self._v3_frame(snapshot, GameState.new(snapshot.project))
+        state = GameState.new(snapshot.project)
+        state.entry_attributes = dict(state.player_attributes)
+        return self._v3_frame(snapshot, state)
 
     def resume(self, snapshot: StorySnapshotV3, state: GameState) -> Frame:
         """Validate a persisted v3 state and render its current node."""
@@ -132,8 +134,10 @@ class GameEngine:
 
         if node_id not in updated.visited_nodes:
             updated.visited_nodes.append(node_id)
-        if choice.next.mode != "stay" and choice.next.target != node_id:
-            updated.visit_id += 1
+        if choice.next.mode != "stay":
+            updated.entry_attributes = dict(updated.player_attributes)
+            if choice.next.target != node_id:
+                updated.visit_id += 1
         updated.current_node_id = choice.next.target
 
         results = visible_blocks(choice.result, updated, self.evaluator)

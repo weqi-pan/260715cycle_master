@@ -68,12 +68,13 @@
             <button v-for="(c, index) in store.choices" :key="c.id"
               class="choice-btn"
               :class="{ warp: c.source === 'special_warp', 'scene-trans': c.next_node_id !== store.currentNode?.id }"
-              :disabled="store.loading || chosenIds.has(c.id)"
+              :disabled="store.loading || !c.available || chosenIds.has(c.id)"
               @click.stop="handleChoice(c)"
             >
               <span class="choice-index">{{ String(index + 1).padStart(2, '0') }}</span>
               <span class="choice-copy">
                 <span class="choice-text">{{ c.text }}</span>
+                <span v-if="!c.available && c.reason" class="choice-reason">{{ c.reason }}</span>
               </span>
               <span v-if="c.source === 'special_warp'" class="warp-tag">跃迁</span>
               <span v-if="c.next_node_id !== store.currentNode?.id" class="trans-arrow">→</span>

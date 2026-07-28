@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import test from 'node:test'
 
 import {
@@ -75,4 +76,14 @@ test('choice list drops malformed response entries defensively', () => {
   ]
 
   assert.deepEqual(visibleChoices(choices).map(choice => choice.id), ['open'])
+})
+
+test('gameplay renders visible locked choices as disabled with their reason', () => {
+  const source = readFileSync(
+    new URL('../src/views/GamePlay.vue', import.meta.url),
+    'utf8',
+  )
+
+  assert.match(source, /:disabled="store\.loading \|\| !c\.available \|\| chosenIds\.has\(c\.id\)"/)
+  assert.match(source, /v-if="!c\.available && c\.reason" class="choice-reason"/)
 })
