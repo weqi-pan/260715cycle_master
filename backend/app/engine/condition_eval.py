@@ -98,7 +98,11 @@ class ConditionEvaluator:
                 condition.value,
             )
         if isinstance(condition, FlagEqualsCondition):
-            return state.flags.get(condition.flag) == condition.value
+            actual = state.flags.get(condition.flag)
+            return (
+                type(actual) is type(condition.value)
+                and actual == condition.value
+            )
         if isinstance(condition, ItemCondition):
             present = any(
                 item.get("id") == condition.item_id

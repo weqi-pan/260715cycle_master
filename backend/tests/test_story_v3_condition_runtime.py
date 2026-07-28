@@ -83,6 +83,8 @@ def test_attribute_compare_rejects_missing_runtime_attribute(state):
         ("door_open", True, True),
         ("trust", 2, True),
         ("title", "keeper", True),
+        ("door_open", 1, False),
+        ("trust", True, False),
         ("missing_flag", False, False),
     ],
 )
@@ -90,6 +92,26 @@ def test_flag_equals_uses_registered_runtime_value(state, flag, value, expected)
     condition = FlagEqualsCondition(type="flag_equals", flag=flag, value=value)
 
     assert ConditionEvaluator().check(condition, state) is expected
+
+
+@pytest.mark.parametrize(
+    ("actual", "expected"),
+    [
+        (True, 1),
+        (1, True),
+        (False, 0),
+        (0, False),
+    ],
+)
+def test_flag_equals_distinguishes_boolean_and_integer_types(actual, expected):
+    state = GameState(current_node_id="A", flags={"mixed": actual})
+    condition = FlagEqualsCondition(
+        type="flag_equals",
+        flag="mixed",
+        value=expected,
+    )
+
+    assert ConditionEvaluator().check(condition, state) is False
 
 
 @pytest.mark.parametrize(
