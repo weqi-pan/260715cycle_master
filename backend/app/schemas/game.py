@@ -14,11 +14,12 @@ Frame 是一帧完整的游戏画面数据，包含当前节点、更新后的�
 """
 
 # backend/app/schemas/game.py
-from pydantic import BaseModel, Field, field_validator
-from typing import Optional, Any
-from .story_v2 import ContentBlock
-from ..domain.npcs import NPC_NAMES
-from ..domain.items import item_definition
+from collections.abc import Collection
+from typing import Any, Literal, Optional
+
+from pydantic import BaseModel, ConfigDict, Field
+
+from .story_v3 import StoryProjectV3
 
 
 # ============================================================
@@ -42,6 +43,17 @@ class Effect(BaseModel):
     type: str     # 效果类型
     target: str   # 效果目标（道具 ID / 标记名 / 属性名）
     value: Any    # 效果值（类型取决于 type）
+
+
+class ContentBlockView(BaseModel):
+    """Frontend-safe rendered story content without authoring conditions."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    type: Literal["narration", "dialogue", "system", "check_result"]
+    text: str
+    speaker_id: str | None = None
 
 
 # ============================================================
@@ -80,19 +92,75 @@ class GameState(BaseModel):
     persistent_nodes: dict[str, dict] = Field(default_factory=dict)
     visit_id: int = 0
     choice_history: dict[str, dict[str, int]] = Field(default_factory=dict)
+    entry_attributes: dict[str, int] = Field(default_factory=dict)
+    interaction_history: dict[str, list[str]] = Field(default_factory=dict)
+    once_marks: dict[str, list[str]] = Field(default_factory=dict)
 
-    @field_validator("inventory")
     @classmethod
-    def hydrate_inventory_metadata(cls, inventory: list[dict]) -> list[dict]:
-        hydrated = []
-        for entry in inventory:
-            try:
-                metadata = item_definition(str(entry.get("id", "")))
-            except ValueError:
-                hydrated.append(entry)
-                continue
-            hydrated.append({**entry, **metadata})
-        return hydrated
+    def new(cls, project: StoryProjectV3) -> "GameState":
+        return cls(
+            current_node_id=project.entry_node_id,
+            flags={
+                key: definition.default
+                for key, definition in project.flags.items()
+            },
+            player_attributes={
+                key: definition.default
+                for key, definition in project.attributes.items()
+            },
+        )
+
+    def normalized(
+        self,
+        project: StoryProjectV3,
+        *,
+        node_ids: Collection[str],
+    ) -> "GameState":
+        """Return a validated copy aligned with the active v3 registries."""
+
+        if self.current_node_id not in node_ids:
+            raise ValueError(f"Unknown story node: {self.current_node_id}")
+
+        normalized = self.model_copy(deep=True)
+        normalized.player_attributes = {
+            **normalized.player_attributes,
+            **{
+                key: min(
+                    definition.maximum,
+                    max(
+                        definition.minimum,
+                        normalized.player_attributes.get(key, definition.default),
+                    ),
+                )
+                for key, definition in project.attributes.items()
+            },
+        }
+        normalized.flags = {
+            key: normalized.flags.get(key, definition.default)
+            for key, definition in project.flags.items()
+        } | {
+            key: value
+            for key, value in normalized.flags.items()
+            if key not in project.flags
+        }
+
+        inventory: list[dict] = []
+        for entry in normalized.inventory:
+            item_id = str(entry.get("id", ""))
+            definition = project.items.get(item_id)
+            if definition is None:
+                raise ValueError(f"Unknown inventory item: {item_id}")
+            inventory.append(
+                {
+                    **entry,
+                    "id": item_id,
+                    "name": definition.display_name,
+                    "discardable": definition.discardable,
+                    "cross_surface": definition.cross_surface,
+                }
+            )
+        normalized.inventory = inventory
+        return normalized
 
 
 # ============================================================
@@ -119,7 +187,7 @@ class NodeData(BaseModel):
     ambient: Optional[str] = None    # 环境音效资源路径
     color_palette: Optional[str] = None  # 场景色调提示
     dialogue_lines: list[dict] = Field(default_factory=list)  # 角色对话行 [{speaker, text}]
-    entry_blocks: list[ContentBlock] = Field(default_factory=list)
+    entry_blocks: list[ContentBlockView] = Field(default_factory=list)
 
 
 class ChoiceResult(BaseModel):
@@ -177,8 +245,8 @@ class Frame(BaseModel):
     cycle_event: Optional[dict] = None
     transition_text: Optional[str] = None
     scene_effects: list[dict] = Field(default_factory=list)
-    result_blocks: list[ContentBlock] = Field(default_factory=list)
-    speaker_names: dict[str, str] = Field(default_factory=lambda: dict(NPC_NAMES))
+    result_blocks: list[ContentBlockView] = Field(default_factory=list)
+    speaker_names: dict[str, str] = Field(default_factory=dict)
     turn_id: str = ""
 
 

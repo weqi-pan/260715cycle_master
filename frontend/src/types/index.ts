@@ -10,6 +10,9 @@ export interface GameState {
   persistent_nodes: Record<string, { items: ItemBrief[]; dangers: any[] }>
   visit_id: number
   choice_history: Record<string, { count: number; last_cycle: number; last_visit_id: number }>
+  entry_attributes: Record<string, number>
+  interaction_history: Record<string, string[]>
+  once_marks: Record<string, string[]>
 }
 
 export interface ItemBrief {
@@ -38,7 +41,7 @@ export interface NodeData {
 
 export interface ContentBlock {
   id: string
-  type: 'narration' | 'dialogue' | 'system'
+  type: 'narration' | 'dialogue' | 'system' | 'check_result'
   text: string
   speaker_id?: string | null
 }

@@ -28,6 +28,7 @@ import re
 from .graph import GraphBundle, ChoiceData
 from .condition_eval import ConditionEvaluator
 from ..domain.items import item_definition
+from ..domain.npcs import NPC_NAMES
 from .special_router import SpecialRouter
 from ..schemas.game import GameState, Frame, NodeData, ChoiceResult, PersistentFound
 
@@ -226,6 +227,7 @@ class GameEngine:
                 else None
             ),
             scene_effects=scene_effects,
+            speaker_names=dict(NPC_NAMES),
         )
 
     # ============================================================

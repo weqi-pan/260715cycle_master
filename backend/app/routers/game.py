@@ -22,6 +22,7 @@ from ..engine.engine import GameEngine
 from ..engine.story_v3_repository import StoryV3Repository
 from ..engine.story_v2_loader import StoryV2Loader
 from ..domain.items import item_definition
+from ..domain.npcs import NPC_NAMES
 from ..engine.turn_store import TurnStore
 from ..paths import STORY_BUILD_DIR, STORY_V3_DIR
 from ..schemas.game import Frame, ChooseRequest, GameState, NodeData, TurnRequest
@@ -79,6 +80,7 @@ def _state_frame(graph: dict, state: GameState) -> Frame:
         ),
         state=state,
         available_choices=available,
+        speaker_names=dict(NPC_NAMES),
     )
 
 

@@ -63,10 +63,15 @@ def test_non_discardable_item_is_rejected_by_server():
         )
 
 
-def test_legacy_inventory_item_is_hydrated_from_catalog():
+def test_inventory_item_is_hydrated_from_v3_project(canonical_v3_snapshot):
     state = GameState(
         current_node_id="A",
         inventory=[{"id": "item_qing_coin", "name": "旧名称", "count": 1}],
+    )
+
+    state = state.normalized(
+        canonical_v3_snapshot.project,
+        node_ids=canonical_v3_snapshot.nodes,
     )
 
     assert state.inventory[0]["name"] == "清代顺治通宝"
