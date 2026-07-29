@@ -8,34 +8,33 @@
 ## [Unreleased]
 
 ### 新增
-- 进程内 Turn 防重放仓库（`TurnStore`），防止客户端篡改和响应重放
-- 游戏领域定义层（`backend/app/domain/`），道具/NPC 元数据集中管理
-- 编辑器 v2 数据仓库（`backend/app/editor/story_repository.py`），JSON 原子写入
-- 选项可见性系统（`choiceVisibility.ts`），前端统一管理选项展示规则
-- 道具丢弃服务端校验动作，不再由前端直接操作 GameState
-- v2 API 契约测试（`test_game_api_contract.py`）
-- 存货操作测试（`test_inventory_actions.py`）
-- 选项可见性测试（`test_choice_visibility.py`）
-- 编辑器 v2 测试（`test_story_v2_editor.py`）
-- Turn Store 单元测试（`test_turn_store.py`）
-- Plan 13 Playwright E2E 浏览器回归测试
+- Story System v3 权威运行仓库：启动时严格编译、发布并加载不可变快照
+- v3 类型化条件求值、原子效果执行、内容选择、重复策略和特殊路线
+- 服务端一次性 `turn_id` 回合授权与重放防护
+- v3 存档状态校验、恢复和物品元数据补全
+- 统一内容时间线，按顺序渲染旁白、对话、系统提示和检定结果
+- 纯 v3 边界测试及核心玩家 Playwright E2E
 
 ### 变更
-- 条件不满足的选项由后端统一过滤，不再返回灰色锁定项
-- `always / once_per_visit / once_per_cycle / once_ever` 四种可见性策略全面贯通
-- 游戏选择与丢弃动作改用服务端一次性 `turn_id`，重放返回 409
-- 前端移除锁定原因、已选勾号和删除线样式
-- 已选 stay 选项在浏览器中自动消失
-- 编辑器切换为 v2 JSON 原子写入，正文内容块在旧编辑界面中只读
-- `cycle_N+` 两位数阈值处理
-- `ChoiceResult.next_node_id` 与死参数清理
-- 后端引擎 9 步流水线优化（`process_choice`）
+- `data/story_v3` 成为唯一剧情源，游戏 API 和前端播放器只消费 v3 快照
+- 锁定选项按 `locked_visibility=hide/show` 显示，并由服务端提供可用状态
+- `always / once_per_visit / once_per_cycle / once_ever` 四种重复策略统一由 v3 执行
+- travel、shortcut、warp、完整循环、E 深度互动限制和 S20 恢复规则切换到 v3
+- 选择和丢弃失败时保持原回合状态，不产生部分效果
+- README、路线图和 E2E 更新为纯 v3 Demo 契约
 
 ### 修复
-- stay 选项离开重进、新循环、永久一次等场景的回归修复
-- 道具跨面属性（A↔E）一致性修复
-- NPC 显示名统一从领域定义获取
-- 伪造重复提交防护
+- K 跃迁出口重复与统一代价问题
+- H 隐藏路线的实际解锁路径
+- E 节点每次访问的深度互动上限
+- S20 每轮仅恢复一次及失败选择原子性
+- 网络请求失败时保留当前前端画面
+
+### 移除
+- 全部旧剧情数据、Schema、加载器、图引擎和迁移工具
+- 后端与前端可视化编辑器及相关 API、组件和测试
+- 旧故事数据库模型和重复的物品/NPC 注册表
+- 旧存档兼容与回退路径
 
 ---
 

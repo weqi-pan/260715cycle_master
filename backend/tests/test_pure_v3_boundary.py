@@ -12,26 +12,31 @@ from app.engine.engine import GameEngine
 from app.schemas.game import GameState
 
 
+LEGACY_VERSION = "v" + "2"
+CURRENT_VERSION = "v" + "3"
+LEGACY_STORY_TOKEN = "story_" + LEGACY_VERSION
+
+
 FORBIDDEN_PATHS = (
-    "data/story_data_v2",
-    "backend/app/schemas/story_v2.py",
-    "backend/app/engine/story_v2_loader.py",
+    f"data/story_data_{LEGACY_VERSION}",
+    f"backend/app/schemas/{LEGACY_STORY_TOKEN}.py",
+    f"backend/app/engine/{LEGACY_STORY_TOKEN}_loader.py",
     "backend/app/engine/graph.py",
     "backend/app/engine/special_router.py",
-    "backend/app/story/v2_migration.py",
-    "backend/scripts/migrate_story_v3.py",
-    "backend/scripts/validate_story_v2.py",
+    f"backend/app/story/{LEGACY_VERSION}_migration.py",
+    f"backend/scripts/migrate_story_{CURRENT_VERSION}.py",
+    f"backend/scripts/validate_{LEGACY_STORY_TOKEN}.py",
     "backend/app/editor",
     "backend/app/routers/editor.py",
     "backend/app/schemas/editor.py",
     "backend/app/models/story.py",
     "backend/app/domain/items.py",
     "backend/app/domain/npcs.py",
-    "backend/tests/test_story_v2_editor.py",
-    "backend/tests/test_story_v2_runtime.py",
-    "backend/tests/test_story_v2_schema.py",
-    "backend/tests/test_story_v2_validation.py",
-    "backend/tests/test_story_v3_migration.py",
+    f"backend/tests/test_{LEGACY_STORY_TOKEN}_editor.py",
+    f"backend/tests/test_{LEGACY_STORY_TOKEN}_runtime.py",
+    f"backend/tests/test_{LEGACY_STORY_TOKEN}_schema.py",
+    f"backend/tests/test_{LEGACY_STORY_TOKEN}_validation.py",
+    f"backend/tests/test_story_{CURRENT_VERSION}_migration.py",
     "backend/tests/test_condition_eval.py",
     "backend/tests/test_engine.py",
     "backend/tests/test_choice_visibility.py",
@@ -52,11 +57,11 @@ ACTIVE_ROOTS = (
 )
 
 FORBIDDEN_ACTIVE_TOKENS = (
-    "story_data_v2",
-    "story_v2",
-    "StoryV2",
-    "validate_story_v2",
-    "migrate_story_v3",
+    f"story_data_{LEGACY_VERSION}",
+    LEGACY_STORY_TOKEN,
+    "Story" + LEGACY_VERSION.upper(),
+    "validate_" + LEGACY_STORY_TOKEN,
+    "migrate_story_" + CURRENT_VERSION,
     "GraphBundle",
     "GraphLoader",
     "special_router",

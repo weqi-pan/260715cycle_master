@@ -2,277 +2,147 @@
 
 > **莫比乌斯环上的每一圈，都是一次对历史的重新发现。**
 
-一款基于莫比乌斯环无限循环结构的中式恐怖视觉小说游戏。以广州荔湾广场为舞台，在四天四夜的时间循环中探索历史真相，体验不同结局。
+一款以广州荔湾为舞台的中式恐怖视觉小说 Demo。玩家在四日循环中调查异常、收集线索与道具，并通过主角属性、持有物品和跨循环状态开启隐藏选项与路线。
 
----
+## 当前状态
 
-## 项目简介
+项目已经完成纯 Story System v3 Demo 切换：
 
-**Cycle Master** 将视觉小说的叙事体验与有向循环图的状态机模型相结合。玩家在一个封闭的莫比乌斯环上不断循环——每次回到起点，既是一次循环的终点，也是下一次循环的起点。
+- `data/story_v3` 是唯一剧情创作源；
+- 后端启动时严格编译、发布并加载 v3 不可变快照；
+- 游戏 API、回合处理、条件、效果、路线、存档和前端播放器都使用 v3；
+- v2 剧情、旧图引擎、迁移链和可视化编辑器已经删除；
+- 本地存档仅面向当前 Demo，旧 v2 存档不受支持；
+- AI NPC 对话功能尚未开始实现。
 
-### 核心特色
+当前 Demo 包含 30 个节点、143 个选项和 846 个内容块。
 
-- **莫比乌斯环叙事** — 8 个主节点（A~H）+ 2 个特殊节点（捷径 J / 跃迁 K）+ 20 个子节点（S1~S20），构成完整的循环故事图谱
-- **跨循环持久化** — 每一轮留下的道具、线索、甚至危险，都会在下一轮循环中保留。上次帮你找到钥匙的线索，下次可能变成致命的陷阱
-- **双时空穿越** — 在特定节点可穿越至 1650 年（庚寅之劫时期的广州），与历史亲历者互动，在过去的行为会"写入"历史，影响下一轮循环
-- **多结局无限重玩** — 没有"真正的结局"，每一次循环都是对故事的新发现
+## 核心体验
 
-### 故事背景
-
-广州荔湾广场，民间传说中被解读为"八棺镇邪"格局。1993 年施工破坏了镇压三百余年的八棺阵法，在广场周围形成了一个封闭的四天四夜时间循环。被卷入循环的人，将不断重复着从入住到消失的四天——而每一次循环，裂隙都会扩大一些，历史与现实的边界也会模糊一些。
-
----
+- **莫比乌斯环叙事**：A~H 八个主节点、J 捷径、K 跃迁和 S1~S20 支线节点组成循环故事。
+- **状态解锁**：主角属性、flags、线索与携带物品共同决定选项是否可见、可用及隐藏路线是否开放。
+- **跨循环影响**：循环次数、节点遗留物、一次性行为和特殊交互范围由 v3 状态统一管理。
+- **服务端回合授权**：每次选择使用一次性 `turn_id`，重复提交不会重复执行效果。
+- **视觉小说播放器**：按创作顺序呈现旁白、对话、系统提示与检定结果，并支持存档、背包和环形地图。
 
 ## 技术栈
 
-| 层 | 技术 | 说明 |
-|---|---|---|
-| 前端框架 | **Vue 3 + Vite** | Composition API + `<script setup>` |
-| 前端语言 | **TypeScript** | 类型安全 |
-| UI 组件库 | **Element Plus** | Vue 3 组件库 |
-| 图渲染（编辑画布） | **Cytoscape.js** | 图节点/边操作 |
-| 图渲染（游戏小地图） | **手写 SVG** | 环形进度条 + 莫比乌斯扭转示意 |
-| 状态管理 | **Pinia** | Vue 官方状态管理 |
-| 样式方案 | **SCSS** | 视觉小说自定义样式 |
-| 后端框架 | **Python 3.12 + FastAPI** | 异步高性能 API |
-| ORM | **SQLAlchemy 2.0** | ORM + 原生 SQL |
-| 数据校验 | **Pydantic v2** | 类型安全校验 |
-| 数据库 | **SQLite** | 零配置单文件部署 |
-| 测试 | **pytest** (后端) + **Playwright** (E2E) + **Vitest** (前端) | 三层测试体系 |
-| 桌面打包（未来） | **Tauri 2.x** | 轻量桌面应用 |
-
----
+| 层 | 技术 |
+|---|---|
+| 前端 | Vue 3、TypeScript、Vite、Pinia、Element Plus、SCSS |
+| 后端 | Python 3.12、FastAPI、Pydantic v2、SQLAlchemy 2.0 |
+| 数据 | Story System v3 JSON、不可变编译快照、SQLite 存档 |
+| 测试 | pytest、Vitest/Node Test、Playwright |
 
 ## 项目结构
 
-```
+```text
 cycle_master/
-├── backend/                          # Python FastAPI 后端
+├── backend/
 │   ├── app/
-│   │   ├── main.py                   #   FastAPI 入口
-│   │   ├── config.py                 #   配置
-│   │   ├── database.py               #   数据库会话
-│   │   ├── paths.py                  #   路径解析
-│   │   ├── domain/                   #   游戏领域定义（道具/NPC 元数据）
-│   │   ├── editor/                   #   编辑器数据仓库（v2 JSON 原子写入）
-│   │   ├── engine/                   #   图引擎核心
-│   │   │   ├── graph.py              #     图加载与缓存
-│   │   │   ├── engine.py             #     游戏引擎（选择处理流水线）
-│   │   │   ├── condition_eval.py     #     条件表达式求值器
-│   │   │   ├── story_v2_loader.py    #     v2 剧情文件加载器
-│   │   │   └── turn_store.py         #     进程内 Turn 防重放仓库
-│   │   ├── models/                   #   ORM 模型
-│   │   ├── routers/                  #   REST API 路由
-│   │   └── schemas/                  #   Pydantic Schema
-│   ├── scripts/                      #   后端工具脚本
-│   │   └── validate_story_v2.py      #     v2 剧情严格校验
-│   └── tests/                        #   后端单元测试
-├── frontend/                         # Vue 3 前端
-│   └── src/
-│       ├── api/                      #   API 调用层
-│       ├── components/               #   组件
-│       │   ├── editor/               #     编辑器组件
-│       │   ├── player/               #     播放器组件
-│       │   └── shared/               #     共享组件
-│       ├── player/                   #   播放器逻辑（choiceVisibility 等）
-│       ├── composables/              #   组合式函数
-│       ├── router/                   #   路由
-│       ├── stores/                   #   Pinia 状态管理
-│       └── views/                    #   页面视图
-├── data/                             # 数据（统一管理）
-│   ├── story_data_v2/                #   v2 游戏内容 JSON（运行时唯一剧情源）
-│   │   ├── manifest.json             #     节点/资源清单
-│   │   ├── nodes/                    #     8 主节点 + 30 子节点 JSON
-│   │   └── story-node-v2.schema.json #     JSON Schema 结构定义
-│   ├── assets/                       #   静态资源（背景/立绘/音频）
-│   │   ├── backgrounds/
-│   │   ├── sprites/
-│   │   └── audio/
-│   ├── exports/                      #   数据导出
-│   └── cycle_master.db              #   SQLite 数据库
-├── docs/                             # 文档
-│   ├── design/                       #   设计文档（技术方案、故事方案等）
-│   ├── story/                        #   故事大纲（全部节点详细故事）
-│   └── specs/                        #   技术规格
-├── plan/                             # 开发计划
-│   ├── 00_总览与路线图.md
-│   ├── 01~13_阶段计划与问题清单.md
-│   ├── implementations/              #   实施方案归档
-│   ├── checklists/                   #   测试清单归档
-│   └── reports/                      #   项目报告归档
-├── tests/                            # E2E 端到端测试
-│   └── e2e/
-├── scripts/                          # 启动/部署/审计脚本
-├── CHANGELOG.md                      # 版本变更日志
-├── README.md
-└── .gitignore
+│   │   ├── engine/                  # v3 条件、效果、内容、路由与回合执行
+│   │   ├── story/                   # v3 编译器、诊断和快照发布
+│   │   ├── routers/                 # game / saves API
+│   │   ├── schemas/                 # v3 剧情与游戏状态契约
+│   │   └── models/                  # 存档与节点持久状态
+│   ├── scripts/
+│   │   ├── compile_story_v3.py      # 严格编译与发布
+│   │   └── export_story_v3_schema.py
+│   └── tests/                       # 后端测试
+├── frontend/
+│   ├── src/
+│   │   ├── components/player/       # 状态栏和循环地图
+│   │   ├── player/                  # 内容时间线与选项展示
+│   │   ├── stores/                  # v3 回合与存档状态
+│   │   └── views/GamePlay.vue       # 视觉小说播放器
+│   └── tests/                       # 前端单元测试
+├── data/
+│   ├── story_v3/                    # 唯一剧情创作源
+│   ├── story_build/                 # 后端生成的不可变运行快照
+│   ├── assets/                      # 背景、立绘和音频资源
+│   └── cycle_master.db              # 本地 Demo 存档
+├── tests/e2e/                       # 核心玩家旅程
+├── docs/                            # 设计、故事、规格与计划归档
+└── plan/reports/                    # 项目交接报告
 ```
 
----
+## 本地运行
 
-## 开发阶段
-
-### Phase 1: 骨架搭建 ✅
-- [x] 后端项目初始化（FastAPI + SQLite + SQLAlchemy）
-- [x] 前端项目初始化（Vue 3 + Vite + Element Plus + Pinia）
-- [x] 数据库建表 + Pydantic Schema
-- [x] 图引擎核心三模块（graph / engine / condition_eval）
-- [x] 最简 API 跑通环形 demo
-
-### Phase 2: 核心机制 ✅
-- [x] 条件表达式解析器（12 种条件语法）
-- [x] 效果系统（道具/标记/属性变更）
-- [x] 跨循环持久化
-- [x] 循环检测 + 结局生成
-- [x] 存档系统 CRUD
-
-### Phase 3: 可视化编辑器 ✅
-- [x] Cytoscape.js 图编辑器
-- [x] 节点/边的增删改查
-- [x] 条件/效果编辑器
-- [x] InspectorPanel 属性面板
-
-### Phase 4: 动效与资源 ✅
-- [x] 场景特效系统（notify/shake/flash）
-- [x] 背景图/立绘资源挂载
-- [x] 角色头像与打字机效果
-- [x] 莫比乌斯环 SVG 小地图
-
-### Phase 5: 音效与跨平台 ✅
-- [x] 音效挂载点
-- [x] 角色 speaker 迁移
-- [x] 色彩氛围 tint
-- [x] E2E 测试基础
-
-### Phase 6: UX 缺陷修复 ✅
-- [x] 道具名称/描述正确显示
-- [x] 选项分组和可见性控制
-- [x] 内联展开叙事流（inline expand）
-- [x] 背包系统完善
-- [x] 小地图切换优化
-
-### Phase 7: 对话系统重设计 ✅
-- [x] dialogue_lines 数组替代纯文本 narrative
-- [x] 聊天气泡式对话渲染
-- [x] 场景转场动画（水墨、时痕裂隙、标题卡）
-- [x] 转场持久化与竞态修复
-
-### Phase 8: 打磨与扩展 🚧
-- [x] v2 剧情数据单源化（story_data_v2 替代旧 JSON）
-- [x] Turn 防重放仓库
-- [x] 领域层重构（道具/NPC 元数据）
-- [x] 编辑器 v2 原子写入
-- [x] 选项可见性系统
-- [x] 代码审查 + 回归测试
-- [ ] Tauri 桌面打包
-
----
-
-## 节点体系
-
-### 主节点（8 个，A~H）
-
-| ID | 名称 | 环面位置 | 说明 |
-|---|---|---|---|
-| A | 荔湾广场正门 | 0 | 起点/终点，每次回到 A = 一次循环完成 |
-| B | 德星路出租屋 | 25 | 主角住所 |
-| C | 华林寺 | 50 | 历史寺庙 |
-| D | 上下九步行街 | 75 | 商业街区（鬼市） |
-| E | 八棺之地 | 100 | 莫比乌斯环中点，A 的另一面 |
-| F | 沙面珠江边 | 125 | 白鹅潭 |
-| G | 陈家祠 | 150 | 清代宗祠 |
-| H | 康王路归途 | 175 | 回归之路 |
-
-### 特殊节点（2 个）
-
-| ID | 名称 | 类型 | 行为 |
-|---|---|---|---|
-| J | 地宫暗道 | `special_shortcut` | 条件满足时：E → J → A，缩短循环路径 |
-| K | 龙脉裂隙 | `special_warp` | 条件满足时：任意节点可进入 K，从 K 可跳转到任意主节点 |
-
-### 子节点（20 个，S1~S20）
-
-每个主节点周围分布 2~3 个子节点，提供支线探索、道具获取和角色交互。详见 `docs/story/节点具体故事/`。
-
----
-
-## 关键设计理念
-
-### 游戏引擎 9 步流水线
-
-```
-parse_choice → validate_state → eval_conditions → filter_visible
-  → compute_effects → apply_effects → check_specials
-    → build_narrative → build_choices → return_frame
-```
-
-### 剧本 = 有向循环图，玩游戏 = 状态在图上遍历
-
-（借鉴 LangGraph 状态图思想）
-
-```
-莫比乌斯环展开（俯视图）：
-
-  A(0) ──→ B(25) ──→ C(50) ──→ D(75)
-   ↑  ↑                            │
-   │  └──── J(捷径) ←───────────────┤
-   │                                ↓
-  H(175) ←── G(150) ←── F(125) ←── E(100)
-   │                                │
-   └────────────────────────────────┘
-       （回到 A = 一次循环完成）
-```
-
-### v2 剧情数据架构（单源化）
-
-- 所有游戏内容存储在 `data/story_data_v2/` 单一目录下
-- JSON Schema 严格校验（`story-node-v2.schema.json`）
-- `manifest.json` 集中管理节点/资源清单
-- gameplay/content/conditions 三段式节点结构
-- 编辑器直接写入 v2 JSON，无需导入同步
-
-### Story System v3 Phase 1 质量门禁
-
-Phase 1 已建立 v3 创作格式、全项目编译和不可变发布基础，但当前游戏运行时仍以
-`data/story_data_v2/` 为权威剧情源。v3 不会在 Phase 1 中替换现有 v2 运行时。
-
-在项目根目录运行迁移、Schema 导出和严格编译：
+安装后端依赖：
 
 ```powershell
-backend\venv\Scripts\python.exe -m backend.scripts.migrate_story_v3 --source data/story_data_v2 --destination data/story_v3
-backend\venv\Scripts\python.exe -m backend.scripts.export_story_v3_schema
-backend\venv\Scripts\python.exe -m backend.scripts.compile_story_v3 --strict
+python -m pip install -r backend/requirements.txt
+python -m pip install -r backend/requirements-dev.txt
 ```
 
-严格编译会在发现 error 或 warning 时返回非零状态；只有通过门禁的快照才会发布到
-`data/story_build/`。诊断以稳定的 JSON 行输出，便于 CI 和编辑器消费。
-
-提交前可运行完整验证：
+启动后端：
 
 ```powershell
-backend\venv\Scripts\python.exe -m backend.scripts.export_story_v3_schema
-git diff --exit-code -- data/story_v3/story-node-v3.schema.json
-backend\venv\Scripts\python.exe -m backend.scripts.compile_story_v3 --strict
-backend\venv\Scripts\python.exe -m pytest backend/tests -q
+python -m uvicorn backend.app.main:app --reload --port 8000
+```
+
+后端启动会编译 `data/story_v3`，将通过校验的快照发布到 `data/story_build`，随后仅从该 v3 快照提供游戏内容。存在编译错误或警告时，严格启动门禁会阻止错误内容进入运行时。
+
+启动前端：
+
+```powershell
 Set-Location frontend
-npm run test:unit
-npm run build
-Set-Location ..
+npm install
+npm run dev
 ```
 
----
+浏览器访问 `http://localhost:5173/play`，点击“踏入循环”开始游戏。
+
+## 剧情编译与验证
+
+严格编译到隔离目录：
+
+```powershell
+python -m backend.scripts.compile_story_v3 --strict --build-root tmp/pure-v3-check
+```
+
+完整验证：
+
+```powershell
+python -m pytest backend/tests -q
+python -m backend.scripts.compile_story_v3 --strict --build-root tmp/pure-v3-final
+
+Set-Location frontend
+npm.cmd run test:unit
+npm.cmd run build
+Set-Location ..
+
+python -m pytest tests/e2e/test_phase2_checklist.py tests/e2e/test_phase2_final.py tests/e2e/test_phase5_immersion.py -q
+```
+
+E2E 需要本地后端运行在 `localhost:8000`、前端运行在 `localhost:5173`。测试后端应通过 `CYCLE_MASTER_DATABASE_PATH` 使用隔离数据库，避免写入日常 Demo 存档。
+
+## 内容编辑方式
+
+当前没有可视化编辑器。剧情内容直接维护在 `data/story_v3`：
+
+1. 修改项目注册表或节点 JSON；
+2. 运行严格编译；
+3. 运行相关后端测试和核心玩家 E2E；
+4. 只有无错误、无警告的快照才可作为运行内容。
+
+如未来确实需要编辑器，应围绕 v3 Schema 和不可变快照重新设计，不恢复旧编辑器。
+
+## Demo 边界
+
+- 当前回合授权保存在后端进程内；后端重启后，未保存的当前回合需要重新开始或读档。
+- SQLite 存档适合本地单机 Demo，不提供生产级账号、并发会话或跨设备同步。
+- 旧 v2 存档和旧内容迁移工具已经移除，不提供兼容或回退路径。
+- 桌面打包、完整资源门禁、前端拆包优化仍属于后续发布工作。
+- AI NPC 尚未实现；未来接入时应以 v3 状态、NPC 白名单和剧情权限为边界。
 
 ## 许可证
 
-待定
-
----
+待定。
 
 ## 作者
 
-- 游戏设计 & 剧本：weqi
+- 游戏设计与剧本：weqi
 - 技术架构：weqi
 
----
-
-> **最后更新**：2026-07-21
+> **最后更新**：2026-07-29
