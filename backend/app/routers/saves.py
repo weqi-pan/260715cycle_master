@@ -27,6 +27,7 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models.save import Save, NodePersistentState
 from ..schemas.game import GameState
+from .game import story
 
 router = APIRouter(prefix="/api/saves", tags=["saves"])
 
@@ -34,6 +35,12 @@ router = APIRouter(prefix="/api/saves", tags=["saves"])
 def _now() -> str:
     """返回当前时间的 ISO 8601 格式字符串。"""
     return datetime.now().isoformat()
+
+
+def _normalized_state(state: GameState) -> GameState:
+    """Validate and hydrate a save against the active v3 project."""
+    snapshot = story.snapshot
+    return state.normalized(snapshot.project, node_ids=snapshot.nodes)
 
 
 def _replace_persistent_nodes(db: Session, save_id: str, state: GameState) -> None:
@@ -112,6 +119,7 @@ def create_save(name: str, state: GameState, db: Session = Depends(get_db)):
     注意:
         当前不限制存档数量。后续可考虑设置上限（如 10 个槽位）。
     """
+    state = _normalized_state(state)
     sid = str(uuid.uuid4())[:8]  # UUID 前 8 位作为存档 ID
     now = _now()
     save = Save(
@@ -130,6 +138,9 @@ def create_save(name: str, state: GameState, db: Session = Depends(get_db)):
         endings_reached_json=json.dumps(state.endings_reached, ensure_ascii=False),
         visit_id=state.visit_id,
         choice_history_json=json.dumps(state.choice_history, ensure_ascii=False),
+        entry_attributes_json=json.dumps(state.entry_attributes, ensure_ascii=False),
+        interaction_history_json=json.dumps(state.interaction_history, ensure_ascii=False),
+        once_marks_json=json.dumps(state.once_marks, ensure_ascii=False),
     )
     db.add(save)
     db.flush()
@@ -161,6 +172,8 @@ def update_save(save_id: str, state: GameState, db: Session = Depends(get_db)):
     if not save:
         raise HTTPException(404, "Save not found")
 
+    state = _normalized_state(state)
+
     # 更新进度字段
     save.current_node_id = state.current_node_id
     save.cycle_count = state.cycle_count
@@ -174,6 +187,12 @@ def update_save(save_id: str, state: GameState, db: Session = Depends(get_db)):
     save.endings_reached_json = json.dumps(state.endings_reached, ensure_ascii=False)
     save.visit_id = state.visit_id
     save.choice_history_json = json.dumps(state.choice_history, ensure_ascii=False)
+    save.entry_attributes_json = json.dumps(state.entry_attributes, ensure_ascii=False)
+    save.interaction_history_json = json.dumps(
+        state.interaction_history,
+        ensure_ascii=False,
+    )
+    save.once_marks_json = json.dumps(state.once_marks, ensure_ascii=False)
     save.updated_at = _now()
 
     _replace_persistent_nodes(db, save_id, state)
@@ -244,7 +263,7 @@ def load_save(save_id: str, db: Session = Depends(get_db)):
         ).all()
     }
 
-    return GameState(
+    state = GameState(
         current_node_id=save.current_node_id,
         cycle_count=save.cycle_count,
         half_cycle_count=save.half_cycle_count,
@@ -256,4 +275,8 @@ def load_save(save_id: str, db: Session = Depends(get_db)):
         persistent_nodes=persistent_nodes,
         visit_id=save.visit_id or 0,
         choice_history=json.loads(save.choice_history_json or "{}"),
+        entry_attributes=json.loads(save.entry_attributes_json or "{}"),
+        interaction_history=json.loads(save.interaction_history_json or "{}"),
+        once_marks=json.loads(save.once_marks_json or "{}"),
     )
+    return _normalized_state(state)

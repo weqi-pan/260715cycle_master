@@ -5,6 +5,7 @@ import type { Frame, GameState, NodeData, ChoiceResult } from '@/types'
 import axios from 'axios'
 import { startGame, resumeGame, chooseAction, discardInventoryItem } from '@/api/game'
 import { visibleChoices } from '@/player/choiceVisibility'
+import { resolveFrameRequest } from '@/player/frameRequest'
 
 export const useGameStore = defineStore('game', () => {
   const currentFrame = ref<Frame | null>(null)
@@ -35,58 +36,67 @@ export const useGameStore = defineStore('game', () => {
   async function init() {
     loading.value = true
     error.value = null
-    try {
-      const frame = await startGame()
-      acceptFrame(frame, true)
-    } catch (e: unknown) {
-      error.value = errorMessage(e, '无法开始游戏')
-    } finally {
-      loading.value = false
+    const outcome = await resolveFrameRequest(currentFrame.value, startGame)
+    if (outcome.error) {
+      error.value = errorMessage(outcome.error, '无法开始游戏')
+    } else if (outcome.frame) {
+      acceptFrame(outcome.frame, true)
     }
+    loading.value = false
   }
 
 
   async function resume(state: GameState) {
     loading.value = true
     error.value = null
-    try {
-      const frame = await resumeGame(state)
-      acceptFrame(frame, true)
-    } catch (e: unknown) {
-      error.value = errorMessage(e, '无法加载存档')
-      throw e
-    } finally {
-      loading.value = false
+    const outcome = await resolveFrameRequest(
+      currentFrame.value,
+      () => resumeGame(state),
+    )
+    loading.value = false
+    if (outcome.error) {
+      error.value = errorMessage(outcome.error, '无法加载存档')
+      throw outcome.error
+    }
+    if (outcome.frame) {
+      acceptFrame(outcome.frame, true)
     }
   }
 
   async function choose(choiceId: string) {
     if (!currentFrame.value) return
-    const nodeId = currentFrame.value.node.id
-    const currentState = currentFrame.value.state
+    const frameBeforeRequest = currentFrame.value
+    const nodeId = frameBeforeRequest.node.id
     loading.value = true
     error.value = null
-    try {
-      const frame = await chooseAction(nodeId, choiceId, currentFrame.value.turn_id)
-      acceptFrame(frame)
-    } catch (e: unknown) {
-      error.value = errorMessage(e, '无法处理选择')
-    } finally {
-      loading.value = false
+    const outcome = await resolveFrameRequest(
+      frameBeforeRequest,
+      () => chooseAction(nodeId, choiceId, frameBeforeRequest.turn_id),
+    )
+    if (outcome.error) {
+      error.value = errorMessage(outcome.error, '无法处理选择')
+    } else if (outcome.frame) {
+      acceptFrame(outcome.frame)
     }
+    loading.value = false
   }
 
   async function discard(itemId: string) {
     if (!currentFrame.value) return
+    const frameBeforeRequest = currentFrame.value
     loading.value = true
     error.value = null
-    try {
-      acceptFrame(await discardInventoryItem(itemId, currentFrame.value.turn_id))
-    } catch (e: unknown) {
-      error.value = errorMessage(e, '无法丢弃道具')
-      throw e
-    } finally {
-      loading.value = false
+    const outcome = await resolveFrameRequest(
+      frameBeforeRequest,
+      () => discardInventoryItem(itemId, frameBeforeRequest.turn_id),
+    )
+    loading.value = false
+    if (outcome.error) {
+      error.value = errorMessage(outcome.error, '无法丢弃道具')
+      throw outcome.error
+    }
+    if (outcome.frame) {
+      acceptFrame(outcome.frame)
     }
   }
 

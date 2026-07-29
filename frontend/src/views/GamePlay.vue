@@ -25,7 +25,7 @@
           >
             <template v-for="block in visibleBlocks" :key="block.id">
               <div
-                v-if="block.type === 'dialogue'"
+                v-if="contentBlockPresentation(block) === 'dialogue'"
                 class="chat-row"
                 :class="{ me: isPlayerSpeaker(block.speaker_id || 'unknown') }"
                 data-testid="story-block"
@@ -40,12 +40,21 @@
               </div>
 
               <div
-                v-else-if="block.type === 'narration'"
+                v-else-if="contentBlockPresentation(block) === 'narration'"
                 class="narrative-box"
                 data-testid="story-block"
                 data-block-type="narration"
               >
                 <div class="narrative-text" v-html="md2html(block.displayed_text)" />
+              </div>
+
+              <div
+                v-else-if="contentBlockPresentation(block) === 'check_result'"
+                class="check-result-block"
+                data-testid="story-block"
+                data-block-type="check_result"
+              >
+                {{ block.displayed_text }}
               </div>
 
               <div
@@ -106,6 +115,8 @@ import type { ChoiceResult, ContentBlock, Frame, GameState, ItemBrief } from '@/
 import { useGameStore } from '@/stores/gameStore'
 import {
   appendVisibleBlock,
+  contentBlockPresentation,
+  speakerDisplayName,
   updateVisibleBlockText,
   type VisibleContentBlock,
 } from '@/player/playbackTimeline'
@@ -292,7 +303,7 @@ function md2html(t:string):string {
   return `<p>${t}</p>`
 }
 function isPlayerSpeaker(speaker:string){return ['player','protagonist','主角','我'].includes(speaker.toLowerCase())}
-function speakerName(speaker:string){return isPlayerSpeaker(speaker)?'我':store.currentFrame?.speaker_names[speaker]??speaker.replace(/^npc_/,'').replace(/_/g,' ')}
+function speakerName(speaker:string){return speakerDisplayName(speaker,store.currentFrame?.speaker_names??{})}
 function speakerInitial(speaker:string){return speakerName(speaker).slice(0,1)||'·'}
 function scrollDown() { nextTick(()=>{ if(mainRef.value) mainRef.value.scrollTop = mainRef.value.scrollHeight }) }
 
@@ -404,6 +415,7 @@ onUnmounted(()=>{
 }
 
 .system-block { align-self:center; margin:.5rem 0 1rem; padding:.5rem 1rem; color:$accent-gold; border:1px solid rgba($accent-gold,.16); background:rgba($accent-gold,.045); font-family:$font-ui; font-size:.78rem; letter-spacing:.08em; }
+.check-result-block { align-self:center; margin:.5rem 0 1rem; padding:.5rem 1rem; color:$text-secondary; border:1px solid rgba($accent-red,.28); background:rgba($accent-red,.06); font-family:$font-ui; font-size:.78rem; letter-spacing:.06em; }
 
 .continue-hint { text-align:center; padding:.6rem 0; cursor:pointer; }
 .arrow { color:$accent-gold; font-size:1.2rem; animation:blink 1.5s infinite; }

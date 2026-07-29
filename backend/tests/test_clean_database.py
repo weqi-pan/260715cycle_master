@@ -16,6 +16,7 @@ from app.schemas.game import GameState
 
 def test_clean_database_can_create_and_load_save_without_story_rows(
     isolated_db_session,
+    active_v3_story,
 ):
     state = GameState(current_node_id="A")
 
@@ -28,12 +29,13 @@ def test_clean_database_can_create_and_load_save_without_story_rows(
 
 def test_clean_database_can_store_node_state_without_story_rows(
     isolated_db_session,
+    active_v3_story,
 ):
     state = GameState(
         current_node_id="A",
         persistent_nodes={
             "A": {
-                "items": [{"id": "note"}],
+                "items": [{"id": "item_warning_note"}],
                 "dangers": [],
             }
         },

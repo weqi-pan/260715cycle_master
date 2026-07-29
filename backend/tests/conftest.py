@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from app.database import Base, init_db
 from app.models.save import NodePersistentState, Save  # noqa: F401
 from app.models.story import Choice, StoryNode  # noqa: F401
+from app.routers import game
 from app.story.compiler import StoryCompiler
 
 
@@ -27,6 +28,13 @@ def canonical_v3_snapshot():
     return StoryCompiler().compile(
         PROJECT_ROOT / "data" / "story_v3"
     ).require_success()
+
+
+@pytest.fixture
+def active_v3_story(monkeypatch, canonical_v3_snapshot):
+    """Expose the canonical snapshot through the application's active repository."""
+    monkeypatch.setattr(game.story, "_snapshot", canonical_v3_snapshot)
+    return canonical_v3_snapshot
 
 
 @pytest.fixture(scope="session")

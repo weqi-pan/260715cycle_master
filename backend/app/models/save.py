@@ -69,6 +69,9 @@ class Save(Base):
     endings_reached_json = Column(Text, default="[]")  # 已达成的结局
     visit_id = Column(Integer, default=0)  # 当前节点访问实例 ID
     choice_history_json = Column(Text, default="{}")  # 选项重复策略记录
+    entry_attributes_json = Column(Text, default="{}")
+    interaction_history_json = Column(Text, default="{}")
+    once_marks_json = Column(Text, default="{}")
 
 
 class NodePersistentState(Base):

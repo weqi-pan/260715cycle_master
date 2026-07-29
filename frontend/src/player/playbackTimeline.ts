@@ -6,6 +6,23 @@ export interface VisibleContentBlock extends ContentBlock {
 }
 
 
+export function contentBlockPresentation(block: ContentBlock): ContentBlock['type'] {
+  return block.type
+}
+
+
+export function speakerDisplayName(
+  speakerId: string,
+  speakerNames: Record<string, string>,
+): string {
+  if (['player', 'protagonist', '主角', '我'].includes(speakerId.toLowerCase())) {
+    return '我'
+  }
+  return speakerNames[speakerId]
+    ?? speakerId.replace(/^npc_/, '').replace(/_/g, ' ')
+}
+
+
 export function appendVisibleBlock(
   timeline: VisibleContentBlock[],
   block: ContentBlock,
