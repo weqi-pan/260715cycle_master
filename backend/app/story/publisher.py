@@ -14,8 +14,8 @@ from typing import Any
 
 from pydantic import ValidationError
 
-from app.schemas.story_v3 import StorySnapshotV3
-from app.story.compiler import StoryCompilation
+from ..schemas.story_v3 import StorySnapshotV3
+from .compiler import StoryCompilation
 
 
 _REVISION_PATTERN = re.compile(r"[0-9a-f]{64}")

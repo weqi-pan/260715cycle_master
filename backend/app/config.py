@@ -9,7 +9,7 @@
 import os
 from pathlib import Path
 
-from .paths import DATABASE_PATH as DEFAULT_DATABASE_PATH, STORY_DATA_DIR
+from .paths import DATABASE_PATH as DEFAULT_DATABASE_PATH
 
 # 测试和隔离运行可通过环境变量指向临时数据库。
 # 未设置时仍使用 data/cycle_master.db，保持现有开发体验不变。

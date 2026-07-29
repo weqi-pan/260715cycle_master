@@ -1,7 +1,7 @@
 """Render ordered Story System v3 content for the frontend."""
 
-from app.schemas.game import ContentBlockView, GameState
-from app.schemas.story_v3 import (
+from ..schemas.game import ContentBlockView, GameState
+from ..schemas.story_v3 import (
     ContentBlockV3,
     DialogueContentBlockV3,
     StoryNodeV3,

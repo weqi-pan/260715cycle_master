@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from app.schemas.story_v3 import StorySnapshotV3
-from app.story.compiler import StoryCompiler
-from app.story.diagnostics import StoryCompileError
-from app.story.publisher import StoryPublisher
+from ..schemas.story_v3 import StorySnapshotV3
+from ..story.compiler import StoryCompiler
+from ..story.diagnostics import StoryCompileError
+from ..story.publisher import StoryPublisher
 
 
 class StoryV3Repository:

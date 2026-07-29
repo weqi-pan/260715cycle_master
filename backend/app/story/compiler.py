@@ -10,7 +10,7 @@ from typing import Iterable
 
 from pydantic import BaseModel, ValidationError
 
-from app.schemas.story_v3 import (
+from ..schemas.story_v3 import (
     AssetCatalogV3,
     ConditionV3,
     StoryEffectV3,
@@ -18,7 +18,7 @@ from app.schemas.story_v3 import (
     StoryProjectV3,
     StorySnapshotV3,
 )
-from app.story.diagnostics import StoryCompileError, StoryDiagnostic
+from .diagnostics import StoryCompileError, StoryDiagnostic
 
 
 @dataclass(frozen=True, slots=True)

@@ -6,10 +6,10 @@ exist.
 """
 
 import pytest
+from sqlalchemy import inspect
 from sqlalchemy.exc import IntegrityError
 
 from app.models.save import NodePersistentState
-from app.models.story import StoryNode
 from app.routers.saves import create_save, load_save
 from app.schemas.game import GameState
 
@@ -24,7 +24,9 @@ def test_clean_database_can_create_and_load_save_without_story_rows(
     loaded = load_save(created["id"], isolated_db_session)
 
     assert loaded.current_node_id == "A"
-    assert isolated_db_session.query(StoryNode).count() == 0
+    assert {"story_nodes", "choices"}.isdisjoint(
+        inspect(isolated_db_session.bind).get_table_names()
+    )
 
 
 def test_clean_database_can_store_node_state_without_story_rows(
@@ -49,7 +51,9 @@ def test_clean_database_can_store_node_state_without_story_rows(
         .one()
     )
     assert stored.node_id == "A"
-    assert isolated_db_session.query(StoryNode).count() == 0
+    assert {"story_nodes", "choices"}.isdisjoint(
+        inspect(isolated_db_session.bind).get_table_names()
+    )
 
 
 def test_node_state_still_requires_an_existing_save(isolated_db_session):

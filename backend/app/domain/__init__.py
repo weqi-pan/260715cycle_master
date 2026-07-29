@@ -1,1 +1,1 @@
-"""游戏领域定义。"""
+"""Domain package reserved for non-story-specific concepts."""

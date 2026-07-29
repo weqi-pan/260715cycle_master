@@ -14,7 +14,6 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from app.database import Base, init_db
 from app.models.save import NodePersistentState, Save  # noqa: F401
-from app.models.story import Choice, StoryNode  # noqa: F401
 from app.routers import game
 from app.story.compiler import StoryCompiler
 

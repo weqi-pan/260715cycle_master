@@ -12,7 +12,7 @@ from pydantic import (
     model_validator,
 )
 
-from app.story.identifiers import validate_story_id
+from ..story.identifiers import validate_story_id
 
 
 StoryId = Annotated[str, AfterValidator(validate_story_id)]

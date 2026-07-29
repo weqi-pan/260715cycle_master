@@ -2,8 +2,8 @@
 
 from collections.abc import Collection
 
-from app.schemas.game import GameState
-from app.schemas.story_v3 import (
+from ..schemas.game import GameState
+from ..schemas.story_v3 import (
     InventoryEffect,
     MarkOnceEffect,
     ModifyAttributeEffect,
