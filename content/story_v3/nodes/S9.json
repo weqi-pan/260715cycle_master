@@ -1,0 +1,149 @@
+{
+  "authoring": {
+    "gender_variant": null,
+    "notes": [],
+    "npc_item_notes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "sensory": null,
+    "trigger_description": "D节点探索北塔时可选进入电梯间"
+  },
+  "choices": [
+    {
+      "availability": {
+        "condition": {
+          "attribute": "courage",
+          "operator": "gte",
+          "type": "attribute_compare",
+          "value": 5
+        },
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "flag": "elevator_to_b1",
+          "type": "set_flag",
+          "value": true
+        },
+        {
+          "attribute": "sanity",
+          "clamp": true,
+          "operation": "add",
+          "type": "modify_attribute",
+          "value": -2
+        }
+      ],
+      "hint": "电梯滑下去了——很深。比B1更深。",
+      "id": "S9_choice_01",
+      "next": {
+        "mode": "stay",
+        "target": "S9"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S9_choice_01_result_paragraph_01_01",
+          "text": "你用指甲抠住胶带的边缘——它已经老化发脆，一撕就碎。B1的按钮露出来，灯是亮着的。你按了下去。电梯门缓缓合拢，开始下行。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S9_choice_01_result_paragraph_02_01",
+          "text": "楼层显示屏上的数字一路跳动：1……B1……但它没有停。数字继续往下跳——B2、B3、B4——然后显示屏变成了一串乱码。电梯还在下降，越来越深，像是在穿过楼基，穿过地基，穿过地壳。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S9_choice_01_result_paragraph_03_01",
+          "text": "叮——电梯停了。门打开的瞬间，一股带着泥土和古木气味的风灌了进来。外面不是停车场——是一个巨大的穹顶空间，墙壁上嵌着发光的岩石，空气里回荡着低沉的嗡鸣。这里不是B1——这里是地下穹顶。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "按下B1",
+      "text": "撕开胶带，按下B1按钮"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "S9_choice_02",
+      "next": {
+        "mode": "travel",
+        "target": "D"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S9_choice_02_result_paragraph_01_01",
+          "text": "你的手指在胶带上停了一下——然后收了回来。现在还不行。你转身走出电梯间，身后那扇开着的电梯门静静等待，B1按钮的灯光在胶带下面持续地亮着。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "离开",
+      "text": "离开电梯间"
+    }
+  ],
+  "entry_sequences": [
+    {
+      "blocks": [
+        {
+          "id": "S9_entry_default_paragraph_01_01",
+          "text": "北塔的电梯间在大楼背面——一个不起眼的侧门进去。电梯是九十年代的老式胶囊观光梯，玻璃罩上蒙着灰。按键面板上——B1的按钮被人用胶带封住了。胶带已经发黄卷边，看起来是很多年前贴的。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S9_entry_default_paragraph_02_01",
+          "text": "电梯旁边的墙上贴着一张褪色的通知：\"B1层因施工封闭，所有电梯取消B1停靠。——管理处\"落款日期被撕掉了。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S9_entry_default_paragraph_03_01",
+          "text": "但你注意到——通知下面还有一张更旧的通知，只露出了下面半截。上面写着\"负二层消防——\"后面被覆盖了。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S9_entry_default_paragraph_04_01",
+          "text": "_（这栋楼有B2吗？所有图纸和标识都说只有B1。但这张旧通知说的是B2。）_",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S9_entry_default_paragraph_05_01",
+          "text": "电梯门是开着的。按键面板上B1的按钮虽然被胶带封住了——但你能看到胶带下面，按钮的灯是亮着的。电梯还在接收去B1的指令。只是没有人敢按。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "id": "S9_entry_default",
+      "when": null
+    }
+  ],
+  "id": "S9",
+  "meta": {
+    "name": "北塔电梯间",
+    "node_type": "normal",
+    "parent_node_id": "D",
+    "position": 75.0,
+    "terminal": null,
+    "time_label": "第二天·夜晚"
+  },
+  "routing": null,
+  "scene": {
+    "allow_no_background": true,
+    "ambient_id": null,
+    "atmosphere": [],
+    "background_id": null,
+    "palette": null
+  },
+  "schema_version": 3
+}

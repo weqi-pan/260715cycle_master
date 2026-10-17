@@ -1,0 +1,229 @@
+{
+  "authoring": {
+    "gender_variant": null,
+    "notes": [],
+    "npc_item_notes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "sensory": null,
+    "trigger_description": "D节点经过德星路时可选进入便利店"
+  },
+  "choices": [
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "flag": "told_zhou_truth",
+          "type": "set_flag",
+          "value": true
+        }
+      ],
+      "hint": "他已经注意到不对劲了——也许他也能记住",
+      "id": "S8_choice_01",
+      "next": {
+        "mode": "stay",
+        "target": "S8"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S8_choice_01_result_paragraph_01_01",
+          "text": "你深吸一口气，把能说的都告诉了他——时间循环、2014年的跳楼事件、每一个重复的夜晚。周明远听着，手里的圆珠笔不知什么时候掉在了柜台上。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S8_choice_01_result_paragraph_02_01",
+          "text": "他没有质疑。没有说\"你疯了吗\"。他只是安静地听完，然后低头看着监控屏幕上那些你消失又出现的帧。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S8_choice_01_result_paragraph_03_01_dialogue",
+          "speaker_id": "npc_zhou_mingyuan",
+          "text": "我一直觉得……有些日子不是第一次过了。只是每次醒来都告诉自己那只是梦。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "S8_choice_01_result_paragraph_04_01_dialogue",
+          "speaker_id": "npc_zhou_mingyuan",
+          "text": "如果循环结束了——你还会记得我吗？",
+          "type": "dialogue",
+          "when": null
+        }
+      ],
+      "short_text": "告诉真相",
+      "text": "告诉周明远关于循环的真相"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "item_id": "item_milk_tea_receipt",
+          "operation": "add",
+          "quantity": 1,
+          "type": "inventory"
+        }
+      ],
+      "hint": "收据背面的字——是那个跳楼女孩写的",
+      "id": "S8_choice_02",
+      "next": {
+        "mode": "stay",
+        "target": "S8"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S8_choice_02_result_paragraph_01_01",
+          "text": "你从柜台下面抽出那张收据。纸已经发黄发脆——广州的潮湿空气用了十年把它变得一碰就碎。但背面的圆珠笔字迹却异常清晰，墨迹像是昨天才干的。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S8_choice_02_result_paragraph_02_01",
+          "text": "收据正面：2014年7月15日，珍珠奶茶，12元。背面四个字——\"今天很开心\"，笔迹稚嫩，是一个十几岁女孩的字。她在那天买了这杯奶茶，然后走上北塔天台，再也没有下来。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S8_choice_02_result_paragraph_03_01",
+          "text": "你把收据折好放进口袋。纸片贴着你的皮肤——微微发热，像是那个女孩的手温还留在上面。又或者只是你自己的体温把它焐热了。你不知道。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "取收据",
+      "text": "取走那张2014年的奶茶收据"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "S8_choice_03",
+      "next": {
+        "mode": "travel",
+        "target": "D"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S8_choice_03_result_paragraph_01_01",
+          "text": "你推开便利店的玻璃门，回到德星路的夜色里。自动门在身后合拢——透过玻璃，你看到周明远还站在收银台后面，一动不动地看着你离开的方向。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "离开",
+      "text": "离开便利店"
+    }
+  ],
+  "entry_sequences": [
+    {
+      "blocks": [
+        {
+          "id": "S8_entry_default_paragraph_01_01",
+          "text": "德星路口的24小时便利店——和康王路那家是同一条连锁。白色日光灯把每样商品照得清清楚楚。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S8_entry_default_paragraph_02_01",
+          "text": "收银台后站着周明远——吴应执的摄影师。他在这里值夜班。看到你进来，他的表情有些微妙——不是惊讶，更像是不确定。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S8_entry_default_paragraph_03_01_dialogue",
+          "speaker_id": "npc_zhou_mingyuan",
+          "text": "那个——",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "S8_entry_default_paragraph_03_02_narration",
+          "text": "他压低声音，",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S8_entry_default_paragraph_03_03_dialogue",
+          "speaker_id": "npc_zhou_mingyuan",
+          "text": "今天跟吴哥去拍摄的时候，我在取景器里看到了你。但我翻回放的时候——里面没有你。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "S8_entry_default_paragraph_04_01",
+          "text": "他把便利店监控切到回放模式——屏幕上的画面里，你在货架间走过，拿了一瓶水，走到柜台。然后——你的身影在画面里消失了大约三秒钟。三秒后你又出现了。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S8_entry_default_paragraph_05_01_dialogue",
+          "speaker_id": "npc_zhou_mingyuan",
+          "text": "这不正常。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "S8_entry_default_paragraph_05_02_narration",
+          "text": "他说。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S8_entry_default_paragraph_05_03_dialogue",
+          "speaker_id": "npc_zhou_mingyuan",
+          "text": "监控不会丢帧——就算会——也不会只丢一个人。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "S8_entry_default_paragraph_06_01",
+          "text": "---",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S8_entry_default_paragraph_07_01",
+          "text": "柜台下面压着一堆旧收据。其中一张是2014年7月15日的奶茶收据。背面用圆珠笔写着——\"今天很开心。\"",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "id": "S8_entry_default",
+      "when": null
+    }
+  ],
+  "id": "S8",
+  "meta": {
+    "name": "德星路便利店",
+    "node_type": "normal",
+    "parent_node_id": "D",
+    "position": 75.0,
+    "terminal": null,
+    "time_label": "第二天·夜晚"
+  },
+  "routing": null,
+  "scene": {
+    "allow_no_background": true,
+    "ambient_id": null,
+    "atmosphere": [],
+    "background_id": null,
+    "palette": null
+  },
+  "schema_version": 3
+}

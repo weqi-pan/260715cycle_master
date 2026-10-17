@@ -1,0 +1,191 @@
+{
+  "authoring": {
+    "gender_variant": null,
+    "notes": [],
+    "npc_item_notes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "sensory": null,
+    "trigger_description": "G→H路径中经过中山七路天桥时可选进入"
+  },
+  "choices": [
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "item_id": "item_bridge_coin",
+          "operation": "add",
+          "quantity": 1,
+          "type": "inventory"
+        }
+      ],
+      "hint": null,
+      "id": "S15_choice_01",
+      "next": {
+        "mode": "stay",
+        "target": "S15"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S15_choice_01_result_paragraph_01_01",
+          "text": "你小心地解开缠在栏杆上的铁丝。硬币落在手心里——比普通的硬币凉得多。它被砸得微微变形，边缘有一道细长的凹痕，不像是被锤子砸的——更像是被什么硬物从内部顶出来的。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S15_choice_01_result_paragraph_02_01",
+          "text": "_（这道凹痕——是人的牙齿咬出来的。有人含着这枚硬币从极高的地方坠落——硬币在撞击的瞬间被牙齿咬变了形。不知道是谁把它捡起来，缠在了这座桥上——作为许愿，还是作为墓碑？）_",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "取硬币",
+      "text": "取下被铁丝缠住的许愿硬币"
+    },
+    {
+      "availability": {
+        "condition": {
+          "item_id": "item_bridge_coin",
+          "present": true,
+          "type": "item"
+        },
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "item_id": "item_bridge_coin",
+          "operation": "remove",
+          "quantity": 1,
+          "type": "inventory"
+        },
+        {
+          "flag": "respected_wish",
+          "type": "set_flag",
+          "value": true
+        }
+      ],
+      "hint": "有些愿望不应该被打扰",
+      "id": "S15_choice_02",
+      "next": {
+        "mode": "stay",
+        "target": "S15"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S15_choice_02_result_paragraph_01_01",
+          "text": "你把铁丝重新缠紧。硬币回到了它原本的位置——在那些同心锁中间，一枚不起眼的、被咬变形的硬币。栏杆上的刻字在夕阳下泛着暗光：「希望明天还是7月15日」。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S15_choice_02_result_paragraph_02_01",
+          "text": "这个愿望——按照字面意义——实现了。刻下这行字的人被困在了这个愿望里。你把硬币放了回去。有些愿望不需要被实现——它们需要被尊重。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "放回硬币",
+      "text": "把硬币放回原处——尊重许愿"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "S15_choice_03",
+      "next": {
+        "mode": "travel",
+        "target": "G"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S15_choice_03_result_paragraph_01_01",
+          "text": "你最后看了一眼那枚被铁丝缠住的硬币，转身走下天桥。中山西路的车流在脚下轰轰作响——噪音中隐约夹杂着硬币碰撞栏杆的清脆回音，像是一枚硬币在风中不停地旋转。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "离开",
+      "text": "离开天桥"
+    }
+  ],
+  "entry_sequences": [
+    {
+      "blocks": [
+        {
+          "id": "S15_entry_default_paragraph_01_01",
+          "text": "中山七路人行天桥横跨在车流之上。桥面铺着防滑的铁板，踩上去有空洞的回音。栏杆上挂满了同心锁——情侣们在这里许愿。锁上刻着名字和日期。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S15_entry_default_paragraph_02_01",
+          "text": "但你注意到一个锁不一样——它不是锁，是一枚被铁丝缠在栏杆上的一元硬币。硬币被什么东西砸得微微变形。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S15_entry_default_paragraph_03_01",
+          "text": "硬币旁边——栏杆的漆面上——有人用尖锐的东西刻了一行字：",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S15_entry_default_paragraph_04_01",
+          "text": "\"希望明天还是7月15日。\"",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S15_entry_default_paragraph_05_01",
+          "text": "字迹很新。非常新。可能是今天刻的。也可能是一年前的今天刻的。在这里——\"今天\"的含义已经模糊了。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S15_entry_default_paragraph_06_01",
+          "text": "_（他许愿希望明天还是7月15日。他的愿望成真了——只是不是他想要的那种方式。）_",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S15_entry_default_paragraph_07_01",
+          "text": "如果你把硬币放回去——你会感到一阵奇怪的既视感。像是有什么东西在循环中被\"纠正\"了。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "id": "S15_entry_default",
+      "when": null
+    }
+  ],
+  "id": "S15",
+  "meta": {
+    "name": "中山七路天桥",
+    "node_type": "normal",
+    "parent_node_id": "G",
+    "position": 150.0,
+    "terminal": null,
+    "time_label": "第四天·白天"
+  },
+  "routing": null,
+  "scene": {
+    "allow_no_background": true,
+    "ambient_id": null,
+    "atmosphere": [],
+    "background_id": null,
+    "palette": null
+  },
+  "schema_version": 3
+}

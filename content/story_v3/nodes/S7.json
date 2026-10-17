@@ -1,0 +1,138 @@
+{
+  "authoring": {
+    "gender_variant": null,
+    "notes": [],
+    "npc_item_notes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "sensory": null,
+    "trigger_description": "D节点探索南塔商场时可选进入"
+  },
+  "choices": [
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "flag": "saw_2014_girl",
+          "type": "set_flag",
+          "value": true
+        },
+        {
+          "attribute": "sanity",
+          "clamp": true,
+          "operation": "add",
+          "type": "modify_attribute",
+          "value": -3
+        }
+      ],
+      "hint": "镜子里的人流比外面慢了——你看到了不该看到的东西",
+      "id": "S7_choice_01",
+      "next": {
+        "mode": "stay",
+        "target": "S7"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S7_choice_01_result_paragraph_01_01",
+          "text": "你朝那面落地镜走近一步。镜子里的你也走近了一步——但脚落地的时间晚了两秒。不是你延迟了——是镜子里的时间比你慢了两拍。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S7_choice_01_result_paragraph_02_01",
+          "text": "镜面不是脏。你伸出手指触碰镜面——指尖传来的温度不是玻璃的冰凉，而是微温的。像是镜子那一侧有体温。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S7_choice_01_result_paragraph_03_01",
+          "text": "镜子深处，白裙女孩的身影逐渐清晰。她在镜中的人流里逆流而行——走在2014年7月15日的同一时刻，反复穿过同一条过道。她的裙摆拖在镜面上，像一尾溺水的鱼。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S7_choice_01_result_paragraph_04_01",
+          "text": "她停下了。转过头——隔着镜面看着你。嘴唇翕动，无声地说了四个字。你看懂了她的口型——\"今天很开心。\"和那张奶茶收据背面的字一模一样。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "走近镜子",
+      "text": "走近落地镜仔细观察"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "S7_choice_02",
+      "next": {
+        "mode": "travel",
+        "target": "D"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S7_choice_02_result_paragraph_01_01",
+          "text": "你转身快步走出南塔商场。身后那面镜子里——你的倒影没有跟着离开。它站在原地，目送着你消失在自动门外的夜色中。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "离开",
+      "text": "离开南塔商场"
+    }
+  ],
+  "entry_sequences": [
+    {
+      "blocks": [
+        {
+          "id": "S7_entry_default_paragraph_01_01",
+          "text": "南塔商场在夜晚依然营业——服装店、手机配件铺、奶茶店挤在一起，霓虹灯牌的光打在过道上来回扫射。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S7_entry_default_paragraph_02_01",
+          "text": "但你注意到了一些不对劲的东西。二楼过道尽头的落地镜——镜面有些模糊。不是脏——是镜子里的画面和外面不一样。镜子里的人流比外面的人流慢了两秒。外面的你已经走过去了——镜子里的你还在原地站着，看着你自己。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S7_entry_default_paragraph_03_01",
+          "text": "更远的地方——镜子深处——有个穿白裙的身影一闪而过。裙摆拖在地上，看不到脚踝。她穿过人群，没有人注意到她。她在2014年7月15日那天从北塔天台跳了下来。但她的残影还在南塔商场的镜子里走动——走在同一天的同一时刻，永无止境。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "id": "S7_entry_default",
+      "when": null
+    }
+  ],
+  "id": "S7",
+  "meta": {
+    "name": "荔湾广场南塔商场",
+    "node_type": "normal",
+    "parent_node_id": "D",
+    "position": 75.0,
+    "terminal": null,
+    "time_label": "第二天·夜晚"
+  },
+  "routing": null,
+  "scene": {
+    "allow_no_background": true,
+    "ambient_id": null,
+    "atmosphere": [],
+    "background_id": null,
+    "palette": null
+  },
+  "schema_version": 3
+}

@@ -1,0 +1,11 @@
+node_modules/
+dist/
+coverage/
+tmp/
+data/*.db
+data/*.db-shm
+data/*.db-wal
+content/build/current.json
+.env
+.env.*
+*.tsbuildinfo

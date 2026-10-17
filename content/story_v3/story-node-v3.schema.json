@@ -1,0 +1,1934 @@
+{
+  "$defs": {
+    "AllCondition": {
+      "additionalProperties": false,
+      "properties": {
+        "conditions": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "all": "#/$defs/AllCondition",
+                "any": "#/$defs/AnyCondition",
+                "at_node": "#/$defs/AtNodeCondition",
+                "attribute_compare": "#/$defs/AttributeCompareCondition",
+                "counter_compare": "#/$defs/CounterCompareCondition",
+                "flag_equals": "#/$defs/FlagEqualsCondition",
+                "item": "#/$defs/ItemCondition",
+                "not": "#/$defs/NotCondition"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/AttributeCompareCondition"
+              },
+              {
+                "$ref": "#/$defs/FlagEqualsCondition"
+              },
+              {
+                "$ref": "#/$defs/ItemCondition"
+              },
+              {
+                "$ref": "#/$defs/CounterCompareCondition"
+              },
+              {
+                "$ref": "#/$defs/AtNodeCondition"
+              },
+              {
+                "$ref": "#/$defs/AllCondition"
+              },
+              {
+                "$ref": "#/$defs/AnyCondition"
+              },
+              {
+                "$ref": "#/$defs/NotCondition"
+              }
+            ]
+          },
+          "minItems": 1,
+          "title": "Conditions",
+          "type": "array"
+        },
+        "type": {
+          "const": "all",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "conditions"
+      ],
+      "title": "AllCondition",
+      "type": "object"
+    },
+    "AnyCondition": {
+      "additionalProperties": false,
+      "properties": {
+        "conditions": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "all": "#/$defs/AllCondition",
+                "any": "#/$defs/AnyCondition",
+                "at_node": "#/$defs/AtNodeCondition",
+                "attribute_compare": "#/$defs/AttributeCompareCondition",
+                "counter_compare": "#/$defs/CounterCompareCondition",
+                "flag_equals": "#/$defs/FlagEqualsCondition",
+                "item": "#/$defs/ItemCondition",
+                "not": "#/$defs/NotCondition"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/AttributeCompareCondition"
+              },
+              {
+                "$ref": "#/$defs/FlagEqualsCondition"
+              },
+              {
+                "$ref": "#/$defs/ItemCondition"
+              },
+              {
+                "$ref": "#/$defs/CounterCompareCondition"
+              },
+              {
+                "$ref": "#/$defs/AtNodeCondition"
+              },
+              {
+                "$ref": "#/$defs/AllCondition"
+              },
+              {
+                "$ref": "#/$defs/AnyCondition"
+              },
+              {
+                "$ref": "#/$defs/NotCondition"
+              }
+            ]
+          },
+          "minItems": 1,
+          "title": "Conditions",
+          "type": "array"
+        },
+        "type": {
+          "const": "any",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "conditions"
+      ],
+      "title": "AnyCondition",
+      "type": "object"
+    },
+    "AtNodeCondition": {
+      "additionalProperties": false,
+      "properties": {
+        "node_id": {
+          "title": "Node Id",
+          "type": "string"
+        },
+        "type": {
+          "const": "at_node",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "node_id"
+      ],
+      "title": "AtNodeCondition",
+      "type": "object"
+    },
+    "AttributeCompareCondition": {
+      "additionalProperties": false,
+      "properties": {
+        "attribute": {
+          "title": "Attribute",
+          "type": "string"
+        },
+        "operator": {
+          "enum": [
+            "lt",
+            "lte",
+            "eq",
+            "ne",
+            "gte",
+            "gt"
+          ],
+          "title": "Operator",
+          "type": "string"
+        },
+        "type": {
+          "const": "attribute_compare",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "type",
+        "attribute",
+        "operator",
+        "value"
+      ],
+      "title": "AttributeCompareCondition",
+      "type": "object"
+    },
+    "AuthoringV3": {
+      "additionalProperties": false,
+      "properties": {
+        "gender_variant": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GenderVariantNoteV3"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        },
+        "npc_item_notes": {
+          "items": {
+            "$ref": "#/$defs/NpcItemNoteV3"
+          },
+          "title": "Npc Item Notes",
+          "type": "array"
+        },
+        "npcs_present": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Npcs Present",
+          "type": "array"
+        },
+        "scene_items": {
+          "items": {
+            "$ref": "#/$defs/SceneItemNoteV3"
+          },
+          "title": "Scene Items",
+          "type": "array"
+        },
+        "sensory": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sensory"
+        },
+        "trigger_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Description"
+        }
+      },
+      "title": "AuthoringV3",
+      "type": "object"
+    },
+    "CheckResultContentBlockV3": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "type": {
+          "const": "check_result",
+          "title": "Type",
+          "type": "string"
+        },
+        "when": {
+          "anyOf": [
+            {
+              "discriminator": {
+                "mapping": {
+                  "all": "#/$defs/AllCondition",
+                  "any": "#/$defs/AnyCondition",
+                  "at_node": "#/$defs/AtNodeCondition",
+                  "attribute_compare": "#/$defs/AttributeCompareCondition",
+                  "counter_compare": "#/$defs/CounterCompareCondition",
+                  "flag_equals": "#/$defs/FlagEqualsCondition",
+                  "item": "#/$defs/ItemCondition",
+                  "not": "#/$defs/NotCondition"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/AttributeCompareCondition"
+                },
+                {
+                  "$ref": "#/$defs/FlagEqualsCondition"
+                },
+                {
+                  "$ref": "#/$defs/ItemCondition"
+                },
+                {
+                  "$ref": "#/$defs/CounterCompareCondition"
+                },
+                {
+                  "$ref": "#/$defs/AtNodeCondition"
+                },
+                {
+                  "$ref": "#/$defs/AllCondition"
+                },
+                {
+                  "$ref": "#/$defs/AnyCondition"
+                },
+                {
+                  "$ref": "#/$defs/NotCondition"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "When"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "text"
+      ],
+      "title": "CheckResultContentBlockV3",
+      "type": "object"
+    },
+    "ChoiceAvailabilityV3": {
+      "additionalProperties": false,
+      "properties": {
+        "condition": {
+          "anyOf": [
+            {
+              "discriminator": {
+                "mapping": {
+                  "all": "#/$defs/AllCondition",
+                  "any": "#/$defs/AnyCondition",
+                  "at_node": "#/$defs/AtNodeCondition",
+                  "attribute_compare": "#/$defs/AttributeCompareCondition",
+                  "counter_compare": "#/$defs/CounterCompareCondition",
+                  "flag_equals": "#/$defs/FlagEqualsCondition",
+                  "item": "#/$defs/ItemCondition",
+                  "not": "#/$defs/NotCondition"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/AttributeCompareCondition"
+                },
+                {
+                  "$ref": "#/$defs/FlagEqualsCondition"
+                },
+                {
+                  "$ref": "#/$defs/ItemCondition"
+                },
+                {
+                  "$ref": "#/$defs/CounterCompareCondition"
+                },
+                {
+                  "$ref": "#/$defs/AtNodeCondition"
+                },
+                {
+                  "$ref": "#/$defs/AllCondition"
+                },
+                {
+                  "$ref": "#/$defs/AnyCondition"
+                },
+                {
+                  "$ref": "#/$defs/NotCondition"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Condition"
+        },
+        "locked_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locked Reason"
+        },
+        "locked_visibility": {
+          "default": "show",
+          "enum": [
+            "show",
+            "hide"
+          ],
+          "title": "Locked Visibility",
+          "type": "string"
+        }
+      },
+      "title": "ChoiceAvailabilityV3",
+      "type": "object"
+    },
+    "CounterCompareCondition": {
+      "additionalProperties": false,
+      "properties": {
+        "counter": {
+          "enum": [
+            "completed_cycles",
+            "current_cycle",
+            "half_cycles"
+          ],
+          "title": "Counter",
+          "type": "string"
+        },
+        "operator": {
+          "enum": [
+            "lt",
+            "lte",
+            "eq",
+            "ne",
+            "gte",
+            "gt"
+          ],
+          "title": "Operator",
+          "type": "string"
+        },
+        "type": {
+          "const": "counter_compare",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "minimum": 0,
+          "title": "Value",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "type",
+        "counter",
+        "operator",
+        "value"
+      ],
+      "title": "CounterCompareCondition",
+      "type": "object"
+    },
+    "CrossingInteractionV3": {
+      "additionalProperties": false,
+      "properties": {
+        "choice_id": {
+          "title": "Choice Id",
+          "type": "string"
+        },
+        "npc_id": {
+          "title": "Npc Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "choice_id",
+        "npc_id"
+      ],
+      "title": "CrossingInteractionV3",
+      "type": "object"
+    },
+    "CrossingRoutingV3": {
+      "additionalProperties": false,
+      "properties": {
+        "deep_interactions": {
+          "items": {
+            "$ref": "#/$defs/CrossingInteractionV3"
+          },
+          "minItems": 1,
+          "title": "Deep Interactions",
+          "type": "array"
+        },
+        "duration_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration Note"
+        },
+        "max_deep_interactions": {
+          "minimum": 1,
+          "title": "Max Deep Interactions",
+          "type": "integer"
+        },
+        "return_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return Note"
+        },
+        "target_era": {
+          "title": "Target Era",
+          "type": "string"
+        },
+        "trigger_time": {
+          "title": "Trigger Time",
+          "type": "string"
+        },
+        "type": {
+          "const": "crossing",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "trigger_time",
+        "target_era",
+        "max_deep_interactions",
+        "deep_interactions"
+      ],
+      "title": "CrossingRoutingV3",
+      "type": "object"
+    },
+    "DialogueContentBlockV3": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "speaker_id": {
+          "title": "Speaker Id",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "type": {
+          "const": "dialogue",
+          "title": "Type",
+          "type": "string"
+        },
+        "when": {
+          "anyOf": [
+            {
+              "discriminator": {
+                "mapping": {
+                  "all": "#/$defs/AllCondition",
+                  "any": "#/$defs/AnyCondition",
+                  "at_node": "#/$defs/AtNodeCondition",
+                  "attribute_compare": "#/$defs/AttributeCompareCondition",
+                  "counter_compare": "#/$defs/CounterCompareCondition",
+                  "flag_equals": "#/$defs/FlagEqualsCondition",
+                  "item": "#/$defs/ItemCondition",
+                  "not": "#/$defs/NotCondition"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/AttributeCompareCondition"
+                },
+                {
+                  "$ref": "#/$defs/FlagEqualsCondition"
+                },
+                {
+                  "$ref": "#/$defs/ItemCondition"
+                },
+                {
+                  "$ref": "#/$defs/CounterCompareCondition"
+                },
+                {
+                  "$ref": "#/$defs/AtNodeCondition"
+                },
+                {
+                  "$ref": "#/$defs/AllCondition"
+                },
+                {
+                  "$ref": "#/$defs/AnyCondition"
+                },
+                {
+                  "$ref": "#/$defs/NotCondition"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "When"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "speaker_id",
+        "text"
+      ],
+      "title": "DialogueContentBlockV3",
+      "type": "object"
+    },
+    "EntrySequenceV3": {
+      "additionalProperties": false,
+      "properties": {
+        "blocks": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "check_result": "#/$defs/CheckResultContentBlockV3",
+                "dialogue": "#/$defs/DialogueContentBlockV3",
+                "narration": "#/$defs/NarrationContentBlockV3",
+                "system": "#/$defs/SystemContentBlockV3"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/NarrationContentBlockV3"
+              },
+              {
+                "$ref": "#/$defs/DialogueContentBlockV3"
+              },
+              {
+                "$ref": "#/$defs/SystemContentBlockV3"
+              },
+              {
+                "$ref": "#/$defs/CheckResultContentBlockV3"
+              }
+            ]
+          },
+          "minItems": 1,
+          "title": "Blocks",
+          "type": "array"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "when": {
+          "anyOf": [
+            {
+              "discriminator": {
+                "mapping": {
+                  "all": "#/$defs/AllCondition",
+                  "any": "#/$defs/AnyCondition",
+                  "at_node": "#/$defs/AtNodeCondition",
+                  "attribute_compare": "#/$defs/AttributeCompareCondition",
+                  "counter_compare": "#/$defs/CounterCompareCondition",
+                  "flag_equals": "#/$defs/FlagEqualsCondition",
+                  "item": "#/$defs/ItemCondition",
+                  "not": "#/$defs/NotCondition"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/AttributeCompareCondition"
+                },
+                {
+                  "$ref": "#/$defs/FlagEqualsCondition"
+                },
+                {
+                  "$ref": "#/$defs/ItemCondition"
+                },
+                {
+                  "$ref": "#/$defs/CounterCompareCondition"
+                },
+                {
+                  "$ref": "#/$defs/AtNodeCondition"
+                },
+                {
+                  "$ref": "#/$defs/AllCondition"
+                },
+                {
+                  "$ref": "#/$defs/AnyCondition"
+                },
+                {
+                  "$ref": "#/$defs/NotCondition"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "When"
+        }
+      },
+      "required": [
+        "id",
+        "blocks"
+      ],
+      "title": "EntrySequenceV3",
+      "type": "object"
+    },
+    "FlagEqualsCondition": {
+      "additionalProperties": false,
+      "properties": {
+        "flag": {
+          "title": "Flag",
+          "type": "string"
+        },
+        "type": {
+          "const": "flag_equals",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "type",
+        "flag",
+        "value"
+      ],
+      "title": "FlagEqualsCondition",
+      "type": "object"
+    },
+    "GenderVariantNoteV3": {
+      "additionalProperties": false,
+      "properties": {
+        "female": {
+          "title": "Female",
+          "type": "string"
+        },
+        "male": {
+          "title": "Male",
+          "type": "string"
+        }
+      },
+      "required": [
+        "male",
+        "female"
+      ],
+      "title": "GenderVariantNoteV3",
+      "type": "object"
+    },
+    "InventoryEffect": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "operation": {
+          "enum": [
+            "add",
+            "remove"
+          ],
+          "title": "Operation",
+          "type": "string"
+        },
+        "quantity": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Quantity",
+          "type": "integer"
+        },
+        "type": {
+          "const": "inventory",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "item_id",
+        "operation"
+      ],
+      "title": "InventoryEffect",
+      "type": "object"
+    },
+    "ItemCondition": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "present": {
+          "default": true,
+          "title": "Present",
+          "type": "boolean"
+        },
+        "type": {
+          "const": "item",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "item_id"
+      ],
+      "title": "ItemCondition",
+      "type": "object"
+    },
+    "MarkOnceEffect": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "scope": {
+          "enum": [
+            "visit",
+            "cycle",
+            "session"
+          ],
+          "title": "Scope",
+          "type": "string"
+        },
+        "type": {
+          "const": "mark_once",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "key",
+        "scope"
+      ],
+      "title": "MarkOnceEffect",
+      "type": "object"
+    },
+    "ModifyAttributeEffect": {
+      "additionalProperties": false,
+      "properties": {
+        "attribute": {
+          "title": "Attribute",
+          "type": "string"
+        },
+        "clamp": {
+          "default": true,
+          "title": "Clamp",
+          "type": "boolean"
+        },
+        "operation": {
+          "enum": [
+            "add",
+            "set"
+          ],
+          "title": "Operation",
+          "type": "string"
+        },
+        "type": {
+          "const": "modify_attribute",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "type",
+        "attribute",
+        "operation",
+        "value"
+      ],
+      "title": "ModifyAttributeEffect",
+      "type": "object"
+    },
+    "ModifyCounterEffect": {
+      "additionalProperties": false,
+      "properties": {
+        "counter": {
+          "enum": [
+            "completed_cycles",
+            "half_cycles"
+          ],
+          "title": "Counter",
+          "type": "string"
+        },
+        "operation": {
+          "enum": [
+            "add",
+            "set"
+          ],
+          "title": "Operation",
+          "type": "string"
+        },
+        "type": {
+          "const": "modify_counter",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "type",
+        "counter",
+        "operation",
+        "value"
+      ],
+      "title": "ModifyCounterEffect",
+      "type": "object"
+    },
+    "NarrationContentBlockV3": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "type": {
+          "const": "narration",
+          "title": "Type",
+          "type": "string"
+        },
+        "when": {
+          "anyOf": [
+            {
+              "discriminator": {
+                "mapping": {
+                  "all": "#/$defs/AllCondition",
+                  "any": "#/$defs/AnyCondition",
+                  "at_node": "#/$defs/AtNodeCondition",
+                  "attribute_compare": "#/$defs/AttributeCompareCondition",
+                  "counter_compare": "#/$defs/CounterCompareCondition",
+                  "flag_equals": "#/$defs/FlagEqualsCondition",
+                  "item": "#/$defs/ItemCondition",
+                  "not": "#/$defs/NotCondition"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/AttributeCompareCondition"
+                },
+                {
+                  "$ref": "#/$defs/FlagEqualsCondition"
+                },
+                {
+                  "$ref": "#/$defs/ItemCondition"
+                },
+                {
+                  "$ref": "#/$defs/CounterCompareCondition"
+                },
+                {
+                  "$ref": "#/$defs/AtNodeCondition"
+                },
+                {
+                  "$ref": "#/$defs/AllCondition"
+                },
+                {
+                  "$ref": "#/$defs/AnyCondition"
+                },
+                {
+                  "$ref": "#/$defs/NotCondition"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "When"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "text"
+      ],
+      "title": "NarrationContentBlockV3",
+      "type": "object"
+    },
+    "NextActionV3": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "stay",
+            "travel",
+            "shortcut",
+            "warp"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target",
+        "mode"
+      ],
+      "title": "NextActionV3",
+      "type": "object"
+    },
+    "NotCondition": {
+      "additionalProperties": false,
+      "properties": {
+        "condition": {
+          "discriminator": {
+            "mapping": {
+              "all": "#/$defs/AllCondition",
+              "any": "#/$defs/AnyCondition",
+              "at_node": "#/$defs/AtNodeCondition",
+              "attribute_compare": "#/$defs/AttributeCompareCondition",
+              "counter_compare": "#/$defs/CounterCompareCondition",
+              "flag_equals": "#/$defs/FlagEqualsCondition",
+              "item": "#/$defs/ItemCondition",
+              "not": "#/$defs/NotCondition"
+            },
+            "propertyName": "type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/AttributeCompareCondition"
+            },
+            {
+              "$ref": "#/$defs/FlagEqualsCondition"
+            },
+            {
+              "$ref": "#/$defs/ItemCondition"
+            },
+            {
+              "$ref": "#/$defs/CounterCompareCondition"
+            },
+            {
+              "$ref": "#/$defs/AtNodeCondition"
+            },
+            {
+              "$ref": "#/$defs/AllCondition"
+            },
+            {
+              "$ref": "#/$defs/AnyCondition"
+            },
+            {
+              "$ref": "#/$defs/NotCondition"
+            }
+          ],
+          "title": "Condition"
+        },
+        "type": {
+          "const": "not",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "condition"
+      ],
+      "title": "NotCondition",
+      "type": "object"
+    },
+    "NpcItemNoteV3": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "npc_id": {
+          "title": "Npc Id",
+          "type": "string"
+        },
+        "required_flag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Required Flag"
+        }
+      },
+      "required": [
+        "npc_id",
+        "item_id"
+      ],
+      "title": "NpcItemNoteV3",
+      "type": "object"
+    },
+    "PersistNodeItemEffect": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "node_id": {
+          "title": "Node Id",
+          "type": "string"
+        },
+        "type": {
+          "const": "persist_node_item",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "node_id",
+        "item_id"
+      ],
+      "title": "PersistNodeItemEffect",
+      "type": "object"
+    },
+    "RecordInteractionEffect": {
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "title": "Group",
+          "type": "string"
+        },
+        "subject_id": {
+          "title": "Subject Id",
+          "type": "string"
+        },
+        "type": {
+          "const": "record_interaction",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "group",
+        "subject_id"
+      ],
+      "title": "RecordInteractionEffect",
+      "type": "object"
+    },
+    "RestoreEntryAttributeEffect": {
+      "additionalProperties": false,
+      "properties": {
+        "attribute": {
+          "title": "Attribute",
+          "type": "string"
+        },
+        "type": {
+          "const": "restore_entry_attribute",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "attribute"
+      ],
+      "title": "RestoreEntryAttributeEffect",
+      "type": "object"
+    },
+    "SceneItemNoteV3": {
+      "additionalProperties": false,
+      "properties": {
+        "acquisition_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Acquisition Note"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "location": {
+          "title": "Location",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id",
+        "location"
+      ],
+      "title": "SceneItemNoteV3",
+      "type": "object"
+    },
+    "SceneV3": {
+      "additionalProperties": false,
+      "properties": {
+        "allow_no_background": {
+          "title": "Allow No Background",
+          "type": "boolean"
+        },
+        "ambient_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ambient Id"
+        },
+        "atmosphere": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Atmosphere",
+          "type": "array"
+        },
+        "background_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Background Id"
+        },
+        "palette": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Palette"
+        }
+      },
+      "required": [
+        "allow_no_background"
+      ],
+      "title": "SceneV3",
+      "type": "object"
+    },
+    "SetFlagEffect": {
+      "additionalProperties": false,
+      "properties": {
+        "flag": {
+          "title": "Flag",
+          "type": "string"
+        },
+        "type": {
+          "const": "set_flag",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "type",
+        "flag",
+        "value"
+      ],
+      "title": "SetFlagEffect",
+      "type": "object"
+    },
+    "ShortcutRoutingV3": {
+      "additionalProperties": false,
+      "properties": {
+        "counter_effects": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "inventory": "#/$defs/InventoryEffect",
+                "mark_once": "#/$defs/MarkOnceEffect",
+                "modify_attribute": "#/$defs/ModifyAttributeEffect",
+                "modify_counter": "#/$defs/ModifyCounterEffect",
+                "persist_node_item": "#/$defs/PersistNodeItemEffect",
+                "record_interaction": "#/$defs/RecordInteractionEffect",
+                "restore_entry_attribute": "#/$defs/RestoreEntryAttributeEffect",
+                "set_flag": "#/$defs/SetFlagEffect"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/ModifyAttributeEffect"
+              },
+              {
+                "$ref": "#/$defs/SetFlagEffect"
+              },
+              {
+                "$ref": "#/$defs/InventoryEffect"
+              },
+              {
+                "$ref": "#/$defs/PersistNodeItemEffect"
+              },
+              {
+                "$ref": "#/$defs/RecordInteractionEffect"
+              },
+              {
+                "$ref": "#/$defs/ModifyCounterEffect"
+              },
+              {
+                "$ref": "#/$defs/MarkOnceEffect"
+              },
+              {
+                "$ref": "#/$defs/RestoreEntryAttributeEffect"
+              }
+            ]
+          },
+          "title": "Counter Effects",
+          "type": "array"
+        },
+        "entry_condition": {
+          "discriminator": {
+            "mapping": {
+              "all": "#/$defs/AllCondition",
+              "any": "#/$defs/AnyCondition",
+              "at_node": "#/$defs/AtNodeCondition",
+              "attribute_compare": "#/$defs/AttributeCompareCondition",
+              "counter_compare": "#/$defs/CounterCompareCondition",
+              "flag_equals": "#/$defs/FlagEqualsCondition",
+              "item": "#/$defs/ItemCondition",
+              "not": "#/$defs/NotCondition"
+            },
+            "propertyName": "type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/AttributeCompareCondition"
+            },
+            {
+              "$ref": "#/$defs/FlagEqualsCondition"
+            },
+            {
+              "$ref": "#/$defs/ItemCondition"
+            },
+            {
+              "$ref": "#/$defs/CounterCompareCondition"
+            },
+            {
+              "$ref": "#/$defs/AtNodeCondition"
+            },
+            {
+              "$ref": "#/$defs/AllCondition"
+            },
+            {
+              "$ref": "#/$defs/AnyCondition"
+            },
+            {
+              "$ref": "#/$defs/NotCondition"
+            }
+          ],
+          "title": "Entry Condition"
+        },
+        "entry_node_id": {
+          "title": "Entry Node Id",
+          "type": "string"
+        },
+        "exit_node_id": {
+          "title": "Exit Node Id",
+          "type": "string"
+        },
+        "type": {
+          "const": "shortcut",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "entry_condition",
+        "entry_node_id",
+        "exit_node_id"
+      ],
+      "title": "ShortcutRoutingV3",
+      "type": "object"
+    },
+    "StoryChoiceV3": {
+      "additionalProperties": false,
+      "properties": {
+        "availability": {
+          "$ref": "#/$defs/ChoiceAvailabilityV3"
+        },
+        "effects": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "inventory": "#/$defs/InventoryEffect",
+                "mark_once": "#/$defs/MarkOnceEffect",
+                "modify_attribute": "#/$defs/ModifyAttributeEffect",
+                "modify_counter": "#/$defs/ModifyCounterEffect",
+                "persist_node_item": "#/$defs/PersistNodeItemEffect",
+                "record_interaction": "#/$defs/RecordInteractionEffect",
+                "restore_entry_attribute": "#/$defs/RestoreEntryAttributeEffect",
+                "set_flag": "#/$defs/SetFlagEffect"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/ModifyAttributeEffect"
+              },
+              {
+                "$ref": "#/$defs/SetFlagEffect"
+              },
+              {
+                "$ref": "#/$defs/InventoryEffect"
+              },
+              {
+                "$ref": "#/$defs/PersistNodeItemEffect"
+              },
+              {
+                "$ref": "#/$defs/RecordInteractionEffect"
+              },
+              {
+                "$ref": "#/$defs/ModifyCounterEffect"
+              },
+              {
+                "$ref": "#/$defs/MarkOnceEffect"
+              },
+              {
+                "$ref": "#/$defs/RestoreEntryAttributeEffect"
+              }
+            ]
+          },
+          "title": "Effects",
+          "type": "array"
+        },
+        "hint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hint"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "next": {
+          "$ref": "#/$defs/NextActionV3"
+        },
+        "repeat_policy": {
+          "default": "once_per_visit",
+          "enum": [
+            "always",
+            "once_per_visit",
+            "once_per_cycle",
+            "once_ever"
+          ],
+          "title": "Repeat Policy",
+          "type": "string"
+        },
+        "result": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "check_result": "#/$defs/CheckResultContentBlockV3",
+                "dialogue": "#/$defs/DialogueContentBlockV3",
+                "narration": "#/$defs/NarrationContentBlockV3",
+                "system": "#/$defs/SystemContentBlockV3"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/NarrationContentBlockV3"
+              },
+              {
+                "$ref": "#/$defs/DialogueContentBlockV3"
+              },
+              {
+                "$ref": "#/$defs/SystemContentBlockV3"
+              },
+              {
+                "$ref": "#/$defs/CheckResultContentBlockV3"
+              }
+            ]
+          },
+          "title": "Result",
+          "type": "array"
+        },
+        "short_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Short Text"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "availability",
+        "next"
+      ],
+      "title": "StoryChoiceV3",
+      "type": "object"
+    },
+    "StoryNodeMetaV3": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "node_type": {
+          "enum": [
+            "main",
+            "normal",
+            "special_shortcut",
+            "special_warp"
+          ],
+          "title": "Node Type",
+          "type": "string"
+        },
+        "parent_node_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Node Id"
+        },
+        "position": {
+          "title": "Position",
+          "type": "number"
+        },
+        "terminal": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TerminalSpecV3"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "time_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time Label"
+        }
+      },
+      "required": [
+        "name",
+        "node_type",
+        "position",
+        "terminal"
+      ],
+      "title": "StoryNodeMetaV3",
+      "type": "object"
+    },
+    "SystemContentBlockV3": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "type": {
+          "const": "system",
+          "title": "Type",
+          "type": "string"
+        },
+        "when": {
+          "anyOf": [
+            {
+              "discriminator": {
+                "mapping": {
+                  "all": "#/$defs/AllCondition",
+                  "any": "#/$defs/AnyCondition",
+                  "at_node": "#/$defs/AtNodeCondition",
+                  "attribute_compare": "#/$defs/AttributeCompareCondition",
+                  "counter_compare": "#/$defs/CounterCompareCondition",
+                  "flag_equals": "#/$defs/FlagEqualsCondition",
+                  "item": "#/$defs/ItemCondition",
+                  "not": "#/$defs/NotCondition"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/AttributeCompareCondition"
+                },
+                {
+                  "$ref": "#/$defs/FlagEqualsCondition"
+                },
+                {
+                  "$ref": "#/$defs/ItemCondition"
+                },
+                {
+                  "$ref": "#/$defs/CounterCompareCondition"
+                },
+                {
+                  "$ref": "#/$defs/AtNodeCondition"
+                },
+                {
+                  "$ref": "#/$defs/AllCondition"
+                },
+                {
+                  "$ref": "#/$defs/AnyCondition"
+                },
+                {
+                  "$ref": "#/$defs/NotCondition"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "When"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "text"
+      ],
+      "title": "SystemContentBlockV3",
+      "type": "object"
+    },
+    "TerminalSpecV3": {
+      "additionalProperties": false,
+      "properties": {
+        "ending_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ending Id"
+        },
+        "type": {
+          "enum": [
+            "ending",
+            "cycle_complete"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "TerminalSpecV3",
+      "type": "object"
+    },
+    "WarpRoutingV3": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_targets": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Allowed Targets",
+          "type": "array"
+        },
+        "entry_condition": {
+          "discriminator": {
+            "mapping": {
+              "all": "#/$defs/AllCondition",
+              "any": "#/$defs/AnyCondition",
+              "at_node": "#/$defs/AtNodeCondition",
+              "attribute_compare": "#/$defs/AttributeCompareCondition",
+              "counter_compare": "#/$defs/CounterCompareCondition",
+              "flag_equals": "#/$defs/FlagEqualsCondition",
+              "item": "#/$defs/ItemCondition",
+              "not": "#/$defs/NotCondition"
+            },
+            "propertyName": "type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/AttributeCompareCondition"
+            },
+            {
+              "$ref": "#/$defs/FlagEqualsCondition"
+            },
+            {
+              "$ref": "#/$defs/ItemCondition"
+            },
+            {
+              "$ref": "#/$defs/CounterCompareCondition"
+            },
+            {
+              "$ref": "#/$defs/AtNodeCondition"
+            },
+            {
+              "$ref": "#/$defs/AllCondition"
+            },
+            {
+              "$ref": "#/$defs/AnyCondition"
+            },
+            {
+              "$ref": "#/$defs/NotCondition"
+            }
+          ],
+          "title": "Entry Condition"
+        },
+        "exit_effects": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "inventory": "#/$defs/InventoryEffect",
+                "mark_once": "#/$defs/MarkOnceEffect",
+                "modify_attribute": "#/$defs/ModifyAttributeEffect",
+                "modify_counter": "#/$defs/ModifyCounterEffect",
+                "persist_node_item": "#/$defs/PersistNodeItemEffect",
+                "record_interaction": "#/$defs/RecordInteractionEffect",
+                "restore_entry_attribute": "#/$defs/RestoreEntryAttributeEffect",
+                "set_flag": "#/$defs/SetFlagEffect"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/ModifyAttributeEffect"
+              },
+              {
+                "$ref": "#/$defs/SetFlagEffect"
+              },
+              {
+                "$ref": "#/$defs/InventoryEffect"
+              },
+              {
+                "$ref": "#/$defs/PersistNodeItemEffect"
+              },
+              {
+                "$ref": "#/$defs/RecordInteractionEffect"
+              },
+              {
+                "$ref": "#/$defs/ModifyCounterEffect"
+              },
+              {
+                "$ref": "#/$defs/MarkOnceEffect"
+              },
+              {
+                "$ref": "#/$defs/RestoreEntryAttributeEffect"
+              }
+            ]
+          },
+          "minItems": 1,
+          "title": "Exit Effects",
+          "type": "array"
+        },
+        "sacrifice_target": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sacrifice Target"
+        },
+        "type": {
+          "const": "warp",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "entry_condition",
+        "allowed_targets",
+        "exit_effects"
+      ],
+      "title": "WarpRoutingV3",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "authoring": {
+      "$ref": "#/$defs/AuthoringV3"
+    },
+    "choices": {
+      "items": {
+        "$ref": "#/$defs/StoryChoiceV3"
+      },
+      "title": "Choices",
+      "type": "array"
+    },
+    "entry_sequences": {
+      "items": {
+        "$ref": "#/$defs/EntrySequenceV3"
+      },
+      "minItems": 1,
+      "title": "Entry Sequences",
+      "type": "array"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "meta": {
+      "$ref": "#/$defs/StoryNodeMetaV3"
+    },
+    "routing": {
+      "anyOf": [
+        {
+          "discriminator": {
+            "mapping": {
+              "crossing": "#/$defs/CrossingRoutingV3",
+              "shortcut": "#/$defs/ShortcutRoutingV3",
+              "warp": "#/$defs/WarpRoutingV3"
+            },
+            "propertyName": "type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/CrossingRoutingV3"
+            },
+            {
+              "$ref": "#/$defs/ShortcutRoutingV3"
+            },
+            {
+              "$ref": "#/$defs/WarpRoutingV3"
+            }
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Routing"
+    },
+    "scene": {
+      "$ref": "#/$defs/SceneV3"
+    },
+    "schema_version": {
+      "const": 3,
+      "title": "Schema Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "meta",
+    "scene",
+    "entry_sequences"
+  ],
+  "title": "StoryNodeV3",
+  "type": "object"
+}

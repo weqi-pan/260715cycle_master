@@ -1,0 +1,315 @@
+{
+  "authoring": {
+    "gender_variant": null,
+    "notes": [],
+    "npc_item_notes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "sensory": "湿冷的地下空气、砖缝中暗红黏土的铁锈味、刻字在指腹下的粗糙质感",
+    "trigger_description": null
+  },
+  "choices": [
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": "走完密道后到达荔湾广场正门外（半循环）",
+      "id": "J_choice_01",
+      "next": {
+        "mode": "shortcut",
+        "target": "A"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "J_choice_01_result_paragraph_01_01",
+          "text": "你弯着腰穿过狭窄的密道。两侧的青砖上刻满了字——清代、民国、九十年代——每一个在这条密道里走过的人都留下了痕迹。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "J_choice_01_result_paragraph_02_01",
+          "text": "通道尽头是一道向上的阶梯。你推开生锈的铁门——发现自己站在荔湾广场正门外那堵旧砖墙的后面。正门的铜狮就在十米之外。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "J_choice_01_result_paragraph_03_01",
+          "text": "你回头看了一眼密道出口。墙上又多了一行字——不是别人刻的。你突然意识到那是你自己的笔迹。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "走密道",
+      "text": "进入密道——走捷径返回正门"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": "墙上有很多人留下的信息——从1650年到2014年",
+      "id": "J_choice_02",
+      "next": {
+        "mode": "stay",
+        "target": "J"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "J_choice_02_result_paragraph_01_01",
+          "text": "你举起手机照亮墙面，一行一行地读那些刻在青砖上的字。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "J_choice_02_result_paragraph_02_01",
+          "text": "\"顺治七年十一月·甲申。城破第七日。藏于此。\"——这是最古老的。字是用碎瓦片划的，笔画断断续续，刻字的人手在抖。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "J_choice_02_result_paragraph_03_01",
+          "text": "\"民国二十六年。日本人来了。我又下来了。\"——这一行用的是小刀，笔画比上面那行更用力。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "J_choice_02_result_paragraph_04_01",
+          "text": "\"1993年9月13日。他们封了入口。我在里面。\"——这是用钥匙刻的。刻字的人被困在地下过了一夜。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "J_choice_02_result_paragraph_05_01",
+          "text": "\"2014.7.15 这里不是出口。\"——这一行用的是圆珠笔。笔迹和502室床底便签上的字一模一样。上任租客来过这里。他走完了密道——但密道没能带他离开循环。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "J_choice_02_result_paragraph_06_01",
+          "text": "最底部还有一行字——你没有印象刻过它。但那是你的笔迹。",
+          "type": "narration",
+          "when": {
+            "counter": "current_cycle",
+            "operator": "gte",
+            "type": "counter_compare",
+            "value": 2
+          }
+        },
+        {
+          "id": "J_choice_02_result_paragraph_07_01",
+          "text": "\"第N次经过。墙壁在向中间靠拢。注意砖缝里的土——它在变红。\"",
+          "type": "narration",
+          "when": {
+            "counter": "current_cycle",
+            "operator": "gte",
+            "type": "counter_compare",
+            "value": 2
+          }
+        },
+        {
+          "id": "J_choice_02_result_paragraph_08_01",
+          "text": "最顶上一块砖上只有两个字——\"轮回\"。刻于1651年正月。刻字的人是刘启盛。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "看刻字",
+      "text": "仔细观察墙上的刻字"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "J_choice_03",
+      "next": {
+        "mode": "travel",
+        "target": "E"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "J_choice_03_result_paragraph_01_01",
+          "text": "你后退一步，从不弯腰的密道中退了出来。脚踩回在地下穹顶的青砖地面上。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "J_choice_03_result_paragraph_02_01",
+          "text": "密道入口还是那个入口——东侧地砖下的方形黑洞。它在那里，下一轮、下一轮、下下一轮都是。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "返回地下",
+      "text": "退出密道，返回地下穹顶"
+    }
+  ],
+  "entry_sequences": [
+    {
+      "blocks": [
+        {
+          "id": "J_entry_default_paragraph_01_01",
+          "text": "你推开东侧松动的青砖——砖后是一条向下倾斜的狭窄通道。通道约半人高，你只能弯腰前进。墙壁是老旧的青砖——和地下穹顶用的是同一种砖。砖缝里填的不是水泥，是一种暗红色的黏土——干了之后像凝固的血。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "J_entry_default_paragraph_02_01",
+          "text": "通道两侧的墙壁上刻满了字。不是毛笔写的——是用尖锐的东西划在砖面上的。字迹从清代到现代都有：",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "J_entry_default_paragraph_03_01",
+          "text": "\"顺治七年十一月·甲申。城破第七日。藏于此。\"\n\"民国二十六年。日本人来了。我又下来了。\"\n\"1993年9月13日。他们封了入口。我在里面。\"\n\"2014.7.15 这里不是出口。\"",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "J_entry_default_paragraph_04_01",
+          "text": "---",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "J_entry_default_paragraph_05_01",
+          "text": "通道尽头是一道向上的阶梯。阶梯顶部是一扇生锈的铁门——门缝里透进外面的路灯灯光和潮湿的夜风。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "J_entry_default_paragraph_06_01",
+          "text": "你推开门——发现自己站在荔湾广场正门外那堵旧砖墙的后面。正门的铜狮就在十米之外。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "J_entry_default_paragraph_07_01",
+          "text": "这趟捷径让你跳过了F→G→H→A的完整路程。但半循环意味着——你保留了一部分记忆和道具，失去了另一部分。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "id": "J_entry_default",
+      "when": null
+    },
+    {
+      "blocks": [
+        {
+          "id": "J_entry_cycle_2_paragraph_01_01",
+          "text": "你再次穿过密道。墙上的刻字没有变化——但这次你注意到了最底部的一行新字：",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "J_entry_cycle_2_paragraph_02_01",
+          "text": "\"第7次经过。墙壁在向中间靠拢。注意砖缝里的土——它在变红。\"",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "J_entry_cycle_2_paragraph_03_01",
+          "text": "这行字的笔迹——和你在B节点床底找到的警告便签上的字迹一模一样。是上任租客。他至少走过7次密道。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "id": "J_entry_cycle_2",
+      "when": {
+        "counter": "current_cycle",
+        "operator": "eq",
+        "type": "counter_compare",
+        "value": 2
+      }
+    },
+    {
+      "blocks": [
+        {
+          "id": "J_entry_cycle_3__paragraph_01_01",
+          "text": "第{{cycle_count}}次穿越密道。你对每一段狭窄处、每一个转弯都了如指掌。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "J_entry_cycle_3__paragraph_02_01",
+          "text": "墙上的刻字越来越多——不是真的有新的人在刻字，是你开始能辨认出更多之前被忽略的字迹。它们一直在那里。你的眼睛在每一轮循环中变得更敏锐。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "J_entry_cycle_3__paragraph_03_01",
+          "text": "最古老的刻字在通道入口处的第一块砖上。只有两个字——\"轮回\"。刻于1651年正月。刻字的人是刘启盛。他修完阵法后从这里出去——发现外面的世界已经不是他认识的那个了。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "id": "J_entry_cycle_3_",
+      "when": {
+        "counter": "current_cycle",
+        "operator": "gte",
+        "type": "counter_compare",
+        "value": 3
+      }
+    }
+  ],
+  "id": "J",
+  "meta": {
+    "name": "地宫暗道（捷径节点）",
+    "node_type": "special_shortcut",
+    "parent_node_id": null,
+    "position": -1.0,
+    "terminal": null,
+    "time_label": "任意时间·半循环"
+  },
+  "routing": {
+    "counter_effects": [
+      {
+        "counter": "half_cycles",
+        "operation": "add",
+        "type": "modify_counter",
+        "value": 1
+      }
+    ],
+    "entry_condition": {
+      "conditions": [
+        {
+          "flag": "know_secret_tunnel",
+          "type": "flag_equals",
+          "value": true
+        },
+        {
+          "item_id": "item_tunnel_map",
+          "present": true,
+          "type": "item"
+        }
+      ],
+      "type": "any"
+    },
+    "entry_node_id": "E",
+    "exit_node_id": "A",
+    "type": "shortcut"
+  },
+  "scene": {
+    "allow_no_background": true,
+    "ambient_id": null,
+    "atmosphere": [
+      "狭窄",
+      "时间的刻痕",
+      "半循环的代价"
+    ],
+    "background_id": null,
+    "palette": "青砖灰+暗红"
+  },
+  "schema_version": 3
+}
