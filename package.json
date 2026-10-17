@@ -10,7 +10,7 @@
   "scripts": {
     "dev:server": "node --experimental-strip-types apps/server/src/main.ts",
     "dev:web": "pnpm --filter @cycle-master/web dev",
-    "dev": "pnpm run --parallel dev:server dev:web",
+    "dev": "pnpm --filter @cycle-master/server dev & pnpm --filter @cycle-master/web dev & wait",
     "story:compile": "node --experimental-strip-types packages/story-schema/src/bin/compile.ts",
     "typecheck": "pnpm run typecheck:packages && pnpm run typecheck:web",
     "test": "pnpm run test:packages && pnpm run test:web",
