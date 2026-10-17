@@ -315,7 +315,7 @@ export class EffectExecutor {
   }
 }
 
-function visibleBlocks(blocks: { id: string; type: 'narration' | 'dialogue' | 'system' | 'check_result'; text: string; speaker_id?: string; when?: ConditionV3 }[], state: GameState, evaluator: ConditionEvaluator): ContentBlockView[] {
+function visibleBlocks(blocks: { id: string; type: 'narration' | 'dialogue' | 'system' | 'check_result'; text: string; speaker_id?: string | undefined; when?: ConditionV3 | null | undefined }[], state: GameState, evaluator: ConditionEvaluator): ContentBlockView[] {
   const result: ContentBlockView[] = []
   for (const block of blocks) {
     if (!evaluator.check(block.when, state)) continue

@@ -41,7 +41,7 @@ const StoryId = z.string().refine(value => {
 
 const CompareOperator = z.enum(['lt', 'lte', 'eq', 'ne', 'gte', 'gt'])
 
-const ConditionSchema: z.ZodType<any> = z.lazy(() => z.discriminatedUnion('type', [
+const ConditionSchema: z.ZodType<ConditionV3> = z.lazy(() => z.discriminatedUnion('type', [
   z.object({ type: z.literal('attribute_compare'), attribute: StoryId, operator: CompareOperator, value: z.number().int() }).strict(),
   z.object({ type: z.literal('flag_equals'), flag: StoryId, value: z.union([z.boolean(), z.number().int(), z.string()]) }).strict(),
   z.object({ type: z.literal('item'), item_id: StoryId, present: z.boolean().default(true) }).strict(),
@@ -53,7 +53,7 @@ const ConditionSchema: z.ZodType<any> = z.lazy(() => z.discriminatedUnion('type'
 ]))
 
 
-const EffectSchema: z.ZodType<any> = z.lazy(() => z.discriminatedUnion('type', [
+const EffectSchema: z.ZodType<StoryEffectV3> = z.lazy(() => z.discriminatedUnion('type', [
   z.object({ type: z.literal('modify_attribute'), attribute: StoryId, operation: z.enum(['add', 'set']), value: z.number().int(), clamp: z.boolean().default(true) }).strict(),
   z.object({ type: z.literal('set_flag'), flag: StoryId, value: z.union([z.boolean(), z.number().int(), z.string()]) }).strict(),
   z.object({ type: z.literal('inventory'), item_id: StoryId, operation: z.enum(['add', 'remove']), quantity: z.number().int().min(1).default(1) }).strict(),
@@ -197,8 +197,28 @@ const AssetCatalog = z.object({
 export type StoryProjectV3 = z.infer<typeof Project>
 export type StoryAssetCatalogV3 = z.infer<typeof AssetCatalog>
 export type StoryNodeV3 = z.infer<typeof StoryNode>
-export type ConditionV3 = any
-export type StoryEffectV3 = any
+export type ConditionOperator = 'lt' | 'lte' | 'eq' | 'ne' | 'gte' | 'gt'
+
+export type ConditionV3 =
+  | { type: 'attribute_compare'; attribute: string; operator: ConditionOperator; value: number }
+  | { type: 'flag_equals'; flag: string; value: boolean | number | string }
+  | { type: 'item'; item_id: string; present: boolean }
+  | { type: 'counter_compare'; counter: 'completed_cycles' | 'current_cycle' | 'half_cycles'; operator: ConditionOperator; value: number }
+  | { type: 'at_node'; node_id: string }
+  | { type: 'all'; conditions: ConditionV3[] }
+  | { type: 'any'; conditions: ConditionV3[] }
+  | { type: 'not'; condition: ConditionV3 }
+
+export type StoryEffectV3 =
+  | { type: 'modify_attribute'; attribute: string; operation: 'add' | 'set'; value: number; clamp: boolean }
+  | { type: 'set_flag'; flag: string; value: boolean | number | string }
+  | { type: 'inventory'; item_id: string; operation: 'add' | 'remove'; quantity: number }
+  | { type: 'persist_node_item'; node_id: string; item_id: string }
+  | { type: 'record_interaction'; group: string; subject_id: string }
+  | { type: 'modify_counter'; counter: 'completed_cycles' | 'half_cycles'; operation: 'add' | 'set'; value: number }
+  | { type: 'mark_once'; key: string; scope: 'visit' | 'cycle' | 'session' }
+  | { type: 'restore_entry_attribute'; attribute: string }
+
 export type ContentBlockV3 = z.infer<typeof ContentBlock>
 export type StoryChoiceV3 = z.infer<typeof Choice>
 
