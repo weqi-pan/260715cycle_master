@@ -1,0 +1,32 @@
+{
+  "name": "cycle-master-v2",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "packageManager": "pnpm@11.17.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev:server": "node --experimental-strip-types apps/server/src/main.ts",
+    "dev:web": "pnpm --filter @cycle-master/web dev",
+    "dev": "pnpm --filter @cycle-master/server dev & pnpm --filter @cycle-master/web dev & wait",
+    "story:compile": "node --experimental-strip-types packages/story-schema/src/bin/compile.ts",
+    "typecheck": "pnpm run typecheck:packages && pnpm run typecheck:web",
+    "test": "pnpm run test:packages && pnpm run test:web",
+    "build": "pnpm run story:compile -- --strict && pnpm run typecheck && pnpm run build:server && pnpm run build:web",
+    "typecheck:packages": "node node_modules/typescript/bin/tsc -b apps/server packages/story-schema packages/game-runtime packages/api-contract",
+    "typecheck:web": "pnpm --filter @cycle-master/web exec vue-tsc --noEmit -p tsconfig.json",
+    "test:packages": "node node_modules/vitest/vitest.mjs run",
+    "test:web": "pnpm --filter @cycle-master/web test",
+    "build:server": "node node_modules/typescript/bin/tsc -p apps/server/tsconfig.json",
+    "build:web": "pnpm --filter @cycle-master/web exec vite build --config vite.config.ts",
+    "e2e": "echo \"Playwright e2e 由独立 worker 实例驱动；当前先运行 pnpm test 作为最小验收。\" && pnpm test"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

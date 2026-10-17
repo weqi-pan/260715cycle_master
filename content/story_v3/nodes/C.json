@@ -1,0 +1,874 @@
+{
+  "authoring": {
+    "gender_variant": null,
+    "notes": [],
+    "npc_item_notes": [],
+    "npcs_present": [
+      "npc_yan_yan",
+      "npc_old_monk"
+    ],
+    "scene_items": [
+      {
+        "acquisition_note": null,
+        "item_id": "item_sutra",
+        "location": "五百罗汉堂·角落悲悯罗汉底座暗格"
+      },
+      {
+        "acquisition_note": null,
+        "item_id": "item_incense_stub",
+        "location": "大雄宝殿前青铜香炉·最左侧"
+      },
+      {
+        "acquisition_note": null,
+        "item_id": "item_merit_stele_photo",
+        "location": "庭院东墙功德碑"
+      }
+    ],
+    "sensory": "檀香与灯油的气味、玉器抛光粉的干涩味、寺内沉甸甸的寂静、青石板被扫帚划过的沙沙声、五百尊罗汉的注视感",
+    "trigger_description": null
+  },
+  "choices": [
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "flag": "yan_yan_accompany",
+          "type": "set_flag",
+          "value": true
+        }
+      ],
+      "hint": null,
+      "id": "C_choice_01",
+      "next": {
+        "mode": "stay",
+        "target": "C"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "C_choice_01_result_paragraph_01_01",
+          "text": "燕妍合上她的笔记本——上面画满了潦草的符号和箭头，看起来像是在连线某种\"广州灵异地图\"。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_01_result_paragraph_02_01_dialogue",
+          "speaker_id": "npc_yan_yan",
+          "text": "你知道吗，荔湾广场那个地方——",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "C_choice_01_result_paragraph_02_02_narration",
+          "text": "她压低声音，",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_01_result_paragraph_02_03_dialogue",
+          "speaker_id": "npc_yan_yan",
+          "text": "我查过了。1993年施工的时候，挖出了八口棺材。八口。死囚的棺材。而且那不是普通的墓——棺材底下发现了一个老青砖砌的地下空间，里面画满了道教符文。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "C_choice_01_result_paragraph_03_01_narration",
+          "text": "她从手机里翻出一张模糊的照片——是华林寺的功德碑。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_01_result_paragraph_03_02_dialogue",
+          "speaker_id": "npc_yan_yan",
+          "text": "看这个——'李门陈氏'，同一个名字出现了八次。八口棺材，八次捐献。你算算，每次捐献的时间间隔都在八到十年之间。有人一直在为某件事'还债'。从1651年到现在。三百多年了。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "C_choice_01_result_paragraph_04_01_narration",
+          "text": "她看着你的表情，敏锐地歪了歪头。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_01_result_paragraph_04_02_dialogue",
+          "speaker_id": "npc_yan_yan",
+          "text": "你是不是——知道点什么？",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "C_choice_01_result_paragraph_05_01_narration",
+          "text": "她没有等你回答。她打开帆布袋，掏出一本皱巴巴的《广州都市传说》。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_01_result_paragraph_05_02_dialogue",
+          "speaker_id": "npc_yan_yan",
+          "text": "走，我带你去个地方。下九路有个老邮局——我在那里发现了一些更奇怪的东西。",
+          "type": "dialogue",
+          "when": null
+        }
+      ],
+      "short_text": "交换信息",
+      "text": "与燕妍交换信息，听她讲荔湾广场的传说"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "item_id": "item_sutra",
+          "operation": "add",
+          "quantity": 1,
+          "type": "inventory"
+        }
+      ],
+      "hint": null,
+      "id": "C_choice_02",
+      "next": {
+        "mode": "stay",
+        "target": "C"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "C_choice_02_result_paragraph_01_01",
+          "text": "五百罗汉堂里光线很暗。阳光只能从高处的窄窗斜斜地射进来，在罗汉们泥塑的面孔上投下明暗交错的条纹。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_02_result_paragraph_02_01",
+          "text": "你沿着排列整齐的罗汉一尊一尊地走过去。有些罗汉是笑的，有些是怒的，有些闭着眼睛像在沉思。走到最角落的一尊——这尊罗汉的面容和其他都不一样。不是威严，不是慈悲，是悲悯。深深的、无力回天的悲悯。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_02_result_paragraph_03_01",
+          "text": "你蹲下来看它的底座。在底座侧面——有一块砖的颜色和周围不一样。不是清代的原砖，是后来补上去的。你用指尖轻轻一推——砖块松动了。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_02_result_paragraph_04_01",
+          "text": "砖后面是一个小暗格。暗格里有一个油布包裹。你小心地打开——里面是一卷泛黄的宣纸。手抄的《金刚经》选段，毛笔小楷清瘦有力。在\"过去心不可得，现在心不可得，未来心不可得\"旁边，朱砂笔写了一个极小的字——\"等\"。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_02_result_paragraph_05_01",
+          "text": "油布内侧还有一行小字：\"留与有缘。慧觉。庚寅年冬月。\"",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_02_result_paragraph_06_01",
+          "text": "慧觉在三百六十八年前把这卷经文藏在这里。他知道有一天会有人找到它。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "探索罗汉堂",
+      "text": "独自探索五百罗汉堂，找找有没有隐藏的东西"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "attribute": "sanity",
+          "clamp": true,
+          "operation": "add",
+          "type": "modify_attribute",
+          "value": 5
+        },
+        {
+          "flag": "buddha_protection",
+          "type": "set_flag",
+          "value": true
+        }
+      ],
+      "hint": null,
+      "id": "C_choice_03",
+      "next": {
+        "mode": "stay",
+        "target": "C"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "C_choice_03_result_paragraph_01_01",
+          "text": "你跪在蒲团上。膝盖压下去的瞬间，蒲团里积了几十年的香灰味被挤压出来——干燥的、温暖的、带着某种说不清的安宁。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_03_result_paragraph_02_01",
+          "text": "你闭上眼睛。大雄宝殿里的声音很纯粹——木鱼声、铜磬声、偶尔一阵风穿过殿堂时佛像前经幡的翻动声。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_03_result_paragraph_03_01",
+          "text": "你没有许具体的愿。你只是在心里说——_（让我撑过这一轮。如果不行——让我记得上一轮。）_",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_03_result_paragraph_04_01",
+          "text": "佛像沉默着。但蒲团下传来的檀香味似乎浓了一些。像是某种应答。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "虔诚跪拜",
+      "text": "在大雄宝殿虔诚跪拜，祈求平安"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "item_id": "item_incense_stub",
+          "operation": "add",
+          "quantity": 1,
+          "type": "inventory"
+        }
+      ],
+      "hint": null,
+      "id": "C_choice_04",
+      "next": {
+        "mode": "stay",
+        "target": "C"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "C_choice_04_result_paragraph_01_01",
+          "text": "大雄宝殿前的青铜香炉里插满了香。大部分已经燃尽了，只剩下一根——烧了一半就熄灭了。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_04_result_paragraph_02_01",
+          "text": "你趁没人注意时把它抽了出来。残香的断口是黑色的——不是正常燃尽后的灰白色，是被人掐灭的。掐灭它的人手劲很大，香身上留下了一道指甲的压痕。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_04_result_paragraph_03_01",
+          "text": "_（什么人会在燃香的时候掐灭自己的香？除非——发生了什么让他不得不停下来。）_",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_04_result_paragraph_04_01",
+          "text": "你把残香收好。它在佛前被祝福了一半。另一半——你可以用来在需要的时刻驱散怨气。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "取残香",
+      "text": "从大雄宝殿香炉中取一截残香"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "item_id": "item_merit_stele_photo",
+          "operation": "add",
+          "quantity": 1,
+          "type": "inventory"
+        }
+      ],
+      "hint": null,
+      "id": "C_choice_05",
+      "next": {
+        "mode": "stay",
+        "target": "C"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "C_choice_05_result_paragraph_01_01",
+          "text": "庭院功德碑上密密麻麻地刻着数百年来捐款修缮寺庙的香客名字。你随便扫了一眼——然后停住了。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_05_result_paragraph_02_01",
+          "text": "\"李门陈氏\"。然后是年份。然后又一行——\"李门陈氏\"——不同年份，但金额差不多。往下看——\"李门陈氏\"出现了八次。八个不同的年份，从咸丰年间一直到光绪年间，跨越了三四十年。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_05_result_paragraph_03_01",
+          "text": "同一个人——或者同一个家族的不同女性——用了八代人的时间，捐了八次钱。每一次的数额一模一样。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_05_result_paragraph_04_01",
+          "text": "_八次捐献。八口棺材。这是一个家族的还债。_",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_05_result_paragraph_05_01",
+          "text": "你用手机拍下了功德碑。照片里的\"李门陈氏\"四个字在阳光下格外清晰。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "拍功德碑",
+      "text": "拍下庭院功德碑上的刻名"
+    },
+    {
+      "availability": {
+        "condition": {
+          "flag": "b_recorded_wall_sound",
+          "type": "flag_equals",
+          "value": true
+        },
+        "locked_reason": null,
+        "locked_visibility": "hide"
+      },
+      "effects": [],
+      "hint": "老和尚可能知道这声音的来历",
+      "id": "C_choice_06",
+      "next": {
+        "mode": "stay",
+        "target": "C"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "C_choice_06_result_paragraph_01_01",
+          "text": "你把手机音量调到最大，对准老和尚的方向，按下播放。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_06_result_paragraph_02_01",
+          "text": "马蹄声。金属碰撞。远处那个男人在中气十足地喊着什么——在录音里比在502室听到的更清晰。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_06_result_paragraph_03_01",
+          "text": "老和尚的扫把停了。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_06_result_paragraph_04_01",
+          "text": "他站在原地，低着头，听了完整的四十秒录音。录音结束后他沉默了很久。他把扫把靠在树上，用那双看过了太多年的眼睛看着你。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_06_result_paragraph_05_01_dialogue",
+          "speaker_id": "npc_old_monk",
+          "text": "这是顺治七年十一月。清兵的号令。施主是从哪里听到的？",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "C_choice_06_result_paragraph_06_01",
+          "text": "他不知道手机是什么。但他知道清兵马蹄的声音。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_06_result_paragraph_07_01_dialogue",
+          "speaker_id": "npc_old_monk",
+          "text": "那声音来的地方——不要去。施主现在住在德星路吧？那个楼的地基下面埋了太多东西。每一块砖里都是那天留下的回声。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "C_choice_06_result_paragraph_08_01_narration",
+          "text": "他顿了顿。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_06_result_paragraph_08_02_dialogue",
+          "speaker_id": "npc_old_monk",
+          "text": "但是施主已经去过了。回不去了。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "C_choice_06_result_paragraph_09_01_narration",
+          "text": "他从袖子里摸出一小串菩提子——只有三颗，用一根红绳串着。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_06_result_paragraph_09_02_dialogue",
+          "speaker_id": "npc_old_monk",
+          "text": "老僧没有什么能帮你的。这三颗来自慧觉师父当年留下的念珠——可惜其余的都散佚了。施主如果能找到完整的念珠，或许能多一份护持。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "C_choice_06_result_paragraph_10_01",
+          "text": "他没有再说下去。拿起扫把，继续扫地。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "播放录音",
+      "text": "把手机中那段马蹄声录音放给老和尚听"
+    },
+    {
+      "availability": {
+        "condition": {
+          "conditions": [
+            {
+              "counter": "current_cycle",
+              "operator": "gte",
+              "type": "counter_compare",
+              "value": 3
+            },
+            {
+              "flag": "helped_ergou",
+              "type": "flag_equals",
+              "value": true
+            }
+          ],
+          "type": "all"
+        },
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": "需要第三轮起，并在八棺之地帮助过李二狗",
+      "id": "C_choice_09",
+      "next": {
+        "mode": "travel",
+        "target": "S5"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "C_choice_09_result_paragraph_01_01",
+          "text": "你想起李二狗提过的家族与玉器生意。第三轮的街景已经熟悉得令人不安，你穿过寺门外的人流，走进相邻的华林玉器市场。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "去玉器市场",
+      "text": "绕进华林玉器市场，寻找李二狗的后人"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "C_choice_07",
+      "next": {
+        "mode": "travel",
+        "target": "D"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "C_choice_07_result_paragraph_01_01",
+          "text": "你跨出华林寺的门槛。所有的声音在一瞬间回来了——玉器市场摊主的吆喝声、公交车的刹车声、头顶榕树上的鸟叫声。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_07_result_paragraph_02_01",
+          "text": "一切恢复了正常。但你回头看了一眼——寺门还是那扇寺门，门框还是那个门框。那层\"声音被吃掉\"的寂静已经消失了。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_07_result_paragraph_03_01",
+          "text": "你感觉到一阵微弱的温暖——不是物理温度，是某种精神上的余温。佛像前的跪拜让你在接下来的穿越中能少失去一点理智。",
+          "type": "narration",
+          "when": {
+            "flag": "buddha_protection",
+            "type": "flag_equals",
+            "value": true
+          }
+        },
+        {
+          "id": "C_choice_07_result_paragraph_04_01",
+          "text": "上下九步行街在东南方向。步行大约五分钟。你朝那边走去。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "前往上下九",
+      "text": "离开华林寺，前往上下九步行街"
+    },
+    {
+      "availability": {
+        "condition": {
+          "flag": "yan_yan_accompany",
+          "type": "flag_equals",
+          "value": true
+        },
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": "燕妍说她在老邮局发现了一些有趣的东西",
+      "id": "C_choice_08",
+      "next": {
+        "mode": "travel",
+        "target": "S6"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "C_choice_08_result_paragraph_01_01_narration",
+          "text": "燕妍拉着你的袖子往外走。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_choice_08_result_paragraph_01_02_dialogue",
+          "speaker_id": "npc_yan_yan",
+          "text": "走——那个老邮局离这里很近。就在下九路中段。我在那里发现了一堆很久没人认领的'死信'——有一封是寄给'十八甫第十二甫李宅李二狗收'的。发信人是陈伯陶。1924年。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "C_choice_08_result_paragraph_02_01_dialogue",
+          "speaker_id": "npc_yan_yan",
+          "text": "陈伯陶是谁？管他是谁——但他给一个死了两百多年的人写信。而且那封信里提到了'八棺阵法'。你听清楚了吗——他在1924年就知道八棺阵要破了。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "C_choice_08_result_paragraph_03_01",
+          "text": "她几乎是小跑着出了华林寺。你跟在后面。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "去老邮局",
+      "text": "和燕妍一起去下九路老邮局"
+    }
+  ],
+  "entry_sequences": [
+    {
+      "blocks": [
+        {
+          "id": "C_entry_default_paragraph_01_01",
+          "text": "华林寺的黄色寺墙在上午阳光下泛着陈旧而温润的光泽。大雄宝殿前的青铜香炉中青烟袅袅升起——檀香和灯油的气味混合在一起，在闷热的空气里缓慢盘旋。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_entry_default_paragraph_02_01",
+          "text": "跨进寺门的一瞬间，温度骤降了几度。微凉的空气贴着皮肤。寺门外华林国际玉器市场摊主的粤语吆喝声（\"靓翡翠啊——\"）在这里被某种东西吸收了——变成一种沉甸甸的安静。甚至连自己的脚步声都变得模糊。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_entry_default_paragraph_03_01",
+          "text": "庭院里，一位老和尚正在用竹扫帚扫地——扫帚划过青石板的沙沙声是这里唯一清晰的声音。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_entry_default_paragraph_04_01",
+          "text": "五百罗汉堂在东侧。堂内光线昏暗，泥塑罗汉们或坐或立，五百张面孔在阴影中若隐若现。角落那尊悲悯罗汉——双手合十——底座上有一块砖头的颜色比周围的略浅。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_entry_default_paragraph_05_01",
+          "text": "---",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_entry_default_paragraph_06_01",
+          "text": "然后你看到了燕妍。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_entry_default_paragraph_07_01",
+          "text": "她坐在大雄宝殿侧面的石阶上，膝盖上摊着一本翻得卷了边的书——《广州都市传说》。她抬起头，看到你，愣了一秒——然后笑了。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_entry_line_01_01_dialogue",
+          "speaker_id": "npc_yan_yan",
+          "text": "你也来逛华林寺？",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "C_entry_line_01_02_narration",
+          "text": "她把书合上，拍了拍旁边的石阶。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_entry_line_01_03_dialogue",
+          "speaker_id": "npc_yan_yan",
+          "text": "坐。我跟你说——这个荔湾广场，真的有问题。我查了好多资料……",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "C_entry_line_02_01_narration",
+          "text": "她从帆布袋里掏出一个皱巴巴的笔记本，翻到画满了箭头和圆圈的一页。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_entry_line_02_02_dialogue",
+          "speaker_id": "npc_yan_yan",
+          "text": "1993年施工的时候，挖出了八口棺材。八口。死囚的棺材。而且那不是普通的墓——棺材底下发现了一个老青砖砌的地下空间。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "C_entry_line_03_01_narration",
+          "text": "她压低声音。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_entry_line_03_02_dialogue",
+          "speaker_id": "npc_yan_yan",
+          "text": "你知道吗，荔湾广场那个地方——我查过了。华林寺的功德碑上，同一个名字出现了八次。八口棺材，八次捐献。有人一直在为某件事'还债'。从1651年到现在。三百多年了。",
+          "type": "dialogue",
+          "when": null
+        }
+      ],
+      "id": "C_entry_default",
+      "when": null
+    },
+    {
+      "blocks": [
+        {
+          "id": "C_entry_cycle_2_paragraph_01_01",
+          "text": "你再次跨进华林寺的寺门。檀香、灯油、旧木头——和上一次完全相同的味道。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_entry_cycle_2_paragraph_02_01",
+          "text": "庭院里老和尚还在扫地。你经过他身边时，他抬了一下头——不是看你，是看你身后的方向。然后继续扫地。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_entry_cycle_2_paragraph_03_01",
+          "text": "燕妍又坐在石阶上。同样的位置，同样的书。她看到你时又笑了——同样的笑。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_entry_cycle_2_paragraph_04_01",
+          "text": "_（她每次都这样——她永远不会记得上次见过你。）_",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_entry_cycle_2_paragraph_05_01",
+          "text": "你感到一阵孤独——不是因为一个人。是因为你知道这里发生过的对话，对面的人永远不会记得。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_cycle_2_entry_line_01_01_dialogue",
+          "speaker_id": "npc_yan_yan",
+          "text": "你也来逛华林寺？",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "C_cycle_2_entry_line_01_02_narration",
+          "text": "她把书合上，拍了拍旁边的石阶。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_cycle_2_entry_line_01_03_dialogue",
+          "speaker_id": "npc_yan_yan",
+          "text": "坐。我跟你说——这个荔湾广场，真的有问题。我查了好多资料……",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "C_cycle_2_entry_line_02_01_narration",
+          "text": "她从帆布袋里掏出一个皱巴巴的笔记本，翻到画满了箭头和圆圈的一页。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_cycle_2_entry_line_02_02_dialogue",
+          "speaker_id": "npc_yan_yan",
+          "text": "1993年施工的时候，挖出了八口棺材。八口。死囚的棺材。而且那不是普通的墓——棺材底下发现了一个老青砖砌的地下空间。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "C_cycle_2_entry_line_03_01_narration",
+          "text": "她压低声音。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_cycle_2_entry_line_03_02_dialogue",
+          "speaker_id": "npc_yan_yan",
+          "text": "你知道吗，荔湾广场那个地方——我查过了。华林寺的功德碑上，同一个名字出现了八次。八口棺材，八次捐献。有人一直在为某件事'还债'。从1651年到现在。三百多年了。",
+          "type": "dialogue",
+          "when": null
+        }
+      ],
+      "id": "C_entry_cycle_2",
+      "when": {
+        "counter": "current_cycle",
+        "operator": "eq",
+        "type": "counter_compare",
+        "value": 2
+      }
+    },
+    {
+      "blocks": [
+        {
+          "id": "C_entry_cycle_3__paragraph_01_01",
+          "text": "第{{cycle_count}}次来华林寺。你已经能闭着眼睛走过五百罗汉堂的每一排。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_entry_cycle_3__paragraph_02_01",
+          "text": "燕妍的笑——你已经看过了{{cycle_count}}次。每一次都是\"第一次\"——对她来说。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_entry_cycle_3__paragraph_03_01",
+          "text": "你突然意识到：她的记忆也在循环。但她的循环只有一天——她永远活在第二天。她永远不会进入第三天。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_entry_cycle_3__paragraph_04_01",
+          "text": "这意味着——她是不是也被困住了？只是困在更小的循环里？",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_entry_cycle_3__paragraph_05_01",
+          "text": "_（还是说——她根本不是\"人\"？）_",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_cycle_3__entry_line_01_01_dialogue",
+          "speaker_id": "npc_yan_yan",
+          "text": "你也来逛华林寺？",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "C_cycle_3__entry_line_01_02_narration",
+          "text": "她把书合上，拍了拍旁边的石阶。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_cycle_3__entry_line_01_03_dialogue",
+          "speaker_id": "npc_yan_yan",
+          "text": "坐。我跟你说——这个荔湾广场，真的有问题。我查了好多资料……",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "C_cycle_3__entry_line_02_01_narration",
+          "text": "她从帆布袋里掏出一个皱巴巴的笔记本，翻到画满了箭头和圆圈的一页。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_cycle_3__entry_line_02_02_dialogue",
+          "speaker_id": "npc_yan_yan",
+          "text": "1993年施工的时候，挖出了八口棺材。八口。死囚的棺材。而且那不是普通的墓——棺材底下发现了一个老青砖砌的地下空间。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "C_cycle_3__entry_line_03_01_narration",
+          "text": "她压低声音。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "C_cycle_3__entry_line_03_02_dialogue",
+          "speaker_id": "npc_yan_yan",
+          "text": "你知道吗，荔湾广场那个地方——我查过了。华林寺的功德碑上，同一个名字出现了八次。八口棺材，八次捐献。有人一直在为某件事'还债'。从1651年到现在。三百多年了。",
+          "type": "dialogue",
+          "when": null
+        }
+      ],
+      "id": "C_entry_cycle_3_",
+      "when": {
+        "counter": "current_cycle",
+        "operator": "gte",
+        "type": "counter_compare",
+        "value": 3
+      }
+    }
+  ],
+  "id": "C",
+  "meta": {
+    "name": "华林寺",
+    "node_type": "main",
+    "parent_node_id": null,
+    "position": 50.0,
+    "terminal": null,
+    "time_label": "第二天·白天 09:00-15:00"
+  },
+  "routing": null,
+  "scene": {
+    "allow_no_background": true,
+    "ambient_id": null,
+    "atmosphere": [
+      "静谧",
+      "神圣",
+      "暗流",
+      "时间的沉淀"
+    ],
+    "background_id": null,
+    "palette": "金黄+灰褐"
+  },
+  "schema_version": 3
+}

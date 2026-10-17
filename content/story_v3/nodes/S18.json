@@ -1,0 +1,155 @@
+{
+  "authoring": {
+    "gender_variant": null,
+    "notes": [],
+    "npc_item_notes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "sensory": null,
+    "trigger_description": "and:has_flag:saw_2014_girl,H节点天台楼梯间开放"
+  },
+  "choices": [
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "item_id": "item_rooftop_tile",
+          "operation": "add",
+          "quantity": 1,
+          "type": "inventory"
+        },
+        {
+          "flag": "found_rooftop_memorial",
+          "type": "set_flag",
+          "value": true
+        }
+      ],
+      "hint": "带上她的名字——至少还有一个人记得她",
+      "id": "S18_choice_01",
+      "next": {
+        "mode": "stay",
+        "target": "S18"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S18_choice_01_result_paragraph_01_01",
+          "text": "你小心地抬起砖头，取出压在最下面的那片红陶瓦。瓦片很轻——但拿在手里有一种异常的沉重。修正液的白色字迹在月光下泛着微光，那个写到一半就被雨水冲掉的名字只剩一个偏旁——「女」字旁。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S18_choice_01_result_paragraph_02_01",
+          "text": "_（她写了至少三个字——只有第一个字的最初几笔留了下来。她在被所有人忘记之前——在被时间彻底抹去之前——把名字写在不会被循环重置的瓦片上。但雨水还是找到了办法。连时间裂隙也容不下她的名字。）_",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S18_choice_01_result_paragraph_03_01",
+          "text": "你把瓦片收进口袋。旁边的毛绒兔子挂件沾满了灰尘——你不知道该不该碰它。最后你没有动它。让它继续待在这里——也许下一轮循环里，她还会回到这个天台，重新用修正液写下自己的名字。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "取瓦片",
+      "text": "取走写着半截名字的红瓦片"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "S18_choice_02",
+      "next": {
+        "mode": "travel",
+        "target": "H"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S18_choice_02_result_paragraph_01_01",
+          "text": "你把砖头重新压回瓦片上——轻轻地，像是怕惊动什么。楼梯间的门在身后发出一声闷响。往下走的每一步都像是在离开一座没有刻名字的墓碑。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "离开天台",
+      "text": "放下瓦片，离开天台"
+    }
+  ],
+  "entry_sequences": [
+    {
+      "blocks": [
+        {
+          "id": "S18_entry_default_paragraph_01_01",
+          "text": "天台楼梯间的门今晚没有锁。门轴发出刺耳的呻吟——像是一个很久没有人来过的入口。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S18_entry_default_paragraph_02_01",
+          "text": "天台的风很大——站在上面能看到整个荔湾广场的穹顶在自己脚下。北塔的轮廓在月光中延伸到远处的德星路。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S18_entry_default_paragraph_03_01",
+          "text": "在一个空调外机的后面——墙角的位置——有人用砖头压着几块红色的陶瓦。瓦面上用修正液写着字。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S18_entry_default_paragraph_04_01",
+          "text": "\"如果你看到这个，请记得我。我叫——\"",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S18_entry_default_paragraph_05_01",
+          "text": "名字被雨水冲掉了。修正液在红色陶瓦上留下的白色字迹——只差最后一个字就完成的名字——在雨水反复冲刷后被彻底抹去了。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S18_entry_default_paragraph_06_01",
+          "text": "_（她知道自己要被忘记了。被所有人——包括时间。所以她把名字写在了不会被循环重置的东西上。但时间找到了办法。）_",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S18_entry_default_paragraph_07_01",
+          "text": "瓦片旁边放着一只沾满灰尘的毛绒兔子挂件——和消防员在S16说的那只是一样的。它也在循环中出现。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "id": "S18_entry_default",
+      "when": null
+    }
+  ],
+  "id": "S18",
+  "meta": {
+    "name": "荔湾广场天台",
+    "node_type": "normal",
+    "parent_node_id": "H",
+    "position": 175.0,
+    "terminal": null,
+    "time_label": "第四天·深夜"
+  },
+  "routing": null,
+  "scene": {
+    "allow_no_background": true,
+    "ambient_id": null,
+    "atmosphere": [],
+    "background_id": null,
+    "palette": null
+  },
+  "schema_version": 3
+}

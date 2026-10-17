@@ -1,0 +1,159 @@
+{
+  "authoring": {
+    "gender_variant": null,
+    "notes": [],
+    "npc_item_notes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "sensory": null,
+    "trigger_description": "F→G路径中经过恩宁路时可选进入"
+  },
+  "choices": [
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "item_id": "item_photo_negative",
+          "operation": "add",
+          "quantity": 1,
+          "type": "inventory"
+        }
+      ],
+      "hint": "每次冲洗出来的画面都不同——她在移动",
+      "id": "S14_choice_01",
+      "next": {
+        "mode": "stay",
+        "target": "S14"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S14_choice_01_result_paragraph_01_01",
+          "text": "老师傅小心翼翼地把底片装进一个老式纸袋里递给你。他的手很稳——冲洗了一辈子照片的手。他看着你的眼神里有一种很深的了然，像是他等这一刻已经等了很久。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S14_choice_01_result_paragraph_02_01",
+          "speaker_id": "npc_photo_master",
+          "text": "后生仔——这张底片，我已经冲洗了三遍了。每一次都不一样。不是曝光的问题——底片本身没有变化。是底片上的人——在变。她还在走。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "S14_choice_01_result_paragraph_03_01",
+          "text": "_（底片上的人或许就是那个女孩——她在2014年坠楼的那一刻被裂隙捕获。她的「图像」困在了时间的夹层里——每一次冲洗，拍到的是她在循环中不同时刻的位置。她不是静止的——她在这个永远重复的7月15日里，一直在移动。）_",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "要底片",
+      "text": "向老师傅要走那张底片"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "S14_choice_02",
+      "next": {
+        "mode": "travel",
+        "target": "G"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S14_choice_02_result_paragraph_01_01",
+          "text": "你向老师傅道了谢，推开照相馆的玻璃门。恩宁路的阳光刺得你眯起眼睛。底片在纸袋里凉凉的——像是刚从冷藏柜里拿出来的，不像是这个季节该有的温度。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "离开",
+      "text": "离开照相馆"
+    }
+  ],
+  "entry_sequences": [
+    {
+      "blocks": [
+        {
+          "id": "S14_entry_default_paragraph_01_01",
+          "text": "恩宁路这家老照相馆已经开了三代人。橱窗里陈列着几十年前的老照片——黑白结婚照、全家福、毕业合影。每张照片上的人都在笑。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S14_entry_default_paragraph_02_01_narration",
+          "text": "照相馆的老师傅正在暗房里冲洗底片。他看到你进来，摘下手套——",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S14_entry_default_paragraph_02_02_dialogue",
+          "speaker_id": "npc_photo_master",
+          "text": "后生仔，我冲洗了一辈子照片。但上个星期——不对，是昨天？不对——",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "S14_entry_default_paragraph_02_03_narration",
+          "text": "他揉了揉眼睛。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S14_entry_default_paragraph_02_04_dialogue",
+          "speaker_id": "npc_photo_master",
+          "text": "我这里有一张底片。我已经冲洗了三遍了。每一遍——照片上的人都不一样。",
+          "type": "dialogue",
+          "when": null
+        },
+        {
+          "id": "S14_entry_default_paragraph_03_01",
+          "text": "他把底片递给你。对着红光灯看——底片上是一个女人。她穿着白色长裙，裙摆长得不自然，站在荔湾广场正门前。底片边缘标注着日期——\"2018.3.15\"。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S14_entry_default_paragraph_04_01",
+          "text": "但荔湾广场正门在2018年3月15日还没有重新装修。更重要的是——底片上的女人——她身后没有影子。照片角落的店主站在她旁边——店主有影子。她没有。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S14_entry_default_paragraph_05_01",
+          "text": "第三次冲洗的照片中——她站的位置变了。她不在正门前了——她在北塔天台边缘。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "id": "S14_entry_default",
+      "when": null
+    }
+  ],
+  "id": "S14",
+  "meta": {
+    "name": "恩宁路老照相馆",
+    "node_type": "normal",
+    "parent_node_id": "G",
+    "position": 125.0,
+    "terminal": null,
+    "time_label": "第四天·白天"
+  },
+  "routing": null,
+  "scene": {
+    "allow_no_background": true,
+    "ambient_id": null,
+    "atmosphere": [],
+    "background_id": null,
+    "palette": null
+  },
+  "schema_version": 3
+}

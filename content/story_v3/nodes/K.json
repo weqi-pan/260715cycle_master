@@ -1,0 +1,423 @@
+{
+  "authoring": {
+    "gender_variant": null,
+    "notes": [],
+    "npc_item_notes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "sensory": "脚下光脉的微弱搏动、虚空中没有声音却有一种持续的嗡鸣感、道具在背包中微微发光",
+    "trigger_description": null
+  },
+  "choices": [
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": "选择背包中的道具献祭给暗下去的光团，修复八棺阵的封印",
+      "id": "K_choice_01",
+      "next": {
+        "mode": "stay",
+        "target": "K"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "K_choice_01_result_paragraph_01_01",
+          "text": "你从背包中取出道具。它在龙脉裂隙中微微发光——比在地面上更亮。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "K_choice_01_result_paragraph_02_01",
+          "text": "你把它放在最暗的那团光下面。道具的发光在增强——然后道具本身开始变得透明，像是被光脉吸收了。最后一点实体的残余消散在灰白色的虚空中。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "K_choice_01_result_paragraph_03_01",
+          "text": "对应的那团暗红色的光——亮了一些。不是很明显。但你知道封印被加固了极其微小的一丝。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "K_choice_01_result_paragraph_04_01",
+          "text": "八棺阵的封印就像一堵满是裂缝的墙。你每次只能补上薄薄的一层。但每补一层——下一轮循环中对应的节点就少一分异常。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "献祭道具",
+      "text": "献祭道具修复光团（补阵）"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "K_choice_02",
+      "next": {
+        "mode": "warp",
+        "target": "A"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "K_choice_02_result_paragraph_01_01",
+          "text": "你伸出手触碰正上方那团最亮的光。虚空在你周围崩塌——然后重新凝聚。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "K_choice_02_result_paragraph_02_01",
+          "text": "脚下一实——是花岗岩台阶。夕阳洒在脸上。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "K_choice_02_result_paragraph_03_01",
+          "text": "你站在荔湾广场正门前。手机上的日期是2018年7月15日，傍晚18:30。铜狮面朝内，沉默地盯着广场深处。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "跃迁→A",
+      "text": "跃迁至A（荔湾广场正门）"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "K_choice_03",
+      "next": {
+        "mode": "warp",
+        "target": "B"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "K_choice_03_result_paragraph_01_01",
+          "text": "暗红色的光吞没了一切。再睁开眼时——你站在502室的门口。钥匙还在口袋里。门内传来水龙头低沉的\"咯——咯——\"声。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "跃迁→B",
+      "text": "跃迁至B（德星路出租屋）"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "K_choice_04",
+      "next": {
+        "mode": "warp",
+        "target": "C"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "K_choice_04_result_paragraph_01_01",
+          "text": "你跨出虚空——檀香和旧木头的味道扑面而来。华林寺的庭院里，青烟从香炉中笔直升起。那个扫地的老和尚抬头看了你一眼。他的眼神不像是看到一个人走进了寺门——更像是看到一个人从空气中凭空出现。但他什么都没说。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "跃迁→C",
+      "text": "跃迁至C（华林寺）"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "K_choice_05",
+      "next": {
+        "mode": "warp",
+        "target": "D"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "K_choice_05_result_paragraph_01_01",
+          "text": "霓虹灯的频闪。卤味和臭豆腐的气味。人潮从你身边流过——没有人注意到你刚刚从一道裂隙中走出来。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "K_choice_05_result_paragraph_02_01",
+          "text": "上下九步行街的夜晚像往常一样嘈杂而拥挤。糖水铺角落里那个穿格子衬衫的男人抬起头——他在等你。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "跃迁→D",
+      "text": "跃迁至D（上下九步行街）"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "K_choice_06",
+      "next": {
+        "mode": "warp",
+        "target": "E"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "K_choice_06_result_paragraph_01_01",
+          "text": "脚下一实——是青砖地面。八口棺材在应急灯的微光中沉默着。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "K_choice_06_result_paragraph_02_01",
+          "text": "你从龙脉裂隙直接跳到了裂隙的正上方。这里的空气比任何地方都冷——因为这里离时间的伤口最近。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "跃迁→E",
+      "text": "跃迁至E（八棺之地）"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "K_choice_07",
+      "next": {
+        "mode": "warp",
+        "target": "F"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "K_choice_07_result_paragraph_01_01",
+          "text": "江风。榕树的气根在夜风中摆荡。珠江水面漆黑如墨，对岸的灯火在水面上扭曲。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "K_choice_07_result_paragraph_02_01",
+          "text": "江边长椅上坐着一个穿灰色长衫的老人——他在钓鱼。他的鱼线没有伸进水里。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "跃迁→F",
+      "text": "跃迁至F（沙面珠江边）"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "K_choice_08",
+      "next": {
+        "mode": "warp",
+        "target": "G"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "K_choice_08_result_paragraph_01_01",
+          "text": "精美的砖雕和灰塑在阳光下静静地反射着岭南建筑的骄傲。陈家祠的庭院里很安静——今天没有太多游客。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "K_choice_08_result_paragraph_02_01",
+          "text": "藏书楼在祠堂的最深处。那个不对外开放的区域里，有一本日记在等你。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "跃迁→G",
+      "text": "跃迁至G（陈家祠）"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "K_choice_09",
+      "next": {
+        "mode": "warp",
+        "target": "H"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "K_choice_09_result_paragraph_01_01",
+          "text": "昏黄的路灯。深夜的康王路几乎没有车。路边电线杆下有一堆烧纸钱的痕迹。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "K_choice_09_result_paragraph_02_01",
+          "text": "荔湾广场的穹顶在不远处——你知道终点就在那里。这一次你选择了从龙脉直接过来，跳过了很多路。但代价是——你的一部分理智被留在了虚空之中。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "跃迁→H",
+      "text": "跃迁至H（康王路归途）"
+    }
+  ],
+  "entry_sequences": [
+    {
+      "blocks": [
+        {
+          "id": "K_entry_default_paragraph_01_01",
+          "text": "你踏入一片灰白色的虚空。脚下是一条暗红色的光脉——像血管，像河流，像一条被埋得太久的龙。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "K_entry_default_paragraph_02_01",
+          "text": "八个方位各有一团大小不一的光。有些明亮，有些暗得几乎看不见。这些光团对应着八棺阵的八个方位——乾、兑、离、震、巽、坎、艮、坤。光团的亮度代表封印的完整程度。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "K_entry_default_paragraph_03_01",
+          "text": "这里没有时间。良久与须臾是同一件事。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "K_entry_default_paragraph_04_01",
+          "text": "暗红色的光脉在你脚下缓慢搏动——不是你的心跳，是地底深处某种存在的脉搏。龙脉——广州地下的风水能量流。时间裂隙就是从龙脉的一处伤口中裂开的。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "K_entry_default_paragraph_05_01",
+          "text": "你背包里的某些东西在微微发光——那些跨面道具。它们在这里有共鸣。你可以把它们献祭给暗下去的光团——用时间的力量修复时间的裂隙。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "id": "K_entry_default",
+      "when": null
+    }
+  ],
+  "id": "K",
+  "meta": {
+    "name": "龙脉裂隙",
+    "node_type": "special_warp",
+    "parent_node_id": null,
+    "position": -1.0,
+    "terminal": null,
+    "time_label": "无时间·裂隙之中"
+  },
+  "routing": {
+    "allowed_targets": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H"
+    ],
+    "entry_condition": {
+      "conditions": [
+        {
+          "flag": "taoist_chant",
+          "type": "flag_equals",
+          "value": true
+        },
+        {
+          "conditions": [
+            {
+              "attribute": "courage",
+              "operator": "gte",
+              "type": "attribute_compare",
+              "value": 8
+            },
+            {
+              "counter": "current_cycle",
+              "operator": "gte",
+              "type": "counter_compare",
+              "value": 3
+            }
+          ],
+          "type": "all"
+        },
+        {
+          "conditions": [
+            {
+              "item_id": "item_beads",
+              "present": true,
+              "type": "item"
+            },
+            {
+              "flag": "river_crossed",
+              "type": "flag_equals",
+              "value": true
+            }
+          ],
+          "type": "all"
+        }
+      ],
+      "type": "any"
+    },
+    "exit_effects": [
+      {
+        "attribute": "sanity_max",
+        "clamp": true,
+        "operation": "add",
+        "type": "modify_attribute",
+        "value": -1
+      }
+    ],
+    "sacrifice_target": null,
+    "type": "warp"
+  },
+  "scene": {
+    "allow_no_background": true,
+    "ambient_id": null,
+    "atmosphere": [
+      "虚空",
+      "无时间",
+      "龙脉的搏动",
+      "献祭与跃迁"
+    ],
+    "background_id": null,
+    "palette": "灰白虚空+暗红光脉"
+  },
+  "schema_version": 3
+}

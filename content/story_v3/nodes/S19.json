@@ -1,0 +1,150 @@
+{
+  "authoring": {
+    "gender_variant": null,
+    "notes": [],
+    "npc_item_notes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "sensory": null,
+    "trigger_description": "任意时间可选经过（位于荔湾广场西侧）"
+  },
+  "choices": [
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "flag": "saw_loop_boundary",
+          "type": "set_flag",
+          "value": true
+        },
+        {
+          "attribute": "sanity",
+          "clamp": true,
+          "operation": "add",
+          "type": "modify_attribute",
+          "value": 3
+        }
+      ],
+      "hint": "两个画面重叠——形成了莫比乌斯环的拓扑形状",
+      "id": "S19_choice_01",
+      "next": {
+        "mode": "stay",
+        "target": "S19"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S19_choice_01_result_paragraph_01_01",
+          "text": "你站在那个位置不动。荔湾广场正门的影像和它在高架桥玻璃幕墙上的反光叠在一起——两个画面不是镜像关系。正门是现在的——反光里是稍微早一点的——然后反光里的画面又反光回广场正门上——时间在玻璃上折叠。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S19_choice_01_result_paragraph_02_01",
+          "text": "你盯着这个重叠的拓扑看了整整几分钟。莫比乌斯环——时间的开始和结束在同一个平面上，没有起点，也没有终点。每一次你以为自己走出了循环——你只是走回了出发的那一侧。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S19_choice_01_result_paragraph_03_01",
+          "text": "_（有人特意设计了这个角度。第13轮的那个人——他不是在开玩笑。他用这面玻璃幕墙作为视觉装置——告诉所有被困在这里的人：你看——这就是你现在的处境。你走在莫比乌斯环上。看到这个信息的人——至少不是孤独的。）_",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "观察拓扑",
+      "text": "站在那个特殊角度观察莫比乌斯拓扑"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "S19_choice_02",
+      "next": {
+        "mode": "travel",
+        "target": "H"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S19_choice_02_result_paragraph_01_01",
+          "text": "你离开那个特殊的角度。荔湾广场的影像恢复了正常——至少看起来恢复了正常。人民路天桥上的风突然变得很冷，像是从某个不该有出口的地方吹过来的。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "离开",
+      "text": "离开天桥"
+    }
+  ],
+  "entry_sequences": [
+    {
+      "blocks": [
+        {
+          "id": "S19_entry_default_paragraph_01_01",
+          "text": "人民路天桥的位置很特殊——它正好处在荔湾广场的西北方向，横跨在一条主干道上。从天桥上往东看，能看到荔湾广场的全貌——正门、北塔、南塔、穹顶——完整的轮廓。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S19_entry_default_paragraph_02_01",
+          "text": "但今天晚上——所有的东西看起来都有些偏移。北塔的轮廓似乎比平时窄了一点。正门的铜狮不在原本的位置——它往左移了大约半米。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S19_entry_default_paragraph_03_01",
+          "text": "不是建筑被移动了。是你看它的角度变了。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S19_entry_default_paragraph_04_01",
+          "text": "你走遍了天桥的每一段——在东侧中段的位置，你找到了一个特殊的角度。站在那里——你能同时看到荔湾广场正门和它在人民路高架桥玻璃幕墙上的反光。两个画面重叠在一起——形成了一个莫比乌斯环的拓扑形状。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S19_entry_default_paragraph_05_01",
+          "text": "_（这不是偶然的。有人设计了这个角度——让你从这里能看到循环的形状。）_",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S19_entry_default_paragraph_06_01",
+          "text": "桥栏杆上有一行被磨得快看不清的刻字：\"我也看到你了。——第13轮\"",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "id": "S19_entry_default",
+      "when": null
+    }
+  ],
+  "id": "S19",
+  "meta": {
+    "name": "人民路天桥",
+    "node_type": "normal",
+    "parent_node_id": "H",
+    "position": 150.0,
+    "terminal": null,
+    "time_label": "任意时间·西侧偏南"
+  },
+  "routing": null,
+  "scene": {
+    "allow_no_background": true,
+    "ambient_id": null,
+    "atmosphere": [],
+    "background_id": null,
+    "palette": null
+  },
+  "schema_version": 3
+}

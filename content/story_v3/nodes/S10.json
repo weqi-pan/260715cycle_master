@@ -1,0 +1,138 @@
+{
+  "authoring": {
+    "gender_variant": null,
+    "notes": [],
+    "npc_item_notes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "sensory": null,
+    "trigger_description": "E→F路径中经过珠江轮渡码头时可选进入"
+  },
+  "choices": [
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "item_id": "item_ferry_ticket",
+          "operation": "add",
+          "quantity": 1,
+          "type": "inventory"
+        }
+      ],
+      "hint": "这张票从来没有被用过",
+      "id": "S10_choice_01",
+      "next": {
+        "mode": "stay",
+        "target": "S10"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S10_choice_01_result_paragraph_01_01",
+          "text": "你用指甲小心地把船票从窗口缝隙里挑出来。纸质比想象中更脆——粉红色的票面在指尖下微微颤动，像是刚从打印机里吐出来的，而不是被遗忘在这里二十年。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S10_choice_01_result_paragraph_02_01",
+          "text": "票面印刷的时间是2005年7月15日。又是7月15日。座位号13A——这个座位号你似乎在什么地方见过，但想不起来。票根完好，没有被撕过的痕迹。买票的人从未登上那班船。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S10_choice_01_result_paragraph_03_01",
+          "text": "_（这张船票不是被遗忘的——是被留下的。有人买了一张不会登上的船——像是在等什么人，或者——在标记什么。）_",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "取船票",
+      "text": "取出售票窗口缝隙里的旧船票"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "S10_choice_02",
+      "next": {
+        "mode": "travel",
+        "target": "F"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S10_choice_02_result_paragraph_01_01",
+          "text": "你最后望了一眼江面——对岸灯光组成的城墙轮廓已经消散，只余下普通的水波反光。你转身离开码头，渡口的红绳在夜风里轻轻摇晃，像无数只没有送出去的手。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "离开",
+      "text": "离开码头"
+    }
+  ],
+  "entry_sequences": [
+    {
+      "blocks": [
+        {
+          "id": "S10_entry_default_paragraph_01_01",
+          "text": "珠江轮渡码头在傍晚时分已经没什么人了。末班轮渡在二十分钟前就开了——现在码头上只剩下一个售票窗口还亮着灯。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S10_entry_default_paragraph_02_01",
+          "text": "售票员不在窗口后面。售票窗口的缝隙里卡着一张旧船票——粉红色的老版式。这种票已经在2005年就停用了。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S10_entry_default_paragraph_03_01",
+          "text": "船票上的座位号是13A。票面没有任何检票的痕迹——这张票被买下来，然后被遗忘在了售票窗口的缝隙里。买票的人去了哪里？",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S10_entry_default_paragraph_04_01",
+          "text": "渡口的栏杆上系着几根红绳——有些已经褪色了，有些还很新。这是广州的习俗——有人在渡口许了愿。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S10_entry_default_paragraph_05_01",
+          "text": "江风吹过来——带着水汽和柴油味。对岸的灯火在水面上拉成一条条颤动的光线。如果你盯着水面看太久——你会看到那些光线开始组成图案。不是随机的图案——是城墙的轮廓。1650年的广州城墙。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "id": "S10_entry_default",
+      "when": null
+    }
+  ],
+  "id": "S10",
+  "meta": {
+    "name": "珠江轮渡码头",
+    "node_type": "normal",
+    "parent_node_id": "F",
+    "position": 100.0,
+    "terminal": null,
+    "time_label": "第三天·傍晚"
+  },
+  "routing": null,
+  "scene": {
+    "allow_no_background": true,
+    "ambient_id": null,
+    "atmosphere": [],
+    "background_id": null,
+    "palette": null
+  },
+  "schema_version": 3
+}

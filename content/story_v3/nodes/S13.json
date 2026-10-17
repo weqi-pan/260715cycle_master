@@ -1,0 +1,150 @@
+{
+  "authoring": {
+    "gender_variant": null,
+    "notes": [],
+    "npc_item_notes": [],
+    "npcs_present": [],
+    "scene_items": [],
+    "sensory": null,
+    "trigger_description": "F→G路径中可选经过荔湾湖公园"
+  },
+  "choices": [
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [
+        {
+          "flag": "lake_reflection_seen",
+          "type": "set_flag",
+          "value": true
+        },
+        {
+          "attribute": "sanity",
+          "clamp": true,
+          "operation": "add",
+          "type": "modify_attribute",
+          "value": -2
+        }
+      ],
+      "hint": "水面倒影的延迟越来越大——你看到了更多东西",
+      "id": "S13_choice_01",
+      "next": {
+        "mode": "stay",
+        "target": "S13"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S13_choice_01_result_paragraph_01_01",
+          "text": "你蹲在湖边，盯着水面上那个慢了不止一拍的自己。延迟越来越大——先是两秒，然后三秒，五秒。你挥了挥手——水里的你过了整整五秒才抬起手臂，像是信号穿过了某种很深、很深的介质才抵达倒影的那一端。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S13_choice_01_result_paragraph_02_01",
+          "text": "然后你的倒影完全停止了跟随你。它静静地站在水面上——看着你。_（不——不是看着你。它在看你身后的什么东西。不是这个时代的东西。）_",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S13_choice_01_result_paragraph_03_01",
+          "text": "你低头盯着水面深处——在「你」的下方，湖水深处出现了另一层画面：城墙、燃烧的木楼、街巷中奔跑的细小身影。那是广州——1650年的广州。尚可喜的军队正在屠城。火光在水面之下无声地跳动。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S13_choice_01_result_paragraph_04_01",
+          "text": "_（荔湾湖连通着地下水脉——地下水脉连通着龙脉——龙脉承载着这座城市三百五十年的记忆。这不是倒影——这是一扇时间之窗。裂隙在每一轮循环中都在扩大——现在它已经大到能映出三百年前的尚藩屠城了。）_",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "注视湖面",
+      "text": "长时间注视湖面倒影"
+    },
+    {
+      "availability": {
+        "condition": null,
+        "locked_reason": null,
+        "locked_visibility": "show"
+      },
+      "effects": [],
+      "hint": null,
+      "id": "S13_choice_02",
+      "next": {
+        "mode": "travel",
+        "target": "G"
+      },
+      "repeat_policy": "once_per_visit",
+      "result": [
+        {
+          "id": "S13_choice_02_result_paragraph_01_01",
+          "text": "你从湖边退开。水面上的倒影恢复了正常——至少看起来恢复了正常。你转身离开荔湾湖公园，但耳边的风声里似乎夹杂着来自遥远年代的回音——像是马蹄踏过石板路，像是有人在很远的地方喊叫。",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "short_text": "离开",
+      "text": "离开荔湾湖"
+    }
+  ],
+  "entry_sequences": [
+    {
+      "blocks": [
+        {
+          "id": "S13_entry_default_paragraph_01_01",
+          "text": "荔湾湖公园在白天是老年人的天地——下棋的、唱粤剧的、遛鸟的。湖心亭里有人拉二胡，声音在水面上飘得很远。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S13_entry_default_paragraph_02_01",
+          "text": "但你走到湖边时——水面上的倒影不太对。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S13_entry_default_paragraph_03_01",
+          "text": "你自己的倒影有几秒的延迟。你举起手——水里的你慢了一拍。风吹过湖面，涟漪扩散——但你的倒影没有跟着涟漪一起动。它静止了。静止了大约两秒，然后突然追上了你的动作。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S13_entry_default_paragraph_04_01",
+          "text": "你不止在镜子里看到了延迟——你在水里也看到了。时间裂隙不仅在荔湾广场地下——它在蔓延。荔湾湖的湖水连通着地下水脉——而地下水脉连通着龙脉。",
+          "type": "narration",
+          "when": null
+        },
+        {
+          "id": "S13_entry_default_paragraph_05_01",
+          "text": "_（裂隙在扩大。每一次循环，它都在往外扩张几厘米。）_",
+          "type": "narration",
+          "when": null
+        }
+      ],
+      "id": "S13_entry_default",
+      "when": null
+    }
+  ],
+  "id": "S13",
+  "meta": {
+    "name": "荔湾湖公园",
+    "node_type": "normal",
+    "parent_node_id": "G",
+    "position": 125.0,
+    "terminal": null,
+    "time_label": "第四天·白天"
+  },
+  "routing": null,
+  "scene": {
+    "allow_no_background": true,
+    "ambient_id": null,
+    "atmosphere": [],
+    "background_id": null,
+    "palette": null
+  },
+  "schema_version": 3
+}
