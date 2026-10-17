@@ -9,3 +9,7 @@ content/build/current.json
 .env
 .env.*
 *.tsbuildinfo
+.pnpm-cache/
+.pnpm-store/
+.xdg-cache/
+.xdg-data/
