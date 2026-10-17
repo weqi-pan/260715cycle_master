@@ -19,11 +19,11 @@ describe('播放逻辑', () => {
 })
 
 describe('选项展示', () => {
-  it('sorts available choices ahead of locked choices', () => {
+  it('hides unavailable choices', () => {
     const choices: ChoiceView[] = [
       { id: 'locked', text: '锁定', nextNodeId: 'B', available: false, reason: '条件不足', source: 'static' },
       { id: 'open', text: '开放', nextNodeId: 'C', available: true, source: 'static' },
     ]
-    expect(orderedChoices(choices).map(choice => choice.id)).toEqual(['open', 'locked'])
+    expect(orderedChoices(choices).map(choice => choice.id)).toEqual(['open'])
   })
 })

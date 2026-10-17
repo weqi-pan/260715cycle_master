@@ -498,7 +498,7 @@ export class GameEngine {
       if (this.crossingLimitReached(node, choice, state)) continue
       if (!this.repeatAvailable(choice, state)) continue
       const available = this.evaluator.check(choice.availability.condition, state)
-      if (!available && choice.availability.locked_visibility === 'hide') continue
+      if (!available) continue
       const view: ChoiceView = {
         id: choice.id,
         text: choice.text,
@@ -507,7 +507,6 @@ export class GameEngine {
         source: 'static',
       }
       if (choice.short_text) view.shortText = choice.short_text
-      if (!available && choice.availability.locked_reason) view.reason = choice.availability.locked_reason
       choices.push(view)
     }
     return choices

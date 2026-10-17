@@ -28,7 +28,6 @@
             v-for="choice in choices"
             :key="choice.id"
             type="button"
-            :class="{ locked: !choice.available }"
             :disabled="!canAct || !choice.available"
             @click="choose(choice.id)"
           >
@@ -108,7 +107,6 @@ function remove(saveId: string): void { void store.deleteSave(saveId) }
 .choices { display: grid; gap: 10px; margin-top: 22px; }
 .choices button { display: grid; gap: 4px; padding: 13px 16px; text-align: left; color: #e8ddc6; border: 1px solid rgba(184,148,62,.18); background: rgba(184,148,62,.05); cursor: pointer; }
 .choices button:hover:not(:disabled) { border-color: #b8943e; color: #ffedbe; }
-.choices button.locked { opacity: .52; cursor: not-allowed; }
 .choices small { color: #9d9284; }
 .map { position: fixed; right: 20px; bottom: 20px; z-index: 15; }
 .empty { min-height: 100vh; display: grid; place-content: center; color: #b3a996; gap: 12px; }
