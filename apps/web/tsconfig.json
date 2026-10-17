@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "noEmit": true,
+    "types": ["vite/client"],
+    "paths": { "@cycle-master/api-contract": ["../../packages/api-contract/src/index.ts"] }
+  },
+  "include": ["src/**/*.ts", "src/**/*.vue", "vite.config.ts", "../../packages/api-contract/src/index.ts"]
+}

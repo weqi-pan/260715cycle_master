@@ -1,0 +1,4 @@
+:root { color-scheme: dark; font-family: "Inter", "Noto Sans SC", sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #060505; color: #efe6d3; }
+a { color: #b8943e; }
