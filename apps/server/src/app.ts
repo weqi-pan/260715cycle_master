@@ -1,7 +1,6 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http'
 import { createReadStream, promises as fsPromises } from 'node:fs'
 import path from 'node:path'
-import type { ZodTypeAny } from 'zod'
 import type { ApiErrorCode } from '@cycle-master/api-contract'
 import { GameEngineError } from '@cycle-master/game-runtime'
 import { GameService, HttpError } from './service.ts'
@@ -61,7 +60,13 @@ async function readJson(request: IncomingMessage): Promise<unknown> {
   }
 }
 
-function parseBody<T>(schema: ZodTypeAny, payload: unknown): T {
+interface ParsableSchema {
+  safeParse(payload: unknown):
+    | { success: true; data: unknown }
+    | { success: false; error: { issues: unknown[] } }
+}
+
+function parseBody<T>(schema: ParsableSchema, payload: unknown): T {
   const result = schema.safeParse(payload)
   if (!result.success) {
     throw new HttpError(400, 'VALIDATION_ERROR', '请求参数无效。', result.error.issues)
