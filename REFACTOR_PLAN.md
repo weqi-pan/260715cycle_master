@@ -4,7 +4,7 @@
 
 - 目标目录：`/home/weqi/projects/261017cycle_master`，初始化为独立 Git 仓库；不复制 `.git`、`venv`、`tmp`、构建缓存和旧存档。
 - 范围：全栈 TypeScript。保留 Vue 3 产品能力，重写 Python/FastAPI 后端；允许 API、数据库结构和存档格式破坏式重构。
-- 技术栈：pnpm monorepo、Node 22、TypeScript strict、Fastify、Zod、Drizzle ORM、better-sqlite3、Vite、Pinia、Vitest、Playwright。
+- 技术栈：pnpm monorepo、Node 22、TypeScript strict、Zod、better-sqlite3、Vue 3、Vite、Pinia、Vitest、Playwright。当前实现使用 Node 原生 HTTP；因环境无网络依赖，Fastify 与 Drizzle ORM 暂未引入。
 - 基线：原项目保持只读作为行为参考；`data/story_v3` 与 `data/assets` 迁入新项目，剧情内容保持 Story v3 语义。
 - 恢复策略：刷新页面或后端重启后，由玩家读取手动存档或开始新游戏；不自动恢复未保存进度。
 - 存档兼容性：按剧情内容指纹与状态格式版本校验；剧情不匹配时保留存档并拒绝读取，还原原剧情后可再次读取。
